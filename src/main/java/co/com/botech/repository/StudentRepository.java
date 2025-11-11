@@ -1,0 +1,15 @@
+package co.com.botech.repository;
+
+import co.com.botech.entity.Student;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface StudentRepository extends JpaRepository<Student, Long> {
+    /** Buscar estudiantes por school_id  */
+    List<Student> findBySchool_Id(Long schoolId);
+    Optional<Student> findByStudentCode(String studentCode);
+}
