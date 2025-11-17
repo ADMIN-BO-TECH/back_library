@@ -21,7 +21,7 @@ jobs:
           java-version: "17"
           server-id: github
           server-username: GITHUB_ACTOR
-          server-password: ${{ secrets.GITHUB_TOKEN }}
+          server-password: GITHUB_TOKEN
           cache: maven
 
       - name: Validate version is SNAPSHOT
@@ -35,3 +35,6 @@ jobs:
 
       - name: Deploy SNAPSHOT to GitHub Packages
         run: mvn -B -DskipTests deploy
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
