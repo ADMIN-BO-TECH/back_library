@@ -26,7 +26,7 @@ jobs:
           java-version: "17"
           cache: maven
           server-id: github
-          server-username: GITHUB_ACTOR
+          server-username: ${{ github.repository_owner }}
           server-password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Validate version is SNAPSHOT
