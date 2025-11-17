@@ -15,6 +15,7 @@ concurrency:
 jobs:
   publish-release:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,16 +33,14 @@ jobs:
           server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate version is a RELEASE (no -SNAPSHOT)
+        shell: bash
         run: |
           VERSION=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
           echo "Project version: $VERSION"
-          [[ "$VERSION" != *"-SNAPSHOT" ]] || { echo "ERROR: main debe publicar RELEASE (sin -SNAPSHOT)"; exit 1; }
-
-      - name: Debug Maven settings.xml (mask password)
-        run: |
-          echo "---- ~/.m2/settings.xml ----"
-          sed -E 's/(<password>).*?(<\/password>)/\1***\2/' ~/.m2/settings.xml || true
-          grep -n "<server>" ~/.m2/settings.xml || true
+          if [[ "$VERSION" == *"-SNAPSHOT" ]]; then
+            echo "ERROR: main debe publicar RELEASE (sin -SNAPSHOT)"
+            exit 1
+          fi
 
       - name: Deploy RELEASE to GitHub Packages
         run: mvn -B -DskipTests deploy

@@ -15,11 +15,11 @@ concurrency:
 jobs:
   publish-snapshot:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Genera ~/.m2/settings.xml con credenciales para el <serverId> "github"
       - name: Set up JDK 17 + Maven server creds
         uses: actions/setup-java@v4
         with:
@@ -27,15 +27,18 @@ jobs:
           java-version: "17"
           cache: maven
           server-id: github
-          # Para publicar dentro del mismo owner, GitHub Token es suficiente
           server-username: ${{ github.actor }}
           server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate version is SNAPSHOT
+        shell: bash
         run: |
           VERSION=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
           echo "Project version: $VERSION"
-          [[ "$VERSION" == *"-SNAPSHOT" ]] || { echo "ERROR: dev debe usar -SNAPSHOT"; exit 1; }
+          if [[ "$VERSION" != *"-SNAPSHOT" ]]; then
+            echo "ERROR: dev debe usar -SNAPSHOT"
+            exit 1
+          fi
 
       - name: Deploy SNAPSHOT to GitHub Packages
         run: mvn -B -DskipTests deploy

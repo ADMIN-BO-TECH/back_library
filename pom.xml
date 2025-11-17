@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>co.com.botech</groupId>
@@ -10,115 +9,149 @@
     <packaging>jar</packaging>
 
     <name>botech-back-library</name>
-    <description>Librería compartida con entidades JPA, repositorios y utilidades (sin Spring Boot).</description>
+    <description>Shared JPA entities, repositories y utilidades comunes para microservicios BO-TECH</description>
     <url>https://github.com/ADMIN-BO-TECH/back_library</url>
-
-    <properties>
-        <java.version>17</java.version>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
-        <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
-    </properties>
 
     <licenses>
         <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/licenses/MIT</url>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
+    <scm>
+        <url>https://github.com/ADMIN-BO-TECH/back_library</url>
+        <connection>scm:git:https://github.com/ADMIN-BO-TECH/back_library.git</connection>
+        <developerConnection>scm:git:git@github.com:ADMIN-BO-TECH/back_library.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- versiones -->
+        <spring-data-jpa.version>3.2.5</spring-data-jpa.version>
+        <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
+        <jakarta.validation.version>3.0.2</jakarta.validation.version>
+        <lombok.version>1.18.34</lombok.version>
+
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+    </properties>
+
     <dependencies>
+        <!-- API JPA (sin implementar provider) -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>3.2.5</version>
+            <version>${jakarta.persistence.version}</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
 
+        <!-- Bean Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
+            <version>${jakarta.validation.version}</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Data JPA (para compilar repos). Lo marcamos provided+optional para no arrastrarlo a consumidores. -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-data-jpa.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Lombok solo en compilación -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
+    <!-- Repos para que Maven resuelva dependencias (consumidores de tu lib deben añadir su propio repo de GitHub Packages si van a consumirla desde allí) -->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
+
+    <!-- A dónde se publica esta librería -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages ADMIN-BO-TECH/back_library</name>
+            <url>https://maven.pkg.github.com/ADMIN-BO-TECH/back_library</url>
+        </repository>
+        <!-- Opcional: mismo endpoint para snapshots -->
+        <snapshotRepository>
+            <id>github</id>
+            <name>GitHub Packages ADMIN-BO-TECH/back_library (snapshots)</name>
+            <url>https://maven.pkg.github.com/ADMIN-BO-TECH/back_library</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
-            <!-- Compilación Java 17 -->
+            <!-- Asegurar release=17 y parámetros -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <release>${maven.compiler.release}</release>
+                    <release>17</release>
+                    <parameters>true</parameters>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
 
-            <!-- Adjuntar sources -->
+            <!-- Adjuntar fuentes -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
+                        <goals><goal>jar</goal></goals>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Adjuntar javadocs (sin fallar el build por doclint) -->
+            <!-- Adjuntar javadoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.javadoc.plugin.version}</version>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <source>${java.version}</source>
-                </configuration>
+                <version>${maven-javadoc-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
+                        <goals><goal>jar</goal></goals>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                            <source>17</source>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Deploy -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
-
-    <!-- Publicación en GitHub Packages del repo ADMIN-BO-TECH/back_library -->
-    <distributionManagement>
-        <snapshotRepository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/ADMIN-BO-TECH/back_library</url>
-        </snapshotRepository>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/ADMIN-BO-TECH/back_library</url>
-        </repository>
-    </distributionManagement>
 </project>
