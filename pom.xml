@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>co.com.botech</groupId>
-    <artifactId>backLibrary</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <artifactId>botech-back-library</artifactId>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>backLibrary</name>
+    <name>botech-back-library</name>
     <description>Librería compartida con entidades JPA, repositorios y utilidades (sin Spring Boot).</description>
 
     <properties>
@@ -79,6 +79,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- Destino de publicación -->
     <distributionManagement>
         <repository>
             <id>github</id>
