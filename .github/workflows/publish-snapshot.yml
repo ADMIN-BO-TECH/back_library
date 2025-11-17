@@ -4,25 +4,30 @@ on:
   push:
     branches: ["dev"]
 
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: backLibrary-dev
+  cancel-in-progress: true
+
 jobs:
   publish-snapshot:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK 17
+      - name: Set up JDK 17 + Maven server creds
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
+          cache: maven
           server-id: github
           server-username: GITHUB_ACTOR
           server-password: ${{ secrets.GH_PACKAGES_TOKEN }}
-          cache: maven
 
       - name: Validate version is SNAPSHOT
         run: |
@@ -31,9 +36,4 @@ jobs:
           [[ "$VERSION" == *"-SNAPSHOT" ]] || { echo "ERROR: dev debe usar -SNAPSHOT"; exit 1; }
 
       - name: Deploy SNAPSHOT to GitHub Packages
-        run: mvn -B -DskipTests \
-          -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/ADMIN-BO-TECH/back_library \
-          deploy
-        env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: mvn -B -DskipTests deploy

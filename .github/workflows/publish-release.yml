@@ -4,38 +4,38 @@ on:
   push:
     branches: ["main"]
 
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: backLibrary-main
+  cancel-in-progress: true
+
 jobs:
   publish-release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup JDK 17
+      - name: Set up JDK 17 + Maven server creds
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
+          cache: maven
           server-id: github
           server-username: GITHUB_ACTOR
           server-password: ${{ secrets.GH_PACKAGES_TOKEN }}
-          cache: maven
 
-      - name: Validate version is RELEASE (no -SNAPSHOT)
+      - name: Validate version is a RELEASE (no -SNAPSHOT)
         run: |
           VERSION=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
           echo "Project version: $VERSION"
-          [[ "$VERSION" != *"-SNAPSHOT" ]] || { echo "ERROR: main debe publicar RELEASE"; exit 1; }
+          [[ "$VERSION" != *"-SNAPSHOT" ]] || { echo "ERROR: main debe publicar RELEASE (sin -SNAPSHOT)"; exit 1; }
 
       - name: Deploy RELEASE to GitHub Packages
-        run: mvn -B -DskipTests \
-          -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/ADMIN-BO-TECH/back_library \
-          deploy
-        env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: mvn -B -DskipTests deploy
