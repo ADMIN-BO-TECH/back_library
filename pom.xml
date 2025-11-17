@@ -38,6 +38,10 @@
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <lombok.version>1.18.34</lombok.version>
 
+        <!-- plugins -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
@@ -62,7 +66,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Spring Data JPA (para compilar repos). Lo marcamos provided+optional para no arrastrarlo a consumidores. -->
+        <!-- Spring Data JPA (para compilar repos). Marcado provided+optional para no arrastrarlo a consumidores -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
@@ -80,7 +84,7 @@
         </dependency>
     </dependencies>
 
-    <!-- Repos para que Maven resuelva dependencias (consumidores de tu lib deben añadir su propio repo de GitHub Packages si van a consumirla desde allí) -->
+    <!-- Repos para resolver dependencias de ESTA build -->
     <repositories>
         <repository>
             <id>central</id>
@@ -95,7 +99,6 @@
             <name>GitHub Packages ADMIN-BO-TECH/back_library</name>
             <url>https://maven.pkg.github.com/ADMIN-BO-TECH/back_library</url>
         </repository>
-        <!-- Opcional: mismo endpoint para snapshots -->
         <snapshotRepository>
             <id>github</id>
             <name>GitHub Packages ADMIN-BO-TECH/back_library (snapshots)</name>
@@ -105,13 +108,54 @@
 
     <build>
         <plugins>
-            <!-- Asegurar release=17 y parámetros -->
+            <!-- Validar Java 17 -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[17,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Compilación con release=17 y parámetros -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>17</release>
                     <parameters>true</parameters>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Jar con Automatic-Module-Name -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>co.com.botech.back.library</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
 
@@ -123,7 +167,9 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <goals><goal>jar</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -136,7 +182,9 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <goals><goal>jar</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                         <configuration>
                             <failOnError>false</failOnError>
                             <source>17</source>
