@@ -37,5 +37,11 @@ jobs:
           echo "Project version: $VERSION"
           [[ "$VERSION" != *"-SNAPSHOT" ]] || { echo "ERROR: main debe publicar RELEASE (sin -SNAPSHOT)"; exit 1; }
 
+      - name: Debug Maven settings.xml
+        run: |
+          echo "---- ~/.m2/settings.xml ----"
+          sed -E 's/(<password>).*?(<\/password>)/\1***\2/' ~/.m2/settings.xml
+          grep -n "server" -n ~/.m2/settings.xml || true
+
       - name: Deploy RELEASE to GitHub Packages
         run: mvn -B -DskipTests deploy
