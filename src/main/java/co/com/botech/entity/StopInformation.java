@@ -17,8 +17,8 @@ public class StopInformation {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "student_record_id")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "school_employee_id")
+    private SchoolEmployee schoolEmployee;
 
     @Column(name = "state")
     private String state;
