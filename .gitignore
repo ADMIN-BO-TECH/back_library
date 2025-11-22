@@ -36,4 +36,8 @@ build/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Store.mvn/settings.xml
+.mvn/maven.config
+.mvn/settings.xml
+.mvn/settings.xml
+.mvn/maven.config

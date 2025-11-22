@@ -24,6 +24,12 @@ public class Attendance {
     @Column(name = "attendance_time")
     private LocalDateTime attendanceTime;
 
+    @Column(name = "system_name")
+    private String system;
+
+    @Column(name = "register_type")
+    private String registerType;
+
     // FKs opcionales (PERMITE NULL)
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "student_record_id")
     private Student student;
