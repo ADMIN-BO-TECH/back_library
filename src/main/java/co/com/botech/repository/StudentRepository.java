@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     /** Buscar estudiantes por school_id  */
     List<Student> findBySchool_Id(Long schoolId);
-    Optional<Student> findByStudentCode(String studentCode);
+    Optional<Student> findById(Long id);
 }
