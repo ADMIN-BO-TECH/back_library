@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface SchoolEmployeeRepository extends JpaRepository<SchoolEmployee, Long> {
     boolean existsByDocumentNumberAndSchool_Id(String documentNumber, Long schoolId);
+    boolean existsByDocumentNumberAndId(String docuemntNumber, Long employeeId);
 
     List<SchoolEmployee> findBySchool_Id(Long schoolId);
 }
