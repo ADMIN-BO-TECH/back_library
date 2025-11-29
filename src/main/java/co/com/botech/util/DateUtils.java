@@ -12,7 +12,7 @@ public class DateUtils {
         return LocalDate.parse(dateTimeString, formatter);
     }
 
-    private static boolean validateInitEndDateRange(LocalDate inicioPermiso, LocalDate finPermiso) {
+    public static boolean validateInitEndDateRange(LocalDate inicioPermiso, LocalDate finPermiso) {
         return !finPermiso.isBefore(inicioPermiso) && !inicioPermiso.isBefore(LocalDate.now());
     }
 }
