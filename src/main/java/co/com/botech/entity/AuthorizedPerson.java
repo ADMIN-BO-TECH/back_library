@@ -3,6 +3,7 @@ package co.com.botech.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
@@ -22,8 +23,8 @@ public class AuthorizedPerson {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_code_id")
     private FamilyCode familyCode;
 
-    @Column(name = "authorization_start") private LocalDateTime authorizationStart;
-    @Column(name = "authorization_end")   private LocalDateTime authorizationEnd;
+    @Column(name = "authorization_start") private LocalDate authorizationStart;
+    @Column(name = "authorization_end")   private LocalDate authorizationEnd;
 
     @Column(name = "authorized_by") private String authorizedBy;
 
