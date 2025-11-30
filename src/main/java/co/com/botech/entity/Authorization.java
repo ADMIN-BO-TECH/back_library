@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -29,9 +30,9 @@ public class Authorization {
     private AuthorizedPerson authorizedPerson;
 
     @Column(name = "authorization_start_date")
-    private LocalDateTime authorizationStartDate;
+    private LocalDate authorizationStartDate;
     @Column(name = "authorization_end_date")
-    private LocalDateTime authorizationEndDate;
+    private LocalDate authorizationEndDate;
 
     @Column(name = "authorized_by")
     private String authorizedBy;
