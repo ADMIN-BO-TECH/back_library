@@ -16,11 +16,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Optional<Student> findById(Long id);
 
-    Optional<Student> findByStudentIdAndSchool_id(Long studentRecordId, Long schoolId);
-
     Optional<Student> findByStudentIdAndSchool_Id(Long studentId, Long schoolId);
     boolean existsByStudentIdAndSchool_Id(Long studentId, Long schoolId);
-    boolean existsByIdAndStudentId(Long studentId, Long studentRecordId);
+    boolean existsByIdAndStudentId(Long studentRecordId, Long studentId);
 
     @Query("SELECT DISTINCT s.gradeLevel FROM Student s WHERE s.school.id = :schoolId")
     List<String> findDistinctGradeLevelsBySchoolId(@Param("schoolId") Long schoolId);
