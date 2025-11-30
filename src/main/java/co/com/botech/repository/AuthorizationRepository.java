@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface AuthorizationRepository extends JpaRepository<Authorization, Long> {
@@ -14,4 +15,13 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
 
     @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.school.id = :schoolId")
     List<Authorization> findBySchool_Id(Long schoolId);
+
+    @Query("SELECT a.authorizationStartDate as dateValue FROM Authorization a " +
+            "WHERE (a.authorizedPerson.id = :authorizedPersonId) " +
+            "AND a.authorizationEndDate > NOW() " +
+            "UNION ALL " +
+            "SELECT  a.authorizationEndDate as dateValue FROM Authorization a " +
+            "WHERE (a.authorizedPerson.id = :authorizedPersonId) " +
+            "AND a.authorizationEndDate > NOW() ")
+    List<LocalDate> findCurrentAuthorizationsByAuthorizedPersonId(Long authorizedPersonId);
 }
