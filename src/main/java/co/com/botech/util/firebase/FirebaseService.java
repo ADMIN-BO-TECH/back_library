@@ -95,63 +95,6 @@ public class FirebaseService {
         }
     }
 
-    public boolean existInCollectionWithSchoolName(String id, String collection, String schoolName) {
-        try {
-            ApiFuture<DocumentSnapshot> future = getSchoolCollection(schoolName, collection)
-                    .document(id)
-                    .get();
-
-            ApiFutures.addCallback(
-                    future,
-                    new ApiFutureCallback<>() {
-                        @Override
-                        public void onFailure(Throwable t) {
-                            log.error("[Firebase] Error leyendo {} para cliente {}: {}", collection, schoolName, t.getMessage());
-                        }
-
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            log.info("[Firebase] Documento {} recuperado correctamente para cliente {}", id, schoolName);
-                        }
-                    },
-                    MoreExecutors.directExecutor()
-            );
-
-            return future.get().exists();
-        } catch (Exception e) {
-            log.error("Error al validar existencia en Firebase", e);
-            throw new FirebaseException("Error al validar en Firebase");
-        }
-    }
-
-    public boolean existsInSubCollection (String mainId, String subId, String collection, String subCollection){
-        try {
-            ApiFuture<DocumentSnapshot> future = firestore.collection(collection).document(mainId)
-                    .collection(subCollection).document(subId)
-                    .get();
-
-            ApiFutures.addCallback(
-                    future,
-                    new ApiFutureCallback<>() {
-                        @Override
-                        public void onFailure(Throwable t) {
-                            log.error("Error leyendo Firebase" + t);
-                        }
-
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            log.info("Documento de ID "+collection+"/"+mainId+"/"+subCollection+"/"+subId+" recuperado correctamente");
-                        }
-                    },
-                    MoreExecutors.directExecutor()
-            );
-
-            return future.get().exists();
-        } catch (Exception e) {
-            throw new RuntimeException("Error al registrar en Firebase", e);
-        }
-    }
-
     public void deleteRegisterById(String id, String collection, String schoolName) {
         try {
             ApiFuture<WriteResult> future = getSchoolCollection(schoolName, collection)
