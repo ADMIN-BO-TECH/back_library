@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AuthorizationRepository extends JpaRepository<Authorization, Long> {
-    @Query("SELECT a FROM Authorization a WHERE a.id = :authorizedPersonId AND (NOW() BETWEEN a.authorizationStartDate AND a.authorizationEndDate)")
+    @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.id = :authorizedPersonId AND (NOW() BETWEEN a.authorizationStartDate AND a.authorizationEndDate)")
     List<Authorization> findDateActiveAuthorizationsByAuthorizedPersonId(@Param("authorizedPersonId") Long authorizedPersonId);
 
     @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.school.id = :schoolId")
