@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RfidRegisterRepository extends JpaRepository<RfidRegister, Long> {
-    @Query("SELECT DISTINCT r.description FROM RfidRegister r WHERE r.school.id = :schoolId")
-    List<String> findDistinctReceptionBySchool_Id(@Param("schoolId") Long schoolId);
+
+    List<RfidRegister> findByKindDevice_IdAndSchool_Id(Long kindDeviceId, Long schoolId);
 }
