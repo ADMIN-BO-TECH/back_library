@@ -11,36 +11,55 @@ import java.time.LocalDateTime;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-    @Query(
-            "SELECT a FROM Attendance a " +
-                    " WHERE (:idFilter IS NULL OR str(a.id) LIKE CONCAT('%', :idFilter, '%')) " +
+    @Query("""
+                SELECT a FROM Attendance a
+                LEFT JOIN a.authorizedPerson ap
+                LEFT JOIN a.parent p
+                LEFT JOIN a.student s
+                LEFT JOIN a.schoolEmployee se
+                LEFT JOIN a.rfidRegister rr
+                LEFT JOIN rr.kindDevice kd
+                LEFT JOIN a.type t
 
-                    "AND (:filterAuthorizedPerson IS NULL OR (a.authorizedPerson IS NOT NULL AND " +
-                    "LOWER(CONCAT(a.authorizedPerson.firstName, ' ', a.authorizedPerson.lastName, ' ', a.authorizedPerson.documentNumber)) " +
-                    "LIKE CONCAT('%', LOWER(:filterAuthorizedPerson), '%'))) " +
+                WHERE (:idFilter IS NULL OR str(a.id) LIKE CONCAT('%', :idFilter, '%'))
 
-                    "AND (:filterParent IS NULL OR (a.parent IS NOT NULL AND " +
-                    "LOWER(CONCAT(a.parent.firstName, ' ', a.parent.lastName, ' ', a.parent.documentNumber)) " +
-                    "LIKE CONCAT('%', LOWER(:filterParent), '%'))) " +
+                  AND (:filterAuthorizedPerson IS NULL OR (
+                        ap IS NOT NULL AND
+                        LOWER(CONCAT(ap.firstName, ' ', ap.lastName, ' ', ap.documentNumber))
+                        LIKE CONCAT('%', LOWER(:filterAuthorizedPerson), '%')
+                  ))
 
-                    "AND (:filterStudent IS NULL OR (a.student IS NOT NULL AND " +
-                    "LOWER(CONCAT(a.student.firstName, ' ', a.student.lastName, ' ', a.student.studentId)) " +
-                    "LIKE CONCAT('%', LOWER(:filterStudent), '%'))) " +
+                  AND (:filterParent IS NULL OR (
+                        p IS NOT NULL AND
+                        LOWER(CONCAT(p.firstName, ' ', p.lastName, ' ', p.documentNumber))
+                        LIKE CONCAT('%', LOWER(:filterParent), '%')
+                  ))
 
-                    "AND (:filterEmployee IS NULL OR (a.schoolEmployee IS NOT NULL AND " +
-                    "LOWER(CONCAT(a.schoolEmployee.firstName, ' ', a.schoolEmployee.lastName, ' ', a.schoolEmployee.documentNumber)) " +
-                    "LIKE CONCAT('%', LOWER(:filterEmployee), '%'))) " +
+                  AND (:filterStudent IS NULL OR (
+                        s IS NOT NULL AND
+                        LOWER(CONCAT(s.firstName, ' ', s.lastName, ' ', s.studentId))
+                        LIKE CONCAT('%', LOWER(:filterStudent), '%')
+                  ))
 
-                    "AND (:filterRfidRegister IS NULL OR (a.rfidRegister IS NOT NULL AND " +
-                    "LOWER(CONCAT(a.rfidRegister.description, ' ', a.rfidRegister.rfidTag, ' ', a.rfidRegister.kindDevice.description)) " +
-                    "LIKE CONCAT('%', LOWER(:filterRfidRegister), '%'))) " +
+                  AND (:filterEmployee IS NULL OR (
+                        se IS NOT NULL AND
+                        LOWER(CONCAT(se.firstName, ' ', se.lastName, ' ', se.documentNumber))
+                        LIKE CONCAT('%', LOWER(:filterEmployee), '%')
+                  ))
 
-                    "AND (:typeAttendanceFilter IS NULL OR " +
-                    "LOWER(a.type.description) LIKE CONCAT('%', LOWER(:typeAttendanceFilter), '%')) " +
+                  AND (:filterRfidRegister IS NULL OR (
+                        rr IS NOT NULL AND
+                        LOWER(CONCAT(rr.description, ' ', rr.rfidTag, ' ', kd.description))
+                        LIKE CONCAT('%', LOWER(:filterRfidRegister), '%')
+                  ))
 
-                    "AND (:startDate IS NULL OR a.attendanceTime >= :startDate) " +
-                    "AND (:endDate IS NULL OR a.attendanceTime <= :endDate)"
-    )
+                  AND (:typeAttendanceFilter IS NULL OR
+                        LOWER(t.description) LIKE CONCAT('%', LOWER(:typeAttendanceFilter), '%')
+                  )
+
+                  AND (:startDate IS NULL OR a.attendanceTime >= :startDate)
+                  AND (:endDate IS NULL OR a.attendanceTime <= :endDate)
+            """)
     Page<Attendance> getAttendanceByCustomQuery(
             @Param("idFilter") String filterId,
             @Param("filterAuthorizedPerson") String filterAuthorizedPerson,
