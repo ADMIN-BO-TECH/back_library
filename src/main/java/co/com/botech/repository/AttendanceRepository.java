@@ -13,7 +13,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     @Query(
             "SELECT a FROM Attendance a " +
-                    "WHERE str(a.id) LIKE CONCAT('%', :idFilter, '%') " +
+                    " WHERE (:idFilter IS NULL OR str(a.id) LIKE CONCAT('%', :idFilter, '%')) " +
 
                     "AND (:filterAuthorizedPerson IS NULL OR (a.authorizedPerson IS NOT NULL AND " +
                     "LOWER(CONCAT(a.authorizedPerson.firstName, ' ', a.authorizedPerson.lastName, ' ', a.authorizedPerson.documentNumber)) " +
