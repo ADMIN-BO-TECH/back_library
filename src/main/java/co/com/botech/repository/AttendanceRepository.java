@@ -2,13 +2,12 @@ package co.com.botech.repository;
 
 import co.com.botech.entity.Attendance;
 import com.google.api.gax.paging.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
