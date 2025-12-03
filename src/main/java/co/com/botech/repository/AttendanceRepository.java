@@ -1,7 +1,7 @@
 package co.com.botech.repository;
 
 import co.com.botech.entity.Attendance;
-import com.google.api.gax.paging.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
