@@ -48,40 +48,47 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
             // GLOBAL FILTER
             if (globalFilterTerms != null && !globalFilterTerms.isEmpty()) {
+
                 List<Predicate> generalPredicates = new ArrayList<>();
 
                 for (String term : globalFilterTerms) {
                     String variable = "%" + term.toLowerCase() + "%";
 
+                    // AUTHORIZED PERSON
+                    Predicate authPerson = builder.or(
+                            builder.like(builder.lower(attendance.get("authorizedPerson").get("firstName")), variable),
+                            builder.like(builder.lower(attendance.get("authorizedPerson").get("lastName")), variable),
+                            builder.like(builder.lower(attendance.get("authorizedPerson").get("documentNumber")), variable)
+                    );
 
-                    // Authorized Person
-                    Predicate authPerson = builder.like(builder.lower(builder.concat(builder.concat(builder.concat(
-                                            builder.coalesce(attendance.get("authorizedPerson").get("firstName"), ""), " "),
-                                    builder.coalesce(attendance.get("authorizedPerson").get("lastName"), "")),
-                            builder.coalesce(attendance.get("authorizedPerson").get("documentNumber"), ""))), variable);
+                    // PARENT
+                    Predicate parent = builder.or(
+                            builder.like(builder.lower(attendance.get("parent").get("firstName")), variable),
+                            builder.like(builder.lower(attendance.get("parent").get("lastName")), variable),
+                            builder.like(builder.lower(attendance.get("parent").get("documentNumber")), variable)
+                    );
 
-                    // Parent
-                    Predicate parent = builder.like(builder.lower(builder.concat(builder.concat(builder.concat(
-                                            builder.coalesce(attendance.get("parent").get("firstName"), ""), " "),
-                                    builder.coalesce(attendance.get("parent").get("lastName"), "")),
-                            builder.coalesce(attendance.get("parent").get("documentNumber"), ""))), variable);
+                    // STUDENT
+                    Predicate student = builder.or(
+                            builder.like(builder.lower(attendance.get("student").get("firstName")), variable),
+                            builder.like(builder.lower(attendance.get("student").get("lastName")), variable),
+                            builder.like(builder.lower(attendance.get("student").get("studentId").as(String.class)), variable)
+                    );
 
-                    // Student
-                    Predicate student = builder.like(builder.lower(builder.concat(builder.concat(builder.concat(
-                                            builder.coalesce(attendance.get("student").get("firstName"), ""), " "),
-                                    builder.coalesce(attendance.get("student").get("lastName"), "")),
-                            builder.coalesce(attendance.get("student").get("studentId").as(String.class), ""))), variable);
-
-                    // Employee
-                    Predicate employee = builder.like(builder.lower(builder.concat(builder.concat(builder.concat(
-                                            builder.coalesce(attendance.get("schoolEmployee").get("firstName"), ""), " "),
-                                    builder.coalesce(attendance.get("schoolEmployee").get("lastName"), "")),
-                            builder.coalesce(attendance.get("schoolEmployee").get("documentNumber"), ""))), variable);
+                    // EMPLOYEE
+                    Predicate employee = builder.or(
+                            builder.like(builder.lower(attendance.get("schoolEmployee").get("firstName")), variable),
+                            builder.like(builder.lower(attendance.get("schoolEmployee").get("lastName")), variable),
+                            builder.like(builder.lower(attendance.get("schoolEmployee").get("documentNumber")), variable)
+                    );
 
                     generalPredicates.add(builder.or(authPerson, parent, student, employee));
                 }
+
+                // Combine all terms with OR
                 predicates.add(builder.or(generalPredicates.toArray(new Predicate[0])));
             }
+
 
             //  RFID FILTER
             if (filterRfidRegisterTerms != null && !filterRfidRegisterTerms.isEmpty()) {
