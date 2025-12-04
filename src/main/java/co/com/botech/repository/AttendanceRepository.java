@@ -13,7 +13,7 @@ import java.util.List;
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     @Query(
-            "SELECT COUNT(a) FROM Attendance a " +
+            "SELECT a FROM Attendance a " +
 
                     // ID FILTER
                     "WHERE (COALESCE(:filterIdTerms, null) IS NULL OR EXISTS (" +
