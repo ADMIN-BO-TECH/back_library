@@ -1,7 +1,10 @@
 package co.com.botech.repository;
 
 import co.com.botech.entity.Attendance;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long>, JpaSpecificationExecutor<Attendance> {
 
@@ -26,6 +30,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
     ) {
         Specification<Attendance> spec = (attendance, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            Join<Object, Object> authJoin = attendance.join("authorizedPerson", JoinType.LEFT);
+            Join<Object, Object> parentJoin = attendance.join("parent", JoinType.LEFT);
+            Join<Object, Object> studentJoin = attendance.join("student", JoinType.LEFT);
+            Join<Object, Object> employeeJoin = attendance.join("schoolEmployee", JoinType.LEFT);
 
             //  ID FILTER
             if (filterIdTerms != null && !filterIdTerms.isEmpty()) {
