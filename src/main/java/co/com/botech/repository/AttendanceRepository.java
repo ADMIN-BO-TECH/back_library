@@ -1,10 +1,10 @@
 package co.com.botech.repository;
 
-import co.com.botech.entity.Attendance;
+import co.com.botech.entity.*;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,112 +28,161 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             LocalDateTime endDate,
             Pageable pageable
     ) {
-        Specification<Attendance> spec = (attendance, query, builder) -> {
+
+        Specification<Attendance> spec = (root, query, builder) -> {
+
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<Object, Object> authJoin = attendance.join("authorizedPerson", JoinType.LEFT);
-            Join<Object, Object> parentJoin = attendance.join("parent", JoinType.LEFT);
-            Join<Object, Object> studentJoin = attendance.join("student", JoinType.LEFT);
-            Join<Object, Object> employeeJoin = attendance.join("schoolEmployee", JoinType.LEFT);
+            // LEFT JOINS según tu entidad
+            Join<Attendance, AuthorizedPerson> authJoin =
+                    root.join("authorizedPerson", JoinType.LEFT);
 
-            //  ID FILTER
+            Join<Attendance, Parent> parentJoin =
+                    root.join("parent", JoinType.LEFT);
+
+            Join<Attendance, Student> studentJoin =
+                    root.join("student", JoinType.LEFT);
+
+            Join<Attendance, SchoolEmployee> employeeJoin =
+                    root.join("schoolEmployee", JoinType.LEFT);
+
+            Join<Attendance, RfidRegister> rfidJoin =
+                    root.join("rfidRegister", JoinType.LEFT);
+
+            Join<RfidRegister, KindDevice> kindJoin =
+                    rfidJoin.join("kindDevice", JoinType.LEFT);
+
+            /*
+             * ID filter
+             */
             if (filterIdTerms != null && !filterIdTerms.isEmpty()) {
-                List<Predicate> idPredicates = new ArrayList<>();
-                for (String term : filterIdTerms) {
-                    idPredicates.add(builder.like(attendance.get("id").as(String.class), "%" + term + "%"));
-                }
-                predicates.add(builder.or(idPredicates.toArray(new Predicate[0])));
-
+                predicates.add(
+                        builder.or(
+                                filterIdTerms.stream()
+                                        .map(term -> builder.like(
+                                                root.get("id").as(String.class),
+                                                "%" + term + "%"
+                                        ))
+                                        .toArray(Predicate[]::new)
+                        )
+                );
             }
 
-            // USER TYPE FILTER
+            /*
+             * User type filter
+             */
             if (userTypeTerms != null && !userTypeTerms.isEmpty()) {
-                List<Predicate> typePredicates = new ArrayList<>();
-                for (String term : userTypeTerms) {
-                    typePredicates.add(builder.like(builder.lower(attendance.get("userType")), "%" + term.toLowerCase() + "%"));
-                }
-                predicates.add(builder.or(typePredicates.toArray(new Predicate[0])));
+                predicates.add(
+                        builder.or(
+                                userTypeTerms.stream()
+                                        .map(term -> builder.like(
+                                                builder.lower(root.get("userType")),
+                                                "%" + term.toLowerCase() + "%"
+                                        ))
+                                        .toArray(Predicate[]::new)
+                        )
+                );
             }
 
-            // GLOBAL FILTER
+            /*
+             * Global filter
+             */
             if (globalFilterTerms != null && !globalFilterTerms.isEmpty()) {
 
-                List<Predicate> generalPredicates = new ArrayList<>();
+                List<Predicate> globalPreds = new ArrayList<>();
 
-                for (String term : globalFilterTerms) {
-                    String variable = "%" + term.toLowerCase() + "%";
+                for (String t : globalFilterTerms) {
+                    String like = "%" + t.toLowerCase() + "%";
 
-                    // AUTHORIZED PERSON
-                    Predicate authPerson = builder.or(
-                            builder.like(builder.lower(authJoin.get("authorizedPerson").get("firstName")), variable),
-                            builder.like(builder.lower(authJoin.get("authorizedPerson").get("lastName")), variable),
-                            builder.like(builder.lower(authJoin.get("authorizedPerson").get("documentNumber")), variable)
+                    Predicate p = builder.or(
+                            // authorized_person
+                            builder.like(builder.lower(authJoin.get("firstName")), like),
+                            builder.like(builder.lower(authJoin.get("lastName")), like),
+                            builder.like(builder.lower(authJoin.get("documentNumber")), like),
+
+                            // parent
+                            builder.like(builder.lower(parentJoin.get("firstName")), like),
+                            builder.like(builder.lower(parentJoin.get("lastName")), like),
+                            builder.like(builder.lower(parentJoin.get("documentNumber")), like),
+
+                            // student
+                            builder.like(builder.lower(studentJoin.get("firstName")), like),
+                            builder.like(builder.lower(studentJoin.get("lastName")), like),
+                            builder.like(studentJoin.get("studentId").as(String.class), like),
+
+                            // school employee
+                            builder.like(builder.lower(employeeJoin.get("firstName")), like),
+                            builder.like(builder.lower(employeeJoin.get("lastName")), like),
+                            builder.like(builder.lower(employeeJoin.get("documentNumber")), like)
                     );
 
-                    // PARENT
-                    Predicate parent = builder.or(
-                            builder.like(builder.lower(parentJoin.get("parent").get("firstName")), variable),
-                            builder.like(builder.lower(parentJoin.get("parent").get("lastName")), variable),
-                            builder.like(builder.lower(parentJoin.get("parent").get("documentNumber")), variable)
-                    );
-
-                    // STUDENT
-                    Predicate student = builder.or(
-                            builder.like(builder.lower(studentJoin.get("student").get("firstName")), variable),
-                            builder.like(builder.lower(studentJoin.get("student").get("lastName")), variable),
-                            builder.like(builder.lower(studentJoin.get("student").get("studentId").as(String.class)), variable)
-                    );
-
-                    // EMPLOYEE
-                    Predicate employee = builder.or(
-                            builder.like(builder.lower(employeeJoin.get("schoolEmployee").get("firstName")), variable),
-                            builder.like(builder.lower(employeeJoin.get("schoolEmployee").get("lastName")), variable),
-                            builder.like(builder.lower(employeeJoin.get("schoolEmployee").get("documentNumber")), variable)
-                    );
-
-                    generalPredicates.add(builder.or(authPerson, parent, student, employee));
+                    globalPreds.add(p);
                 }
 
-                // Combine all terms with OR
-                predicates.add(builder.or(generalPredicates.toArray(new Predicate[0])));
+                predicates.add(builder.or(globalPreds.toArray(Predicate[]::new)));
             }
 
-
-            //  RFID FILTER
+            /*
+             * RFID filter
+             */
             if (filterRfidRegisterTerms != null && !filterRfidRegisterTerms.isEmpty()) {
-                List<Predicate> rfidPredicates = new ArrayList<>();
-                for (String term : filterRfidRegisterTerms) {
-                    // Concatenar campos RFID
-                    Predicate rfidMatch = builder.like(builder.lower(builder.concat(builder.concat(builder.concat(
-                                                    builder.coalesce(attendance.get("rfidRegister").get("description"), ""), " "),
-                                            builder.coalesce(attendance.get("rfidRegister").get("rfidTag"), "")),
-                                    builder.coalesce(attendance.get("rfidRegister").get("kindDevice").get("description"), ""))),
-                            "%" + term.toLowerCase() + "%");
-                    rfidPredicates.add(rfidMatch);
+
+                List<Predicate> rfidPreds = new ArrayList<>();
+
+                for (String t : filterRfidRegisterTerms) {
+                    String like = "%" + t.toLowerCase() + "%";
+
+                    Expression<String> concat = builder.lower(
+                            builder.concat(
+                                    builder.coalesce(rfidJoin.get("description"), ""),
+                                    builder.concat(" ",
+                                            builder.concat(
+                                                    builder.coalesce(rfidJoin.get("rfidTag"), ""),
+                                                    builder.concat(" ",
+                                                            builder.coalesce(kindJoin.get("description"), "")
+                                                    )
+                                            )
+                                    )
+                            )
+                    );
+
+                    rfidPreds.add(builder.like(concat, like));
                 }
-                predicates.add(builder.or(rfidPredicates.toArray(new Predicate[0])));
+
+                predicates.add(builder.or(rfidPreds.toArray(Predicate[]::new)));
             }
 
-            // ATTENDANCE TYPE FILTER
+            /*
+             * Type filter
+             */
             if (typeAttendanceFilterTerms != null && !typeAttendanceFilterTerms.isEmpty()) {
-                List<Predicate> attTypePredicates = new ArrayList<>();
-                for (String term : typeAttendanceFilterTerms) {
-                    attTypePredicates.add(builder.like(builder.lower(attendance.get("type").get("description")), "%" + term.toLowerCase() + "%"));
-                }
-                predicates.add(builder.or(attTypePredicates.toArray(new Predicate[0])));
+                predicates.add(
+                        builder.or(
+                                typeAttendanceFilterTerms.stream()
+                                        .map(term -> builder.like(
+                                                builder.lower(root.get("type").get("description")),
+                                                "%" + term.toLowerCase() + "%"
+                                        ))
+                                        .toArray(Predicate[]::new)
+                        )
+                );
             }
 
-            // DATE FILTERS
+            /*
+             * Date filters
+             */
             if (startDate != null) {
-                predicates.add(builder.greaterThanOrEqualTo(attendance.get("attendanceTime"), startDate));
-            }
-            if (endDate != null) {
-                predicates.add(builder.lessThanOrEqualTo(attendance.get("attendanceTime"), endDate));
+                predicates.add(builder.greaterThanOrEqualTo(root.get("attendanceTime"), startDate));
             }
 
-            return builder.and(predicates.toArray(new Predicate[0]));
+            if (endDate != null) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("attendanceTime"), endDate));
+            }
+
+            return builder.and(predicates.toArray(Predicate[]::new));
         };
 
         return findAll(spec, pageable);
     }
+
 }
