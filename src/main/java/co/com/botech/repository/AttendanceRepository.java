@@ -65,30 +65,30 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
                     // AUTHORIZED PERSON
                     Predicate authPerson = builder.or(
-                            builder.like(builder.lower(attendance.get("authorizedPerson").get("firstName")), variable),
-                            builder.like(builder.lower(attendance.get("authorizedPerson").get("lastName")), variable),
-                            builder.like(builder.lower(attendance.get("authorizedPerson").get("documentNumber")), variable)
+                            builder.like(builder.lower(authJoin.get("authorizedPerson").get("firstName")), variable),
+                            builder.like(builder.lower(authJoin.get("authorizedPerson").get("lastName")), variable),
+                            builder.like(builder.lower(authJoin.get("authorizedPerson").get("documentNumber")), variable)
                     );
 
                     // PARENT
                     Predicate parent = builder.or(
-                            builder.like(builder.lower(attendance.get("parent").get("firstName")), variable),
-                            builder.like(builder.lower(attendance.get("parent").get("lastName")), variable),
-                            builder.like(builder.lower(attendance.get("parent").get("documentNumber")), variable)
+                            builder.like(builder.lower(parentJoin.get("parent").get("firstName")), variable),
+                            builder.like(builder.lower(parentJoin.get("parent").get("lastName")), variable),
+                            builder.like(builder.lower(parentJoin.get("parent").get("documentNumber")), variable)
                     );
 
                     // STUDENT
                     Predicate student = builder.or(
-                            builder.like(builder.lower(attendance.get("student").get("firstName")), variable),
-                            builder.like(builder.lower(attendance.get("student").get("lastName")), variable),
-                            builder.like(builder.lower(attendance.get("student").get("studentId").as(String.class)), variable)
+                            builder.like(builder.lower(studentJoin.get("student").get("firstName")), variable),
+                            builder.like(builder.lower(studentJoin.get("student").get("lastName")), variable),
+                            builder.like(builder.lower(studentJoin.get("student").get("studentId").as(String.class)), variable)
                     );
 
                     // EMPLOYEE
                     Predicate employee = builder.or(
-                            builder.like(builder.lower(attendance.get("schoolEmployee").get("firstName")), variable),
-                            builder.like(builder.lower(attendance.get("schoolEmployee").get("lastName")), variable),
-                            builder.like(builder.lower(attendance.get("schoolEmployee").get("documentNumber")), variable)
+                            builder.like(builder.lower(employeeJoin.get("schoolEmployee").get("firstName")), variable),
+                            builder.like(builder.lower(employeeJoin.get("schoolEmployee").get("lastName")), variable),
+                            builder.like(builder.lower(employeeJoin.get("schoolEmployee").get("documentNumber")), variable)
                     );
 
                     generalPredicates.add(builder.or(authPerson, parent, student, employee));
