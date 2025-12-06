@@ -5,7 +5,7 @@
 
     <groupId>co.com.botech</groupId>
     <artifactId>botech-back-library</artifactId>
-    <version>0.1.6-SNAPSHOT-Test-41</version>
+    <version>0.1.6-SNAPSHOT-Test-43</version>
     <packaging>jar</packaging>
 
     <name>botech-back-library</name>
