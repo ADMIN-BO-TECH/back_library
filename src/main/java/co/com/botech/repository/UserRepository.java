@@ -8,12 +8,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Query("SELECT DISTINCT u FROM User u " +
+    @Query("SELECT DISTINCT u.fcmToken FROM User u " +
             "JOIN UserNotificationPreferences up ON  up.user.id = u.id WHERE " +
             "(u.school.id = :schoolId) AND " +
             "(up.enabled = true) AND " +
             "(up.category.id = :notificationCategoryId)")
-    List<User> findUserBySchool_IdAndActivePreference(@Param("schoolId") Long schoolId,
+    List<String> findTokenBySchool_IdAndActivePreference(@Param("schoolId") Long schoolId,
                                                       @Param("notificationCategoryId") Long notificationCategoryId);
 
     @Query("SELECT DISTINCT u FROM User u " +
@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(up.enabled = true) AND " +
             "(up.category.id = :notificationCategoryId) AND " +
             "(u.familyCode.id IN :familyCodeList)")
-    List<User> findUserBySchool_IdAndActivePreferenceAndFamilyCode(@Param("schoolId") Long schoolId,
+    List<String> findTokenBySchool_IdAndActivePreferenceAndFamilyCode(@Param("schoolId") Long schoolId,
                                                                    @Param("notificationCategoryId") Long notificationCategoryId,
                                                                    @Param("familyCodeList") List<Long> familyCodeList);
 }
