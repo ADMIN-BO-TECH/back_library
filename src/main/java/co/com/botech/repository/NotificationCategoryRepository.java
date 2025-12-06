@@ -1,6 +1,11 @@
 package co.com.botech.repository;
 
 import co.com.botech.entity.NotificationCategory;
+import co.com.botech.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NotificationCategoryRepository extends JpaRepository<NotificationCategory, Long> {}
+import java.util.Optional;
+
+public interface NotificationCategoryRepository extends JpaRepository<NotificationCategory, Long> {
+    Optional<NotificationCategory> findByCategoryName(String categoryName);
+}
