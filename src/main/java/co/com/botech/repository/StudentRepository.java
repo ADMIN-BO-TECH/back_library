@@ -23,6 +23,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT DISTINCT s.familyCode.id FROM Student s WHERE s.gradeLevel IN :gradeList")
     List<Long> findFamilyCodesByGrades(@Param("gradeList") List<String> gradeList);
 
+    @Query("SELECT DISTINCT s.familyCode.id FROM Student s WHERE s.studentId IN :studentSchoolIds")
+    List<Long> findFamilyCodesByStudentSchoolIds(@Param("studentSchoolIds") List<Long> studentSchoolIds);
+
     @Query("SELECT DISTINCT s.gradeLevel FROM Student s WHERE s.school.id = :schoolId")
     List<String> findDistinctGradeLevelsBySchoolId(@Param("schoolId") Long schoolId);
 
