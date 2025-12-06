@@ -37,6 +37,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             Join<Attendance, Student> studentJoin = attendance.join("student", JoinType.LEFT);
             Join<Attendance, SchoolEmployee> employeeJoin = attendance.join("schoolEmployee", JoinType.LEFT);
             Join<Attendance, RfidRegister> rfidJoin = attendance.join("rfidRegister", JoinType.LEFT);
+            Join<Attendance, AttendanceType> attendanceTypeJoin = attendance.join("type", JoinType.LEFT);
 
             Join<RfidRegister, KindDevice> kindJoin = rfidJoin.join("kindDevice", JoinType.LEFT);
 
@@ -79,6 +80,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                             // STUDENT
                             builder.like(builder.lower(studentJoin.get("firstName")), value),
                             builder.like(builder.lower(studentJoin.get("lastName")), value),
+                            builder.like(builder.lower(studentJoin.get("gradeLevel")), value),
                             builder.like(studentJoin.get("studentId").as(String.class), value),
 
                             // EMPLOYEE
@@ -116,7 +118,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             if (typeAttendanceFilterTerms != null && !typeAttendanceFilterTerms.isEmpty()) {
                 predicates.add(builder.or(typeAttendanceFilterTerms.stream()
                                 .map(filterValue -> builder.like(
-                                        builder.lower(attendance.get("type").get("description")),
+                                        builder.lower(attendanceTypeJoin.get("type").get("description")),
                                         "%" + filterValue.toLowerCase() + "%"
                                 ))
                                 .toArray(Predicate[]::new)
