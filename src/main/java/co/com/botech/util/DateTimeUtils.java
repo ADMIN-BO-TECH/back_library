@@ -1,5 +1,6 @@
 package co.com.botech.util;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,20 @@ public class DateTimeUtils {
         return dateTime;
     }
 
+    public static LocalDateTime setDateTimeFilter(String evaluatedDate, String evaluatedTime, String defaultTimeValue) {
+        LocalDateTime dateTime;
+        boolean haveDate = evaluatedDate != null;
+        if (haveDate) {
+            Time timeReceived = evaluatedTime != null
+                    ? Time.valueOf(evaluatedTime)
+                    : Time.valueOf(defaultTimeValue);
+            dateTime = DateUtils.prepareDateFormat(evaluatedDate).atTime(timeReceived.toLocalTime());
+        } else {
+            dateTime = null;
+        }
+        return dateTime;
+    }
+
     private static LocalDateTime tryParseISO(String date) {
         try {
             return LocalDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
@@ -22,7 +37,6 @@ public class DateTimeUtils {
             return null;
         }
     }
-
 
     private static LocalDateTime tryParseWithPattern(String date, boolean inicio) {
         DateTimeFormatter[] formatters = new DateTimeFormatter[]{
@@ -45,6 +59,8 @@ public class DateTimeUtils {
         }
         throw new IllegalArgumentException("Formato de fecha inválido: " + date);
     }
+
+
 }
 
 
