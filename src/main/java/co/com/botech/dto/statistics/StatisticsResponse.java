@@ -20,12 +20,10 @@ public class StatisticsResponse {
     private Long exitEmployeeRegisters;
     private Long entryParentRegisters;
     private Long exitParentRegisters;
-    private Long entryTotalRegisters;
-    private Long exitTotalRegisters;
     private Long entryExternalRegisters;
     private Long exitExternalRegisters;
-    private Long entryGeneralRegisters;
-    private Long exitGeneralRegisters;
+    private Long entryTotalRegisters;
+    private Long exitTotalRegisters;
     private Long totalEmployees;
     private Long presentEmployees;
     private Long presentExternal;
