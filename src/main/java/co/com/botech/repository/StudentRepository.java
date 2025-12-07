@@ -1,5 +1,6 @@
 package co.com.botech.repository;
 
+import co.com.botech.customDto.GradeStudentsCount;
 import co.com.botech.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +31,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<String> findDistinctGradeLevelsBySchoolId(@Param("schoolId") Long schoolId);
 
     List<Student> findByFamilyCode_Id (Long familyCodeId);
+
+    @Query("SELECT DISTINCT s.gradeLevel, COUNT(s) FROM Student s WHERE s.school.id = :schoolId")
+    List<GradeStudentsCount> countGradeLevelStatistics(@Param("schoolId") Long schoolId);
 }

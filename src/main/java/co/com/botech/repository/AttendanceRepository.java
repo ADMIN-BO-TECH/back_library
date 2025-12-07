@@ -1,5 +1,6 @@
 package co.com.botech.repository;
 
+import co.com.botech.customDto.UserTypeStatistics;
 import co.com.botech.entity.*;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +29,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             List<String> typeAttendanceFilterTerms,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            Pageable pageable
+            Pageable pageable,
+            Long schoolId
     ) {
 
         Specification<Attendance> attendanceSpecification = (attendance, query, builder) -> {
@@ -38,8 +42,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             Join<Attendance, SchoolEmployee> employeeJoin = attendance.join("schoolEmployee", JoinType.LEFT);
             Join<Attendance, RfidRegister> rfidJoin = attendance.join("rfidRegister", JoinType.LEFT);
             Join<Attendance, AttendanceType> attendanceTypeJoin = attendance.join("type", JoinType.LEFT);
-
             Join<RfidRegister, KindDevice> kindJoin = rfidJoin.join("kindDevice", JoinType.LEFT);
+            Join<Attendance, School> schoolJoin = attendance.join("school", JoinType.LEFT);
 
             // ID
             if (filterIdTerms != null && !filterIdTerms.isEmpty()) {
@@ -135,10 +139,54 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                 predicates.add(builder.lessThanOrEqualTo(attendance.get("attendanceTime"), endDate));
             }
 
+            predicates.add(builder.equal(schoolJoin.get("id"), schoolId));
+
             return builder.and(predicates.toArray(Predicate[]::new));
         };
 
         return findAll(attendanceSpecification, pageable);
     }
+
+
+    @Query(value = """
+            SELECT
+                a.user_type AS userType,
+                
+                CASE a.user_type
+                    WHEN 'Estudiante' THEN (SELECT COUNT(s.id) FROM student s WHERE s.school_id = :schoolId)
+                    WHEN 'Acudiente' THEN (SELECT COUNT(p.id) FROM parent p WHERE p.school_id = :schoolId)
+                    WHEN 'Empleado' THEN (SELECT COUNT(e.id) FROM school_employee e WHERE e.school_id = :schoolId)
+                    WHEN 'Persona Autorizada' THEN (SELECT COUNT(ap.id) FROM authorized_person ap WHERE ap.school_id = :schoolId)
+                    ELSE 0
+                END AS totalUsers,
+                
+                COUNT(CASE
+                    WHEN at.description = :enterFiler THEN 1
+                    ELSE NULL
+                END) AS entryRegisters,
+                
+                COUNT(CASE
+                    WHEN at.description = :outFilter THEN 1
+                    ELSE NULL
+                END) AS exitRegisters
+            FROM
+                attendance a
+            JOIN
+                attendance_type at ON a.type_id = at.id
+            WHERE
+                a.school_id = :schoolId
+                AND a.attendance_time >= :initDateTime
+                AND a.attendance_time <= :endDateTime
+            GROUP BY
+                a.user_type
+            """,
+            nativeQuery = true)
+    List<UserTypeStatistics> getUserStatistics(
+            @Param("schoolId") Long schoolId,
+            @Param("init") LocalDateTime initDateTime,
+            @Param("end") LocalDateTime endDateTime,
+            @Param("enterFiler") String enterFiler,
+            @Param("outFilter") String outFilter
+    );
 
 }
