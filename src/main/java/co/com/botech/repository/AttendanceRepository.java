@@ -217,8 +217,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             nativeQuery = true)
     List<UserTypeStatistics> getUserStatistics(
             @Param("schoolId") Long schoolId,
-            @Param("init") LocalDateTime initDateTime,
-            @Param("end") LocalDateTime endDateTime,
+            @Param("initDateTime") LocalDateTime initDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
             @Param("enterFilter") String enterFilter,
             @Param("outFilter") String outFilter
     );
