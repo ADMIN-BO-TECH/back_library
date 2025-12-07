@@ -151,16 +151,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
     @Query(value = """
             WITH
             student_count AS (
-                SELECT COUNT(*) AS total FROM student WHERE school_id = :schoolId
+                SELECT COUNT(*) AS total FROM students WHERE school_id = :schoolId
             ),
             parent_count AS (
                 SELECT COUNT(*) AS total FROM parent WHERE school_id = :schoolId
             ),
             employee_count AS (
-                SELECT COUNT(*) AS total FROM school_employee WHERE school_id = :schoolId
+                SELECT COUNT(*) AS total FROM school_employees WHERE school_id = :schoolId
             ),
             authorized_count AS (
-                SELECT COUNT(*) AS total FROM authorized_person WHERE school_id = :schoolId
+                SELECT COUNT(*) AS total FROM authorized_persons WHERE school_id = :schoolId
             ),
 
             user_totals AS (
