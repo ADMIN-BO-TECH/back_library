@@ -14,13 +14,21 @@ public class StatisticsResponse {
     private Long totalStudents;
     private Long presentStudents;
     private Long absentStudents;
-    private Long entryRegisters;
-    private Long exitRegisters;
+    private Long entryStudentRegisters;
+    private Long exitStudentRegisters;
+    private Long entryEmployeeRegisters;
+    private Long exitEmployeeRegisters;
+    private Long entryParentRegisters;
+    private Long exitParentRegisters;
+    private Long entryTotalRegisters;
+    private Long exitTotalRegisters;
+    private Long entryExternalRegisters;
+    private Long exitExternalRegisters;
+    private Long entryGeneralRegisters;
+    private Long exitGeneralRegisters;
     private Long totalEmployees;
     private Long presentEmployees;
     private Long presentExternal;
-    private Long entryExternalRegisters;
-    private Long exitExternalRegisters;
     private Long presentParents;
     private List<GradeStatisticsResponse> grades;
 }

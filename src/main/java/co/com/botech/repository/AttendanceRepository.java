@@ -149,43 +149,77 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
 
     @Query(value = """
+            WITH
+            student_count AS (
+                SELECT COUNT(*) AS total FROM student WHERE school_id = :schoolId
+            ),
+            parent_count AS (
+                SELECT COUNT(*) AS total FROM parent WHERE school_id = :schoolId
+            ),
+            employee_count AS (
+                SELECT COUNT(*) AS total FROM school_employee WHERE school_id = :schoolId
+            ),
+            authorized_count AS (
+                SELECT COUNT(*) AS total FROM authorized_person WHERE school_id = :schoolId
+            ),
+
+            user_totals AS (
+                SELECT 'Estudiante' AS userType, (SELECT total FROM student_count) AS totalUsers
+                UNION ALL
+                SELECT 'Acudiente', (SELECT total FROM parent_count)
+                UNION ALL
+                SELECT 'Empleado', (SELECT total FROM employee_count)
+                UNION ALL
+                SELECT 'Persona Autorizada', (SELECT total FROM authorized_count)
+            ),
+
+            attendance_totals AS (
+                SELECT
+                    COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS totalEntry,
+                    COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS totalExit
+                FROM attendance a
+                JOIN attendance_type at ON a.type_id = at.id
+                WHERE a.school_id = :schoolId
+                  AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+            )
+
             SELECT
-                a.user_type AS userType,
-                
-                CASE a.user_type
-                    WHEN 'Estudiante' THEN (SELECT COUNT(s.id) FROM student s WHERE s.school_id = :schoolId)
-                    WHEN 'Acudiente' THEN (SELECT COUNT(p.id) FROM parent p WHERE p.school_id = :schoolId)
-                    WHEN 'Empleado' THEN (SELECT COUNT(e.id) FROM school_employee e WHERE e.school_id = :schoolId)
-                    WHEN 'Persona Autorizada' THEN (SELECT COUNT(ap.id) FROM authorized_person ap WHERE ap.school_id = :schoolId)
-                    ELSE 0
-                END AS totalUsers,
-                
-                COUNT(CASE
-                    WHEN at.description = :enterFiler THEN 1
-                    ELSE NULL
-                END) AS entryRegisters,
-                
-                COUNT(CASE
-                    WHEN at.description = :outFilter THEN 1
-                    ELSE NULL
-                END) AS exitRegisters
-            FROM
-                attendance a
-            JOIN
-                attendance_type at ON a.type_id = at.id
-            WHERE
-                a.school_id = :schoolId
-                AND a.attendance_time >= :initDateTime
-                AND a.attendance_time <= :endDateTime
-            GROUP BY
-                a.user_type
+                combined.userType,
+                SUM(combined.totalUsers) AS totalUsers,
+                SUM(combined.entryRegisters) AS entryRegisters,
+                SUM(combined.exitRegisters) AS exitRegisters
+            FROM (
+                SELECT
+                    u.userType,
+                    u.totalUsers,
+                    COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS entryRegisters,
+                    COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS exitRegisters
+                FROM attendance a
+                JOIN attendance_type at ON a.type_id = at.id
+                RIGHT JOIN user_totals u ON u.userType = a.user_type
+                WHERE a.school_id = :schoolId
+                  AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                GROUP BY u.userType
+
+                UNION ALL
+                SELECT
+                    'TOTAL',
+                    (SELECT total FROM student_count) +
+                    (SELECT total FROM parent_count) +
+                    (SELECT total FROM employee_count) +
+                    (SELECT total FROM authorized_count),
+                    (SELECT totalEntry FROM attendance_totals),
+                    (SELECT totalExit FROM attendance_totals)
+            ) AS combinedTable
+
+            GROUP BY combinedTable.userType
             """,
             nativeQuery = true)
     List<UserTypeStatistics> getUserStatistics(
             @Param("schoolId") Long schoolId,
             @Param("init") LocalDateTime initDateTime,
             @Param("end") LocalDateTime endDateTime,
-            @Param("enterFiler") String enterFiler,
+            @Param("enterFilter") String enterFilter,
             @Param("outFilter") String outFilter
     );
 
