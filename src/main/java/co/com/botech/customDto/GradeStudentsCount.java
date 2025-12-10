@@ -1,3 +1,7 @@
 package co.com.botech.customDto;
 
-public record GradeStudentsCount(String gradeLevel, Long totalStudents) {}
+public interface GradeStudentsCount {
+    String getGradeLevel();
+
+    Long getTotalStudents();
+}

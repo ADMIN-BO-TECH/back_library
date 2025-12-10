@@ -24,4 +24,8 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
             "WHERE (a.authorizedPerson.id = :authorizedPersonId) " +
             "AND a.authorizationEndDate > NOW() ")
     List<LocalDate> findCurrentAuthorizationsByAuthorizedPersonId(Long authorizedPersonId);
+
+    @Query("SELECT DISTINCT a FROM Authorization a WHERE a.student.id = :idRecordStudent")
+    List<Authorization> findAuthorizationsByStudent(@Param("idRecordStudent") Long idRecordStudent);
+
 }

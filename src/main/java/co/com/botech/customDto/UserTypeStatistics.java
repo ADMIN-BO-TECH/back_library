@@ -1,3 +1,11 @@
 package co.com.botech.customDto;
 
-public record UserTypeStatistics(String userType, Long totalUsers, Long entryRegisters, Long exitRegisters) { }
+public interface UserTypeStatistics {
+    String getUserType();
+
+    Long getTotalUsers();
+
+    Long getEntryRegisters();
+
+    Long getExitRegisters();
+}

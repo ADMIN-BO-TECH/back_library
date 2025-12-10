@@ -149,71 +149,61 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
 
     @Query(value = """
-            WITH
-            student_count AS (
-                SELECT COUNT(*) AS total FROM students WHERE school_id = :schoolId
-            ),
-            parent_count AS (
-                SELECT COUNT(*) AS total FROM parent WHERE school_id = :schoolId
-            ),
-            employee_count AS (
-                SELECT COUNT(*) AS total FROM school_employees WHERE school_id = :schoolId
-            ),
-            authorized_count AS (
-                SELECT COUNT(*) AS total FROM authorized_persons WHERE school_id = :schoolId
-            ),
-
-            user_totals AS (
-                SELECT 'Estudiante' AS userType, (SELECT total FROM student_count) AS totalUsers
-                UNION ALL
-                SELECT 'Acudiente', (SELECT total FROM parent_count)
-                UNION ALL
-                SELECT 'Empleado', (SELECT total FROM employee_count)
-                UNION ALL
-                SELECT 'Persona Autorizada', (SELECT total FROM authorized_count)
-            ),
-
-            attendance_totals AS (
-                SELECT
-                    COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS totalEntry,
-                    COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS totalExit
-                FROM attendance a
-                JOIN attendance_type at ON a.type_id = at.id
-                WHERE a.school_id = :schoolId
-                  AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
-            )
 
             SELECT
-                combined.userType,
-                SUM(combined.totalUsers) AS totalUsers,
-                SUM(combined.entryRegisters) AS entryRegisters,
-                SUM(combined.exitRegisters) AS exitRegisters
-            FROM (
-                SELECT
-                    u.userType,
-                    u.totalUsers,
-                    COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS entryRegisters,
-                    COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS exitRegisters
-                FROM attendance a
-                JOIN attendance_type at ON a.type_id = at.id
-                RIGHT JOIN user_totals u ON u.userType = a.user_type
-                WHERE a.school_id = :schoolId
-                  AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
-                GROUP BY u.userType
-
-                UNION ALL
-                SELECT
-                    'TOTAL',
-                    (SELECT total FROM student_count) +
-                    (SELECT total FROM parent_count) +
-                    (SELECT total FROM employee_count) +
-                    (SELECT total FROM authorized_count),
-                    (SELECT totalEntry FROM attendance_totals),
-                    (SELECT totalExit FROM attendance_totals)
-            ) AS combinedTable
-
-            GROUP BY combinedTable.userType
-            """,
+                      -- CREA COLUMNA 'userType'
+                      user_types.userType AS userType,
+                      -- ASIGNA VALOR DE 'totalUsers' DEPENDIENDO EL VALOR
+                      CASE user_types.userType
+                          WHEN 'Estudiante' THEN (SELECT COUNT(*) FROM students s WHERE s.school_id = :schoolId)
+                          WHEN 'Acudiente' THEN (SELECT COUNT(*) FROM parent p WHERE p.school_id = :schoolId)
+                          WHEN 'Empleado' THEN (SELECT COUNT(*) FROM school_employees e WHERE e.school_id = :schoolId)
+                          WHEN 'Persona Autorizada' THEN (SELECT COUNT(*) FROM authorized_persons ap WHERE ap.school_id = :schoolId)
+                          ELSE 0
+                      END AS totalUsers,
+                      -- CONDICION PARA RECUPERAR 'entryRegisters' y 'exitRegisters'
+                      CAST(COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS UNSIGNED) AS entryRegisters,
+                      CAST(COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS UNSIGNED)  AS exitRegisters
+                  FROM (
+                           -- SE CREA TABLA VIRTUAL PARA EVITAR VALORES NULOS EN ASISTENCIA
+                           SELECT 'Estudiante' AS userType
+                           UNION ALL
+                           SELECT 'Acudiente'
+                           UNION ALL
+                           SELECT 'Empleado'
+                           UNION ALL
+                           SELECT 'Persona Autorizada'
+                       ) AS user_types
+                           LEFT JOIN attendance a
+                                     ON a.user_type = user_types.userType
+                                         AND a.school_id = :schoolId
+                                         AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                           LEFT JOIN attendance_type at
+                                     ON a.attendance_type_id = at.attendance_type_id
+                  GROUP BY user_types.userType
+                  
+                  UNION ALL
+                  
+                  -- SE CREA LA COLUMNA 'Total' PARA REGISTROS GENERALES
+                  SELECT 'Total' AS userType,
+                         (
+                             (SELECT COUNT(*) FROM students s WHERE s.school_id = :schoolId) +
+                             (SELECT COUNT(*) FROM parent p WHERE p.school_id = :schoolId) +
+                             (SELECT COUNT(*) FROM school_employees e WHERE e.school_id = :schoolId) +
+                             (SELECT COUNT(*) FROM authorized_persons ap WHERE ap.school_id = :schoolId)
+                         ) AS totalUsers,
+                         CAST(SUM(totals.entryRegisters) AS UNSIGNED) AS entryRegisters,
+                         CAST(SUM(totals.exitRegisters) AS UNSIGNED)  AS exitRegisters
+                  FROM (
+                           SELECT
+                               CAST(COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS UNSIGNED) AS entryRegisters,
+                               CAST(COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS UNSIGNED)  AS exitRegisters
+                           FROM attendance a
+                                    JOIN attendance_type at ON a.attendance_type_id = at.attendance_type_id
+                           WHERE a.school_id = :schoolId
+                             AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                       ) AS totals;
+                  """,
             nativeQuery = true)
     List<UserTypeStatistics> getUserStatistics(
             @Param("schoolId") Long schoolId,
