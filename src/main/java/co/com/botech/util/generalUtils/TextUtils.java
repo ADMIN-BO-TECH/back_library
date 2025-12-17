@@ -1,4 +1,4 @@
-package co.com.botech.util;
+package co.com.botech.util.generalUtils;
 
 import lombok.experimental.UtilityClass;
 import java.util.Arrays;

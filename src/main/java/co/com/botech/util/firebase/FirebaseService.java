@@ -1,5 +1,7 @@
 package co.com.botech.util.firebase;
 
+import co.com.botech.constants.FirebaseCollectionsConstants;
+import co.com.botech.util.generalUtils.FirebaseObjectUtils;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
@@ -8,14 +10,16 @@ import com.google.common.util.concurrent.MoreExecutors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static co.com.botech.util.generalUtils.FirebaseObjectUtils.toDouble;
 
 @Getter
 @Slf4j
@@ -25,19 +29,9 @@ public class FirebaseService {
 
     private final Firestore firestore;
 
-    @Value("${firebase.root-collection:BO-TECH-PASS}")
-    private String rootCollection;
-
-    private CollectionReference getSchoolCollection(String schoolName, String collection) {
-        return firestore
-                .collection(rootCollection)
-                .document(schoolName)
-                .collection(collection);
-    }
-
-    public boolean existsInCollection(String id, String collection, String schoolName) {
+    public boolean existsInCollectionBasic(String id, String collection) {
         try {
-            ApiFuture<DocumentSnapshot> future = getSchoolCollection(schoolName, collection)
+            ApiFuture<DocumentSnapshot> future = firestore.collection(collection)
                     .document(id)
                     .get();
 
@@ -46,12 +40,12 @@ public class FirebaseService {
                     new ApiFutureCallback<>() {
                         @Override
                         public void onFailure(Throwable t) {
-                            log.error("[Firebase] Error leyendo {} para cliente {}: {}", collection, schoolName, t.getMessage());
+                            log.error("[Firebase] Error leyendo {} : {}", collection, t.getMessage());
                         }
 
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            log.info("[Firebase] Documento {} recuperado correctamente para cliente {}", id, schoolName);
+                            log.info("[Firebase] Documento {} recuperado correctamente  {}", id, collection);
                         }
                     },
                     MoreExecutors.directExecutor()
@@ -64,40 +58,101 @@ public class FirebaseService {
         }
     }
 
-    public void createRegister(Map<String, Object> registerMap, String id, String collection, String schoolName) {
-        try {
-            CollectionReference collectionRef = getSchoolCollection(schoolName, collection);
-            DocumentReference docRef = ("Autogenerado".equals(id) || id == null)
-                    ? collectionRef.document()
-                    : collectionRef.document(id);
 
-            ApiFuture<WriteResult> future = docRef.set(registerMap);
-            future.get();
+    public boolean existsInCollection(String rootCollection, String rootId, String collection, String id) {
+        try {
+            ApiFuture<DocumentSnapshot> future = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection)
+                    .document(id)
+                    .get();
 
             ApiFutures.addCallback(
                     future,
                     new ApiFutureCallback<>() {
                         @Override
                         public void onFailure(Throwable t) {
-                            log.error("[Firebase] Error guardando en {} de {}: {}", collection, schoolName, t.getMessage());
+                            log.error("[Firebase] Error leyendo {} para {}: {}", collection, rootId, t.getMessage());
                         }
 
                         @Override
-                        public void onSuccess(WriteResult result) {
-                            log.info("[Firebase] Registro guardado o actualizado en {}/{} correctamente: {}", schoolName, collection, registerMap);
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()) {
+                                log.info("[Firebase] Documento {} existe en {} para {}", id, collection, rootId);
+                            } else {
+                                log.info("[Firebase] Documento {} NO existe en {} para {}", id, collection, rootId);
+                            }
                         }
                     },
                     MoreExecutors.directExecutor()
             );
+
+            return future.get().exists();
+        } catch (Exception e) {
+            log.error("[Firebase] Error al validar existencia en Firebase", e);
+            throw new FirebaseException("Error al validar existencia en Firebase");
+        }
+    }
+
+
+    public void createRegister(
+            Map<String, Object> registerMap,
+            String rootCollection,
+            String rootId,
+            String collection,
+            String id
+    ) {
+        try {
+            CollectionReference collectionRef = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection);
+
+            DocumentReference docRef = ("Autogenerado".equals(id) || id == null)
+                    ? collectionRef.document()
+                    : collectionRef.document(id);
+
+            ApiFuture<WriteResult> future = docRef.set(registerMap);
+
+            ApiFutures.addCallback(
+                    future,
+                    new ApiFutureCallback<>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            log.error("[Firebase] Error guardando en {} de {}: {}", collection, rootId, t.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(WriteResult result) {
+                            log.info(
+                                    "[Firebase] Registro guardado o actualizado en {}/{} correctamente: {}",
+                                    rootId, collection, registerMap
+                            );
+                        }
+                    },
+                    MoreExecutors.directExecutor()
+            );
+
+            future.get();
         } catch (Exception e) {
             log.error("Error al registrar en Firebase", e);
             throw new FirebaseException("Error al registrar en Firebase");
         }
     }
 
-    public void deleteRegisterById(String id, String collection, String schoolName) {
+
+    public void deleteRegisterById(
+            String rootCollection,
+            String rootId,
+            String collection,
+            String id
+    ) {
         try {
-            ApiFuture<WriteResult> future = getSchoolCollection(schoolName, collection)
+            ApiFuture<WriteResult> future = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection)
                     .document(id)
                     .delete();
 
@@ -106,12 +161,12 @@ public class FirebaseService {
                     new ApiFutureCallback<>() {
                         @Override
                         public void onFailure(Throwable t) {
-                            log.error("[Firebase] Error eliminando registro {} en {}: {}", id, schoolName, t.getMessage());
+                            log.error("[Firebase] Error eliminando registro {} en {}: {}", id, rootId, t.getMessage());
                         }
 
                         @Override
                         public void onSuccess(WriteResult result) {
-                            log.info("[Firebase] Registro {} eliminado correctamente en {}/{}", id, schoolName, collection);
+                            log.info("[Firebase] Registro {} eliminado correctamente en {}/{}", id, rootId, collection);
                         }
                     },
                     MoreExecutors.directExecutor()
@@ -122,25 +177,39 @@ public class FirebaseService {
         }
     }
 
-    public void deleteRegisterByCondition(String value, String variable, String collection, String schoolName) {
+
+    public void deleteRegisterByCondition(
+            String rootCollection,
+            String rootId,
+            String collection,
+            String variable,
+            String value
+    ) {
         try {
-            CollectionReference col = getSchoolCollection(schoolName, collection);
+            CollectionReference col = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection);
+
             col.whereEqualTo(variable, value)
                     .get()
                     .get()
                     .forEach(document -> {
-                        ApiFuture<WriteResult> deleteFuture = col.document(document.getId()).delete();
+                        ApiFuture<WriteResult> deleteFuture = col
+                                .document(document.getId())
+                                .delete();
+
                         ApiFutures.addCallback(
                                 deleteFuture,
                                 new ApiFutureCallback<>() {
                                     @Override
                                     public void onFailure(Throwable t) {
-                                        log.error("[Firebase] Error eliminando {}={} en {}: {}", variable, value, schoolName, t.getMessage());
+                                        log.error("[Firebase] Error eliminando {}={} en {}: {}", variable, value, rootId, t.getMessage());
                                     }
 
                                     @Override
                                     public void onSuccess(WriteResult result) {
-                                        log.info("[Firebase] Registro {}={} eliminado correctamente de {}/{}", variable, value, schoolName, collection);
+                                        log.info("[Firebase] Registro {}={} eliminado correctamente de {}/{}", variable, value, rootId, collection);
                                     }
                                 },
                                 MoreExecutors.directExecutor()
@@ -152,15 +221,27 @@ public class FirebaseService {
         }
     }
 
-    public Map<String, Long> countLiveListRegisters(String collection, String variable, String schoolName) {
+
+    public Map<String, Long> countLiveListRegisters(
+            String rootCollection,
+            String rootId,
+            String collection,
+            String variable
+    ) {
         try {
-            ApiFuture<QuerySnapshot> future = getSchoolCollection(schoolName, collection).get();
+            ApiFuture<QuerySnapshot> future = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection)
+                    .get();
+
             return getCountOfVariableFromFirebaseRegisters(future, variable);
         } catch (Exception e) {
             log.error("Error al contar registros en Firebase", e);
             throw new FirebaseException("Error al contar registros en Firebase");
         }
     }
+
 
     private Map<String, Long> getCountOfVariableFromFirebaseRegisters(ApiFuture<QuerySnapshot> registers, String variable) {
         try {
@@ -178,14 +259,63 @@ public class FirebaseService {
         }
     }
 
-    public void deleteRegistersByCollection(String collection, String schoolName) {
+    public List<Map<String, Object>> getRegisterByCondition(
+            String rootCollection,
+            String rootId,
+            String collection,
+            String variable,
+            String value
+    ) {
         try {
-            CollectionReference firestoreCollection = getSchoolCollection(schoolName, collection);
+            CollectionReference collectionRef = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection);
+
+            ApiFuture<QuerySnapshot> query = collectionRef
+                    .whereEqualTo(variable, value)
+                    .get();
+
+            List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+
+            List<Map<String, Object>> results = documents.stream()
+                    .map(QueryDocumentSnapshot::getData)
+                    .collect(Collectors.toList());
+
+            log.info(
+                    "[Firebase] Se obtuvieron {} registros de {}/{} donde {} = {}",
+                    results.size(), rootId, collection, variable, value
+            );
+
+            return results;
+
+        } catch (Exception e) {
+            log.error(
+                    "Error obteniendo registros por condición en Firebase para cliente {} y colección {}: {}",
+                    rootId, collection, e.getMessage(), e
+            );
+            throw new RuntimeException("Error al obtener registros por condición en Firebase", e);
+        }
+    }
+
+
+    public void deleteRegistersByCollection(
+            String rootCollection,
+            String rootId,
+            String collection
+    ) {
+        try {
+            CollectionReference firestoreCollection = firestore
+                    .collection(rootCollection)
+                    .document(rootId)
+                    .collection(collection);
+
             int deletedRegisters = 0;
 
             while (true) {
                 ApiFuture<QuerySnapshot> future = firestoreCollection.limit(100).get();
                 QuerySnapshot documents = future.get();
+
                 if (documents.isEmpty()) break;
 
                 WriteBatch deleteBatch = firestore.batch();
@@ -193,12 +323,36 @@ public class FirebaseService {
                     deleteBatch.delete(snapshot.getReference());
                     deletedRegisters++;
                 }
+
                 deleteBatch.commit().get();
             }
-            log.info("[Firebase] Se eliminaron {} registros de {}/{}", deletedRegisters, schoolName, collection);
+
+            log.info("[Firebase] Se eliminaron {} registros de {}/{}", deletedRegisters, rootId, collection);
+
         } catch (Exception e) {
             log.error("Error al eliminar registros por colección en Firebase", e);
             throw new FirebaseException("Error al eliminar registros de Firebase");
+        }
+    }
+
+
+    public Optional<FirebaseObjectUtils.LatLng> getLatLngByDocId(String docId) {
+        try {
+            DocumentSnapshot doc = firestore.collection(FirebaseCollectionsConstants.UBICACION.getName())
+                    .document(docId.trim())
+                    .get()
+                    .get();
+
+            if (!doc.exists() || doc.getData() == null) return Optional.empty();
+
+            Double lat = toDouble(doc.get("latitude"));
+            Double lon = toDouble(doc.get("longitude"));
+            if (lat == null || lon == null) return Optional.empty();
+
+            return Optional.of(new FirebaseObjectUtils.LatLng(lat, lon));
+        } catch (Exception e) {
+            log.error("Error leyendo ubicación por ID en Firebase (col={}, id={})", FirebaseCollectionsConstants.UBICACION.getName(), docId, e);
+            return Optional.empty();
         }
     }
 }

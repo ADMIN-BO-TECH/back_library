@@ -1,4 +1,4 @@
-package co.com.botech.util;
+package co.com.botech.util.generalUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

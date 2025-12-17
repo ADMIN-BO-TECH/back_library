@@ -35,4 +35,13 @@ public interface StopRepository extends JpaRepository<Stop, Long> {
                 WHERE si.student.id = :idRecordStudent
             """)
     List<Stop> findStopsByStudent(@Param("idRecordStudent") Long idRecordStudent);
+
+    @Query("""
+                SELECT s FROM Stop s
+                WHERE s.route.id = :idRoute
+                AND s.status = TRUE
+                ORDER BY s.stopOrder asc
+            """)
+    List<Stop> findByRouteStateAndOrderedByOrderAsc(@Param("idRoute") Long idRoute);
+
 }

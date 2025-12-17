@@ -1,4 +1,4 @@
-package co.com.botech.util;
+package co.com.botech.util.generalUtils;
 
 import java.sql.Time;
 import java.time.LocalDate;
