@@ -8,12 +8,21 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RouteRepository extends JpaRepository<Route, Long> {
+
+    @Query("""
+             SELECT r
+             FROM Route r
+             WHERE r.routeDays LIKE CONCAT('%', :searchedDay, '%')
+             AND r.status = TRUE
+            """)
+    List<Route> findActiveRoutesByDay(@Param("searchedDay") String searchedDay);
+
     @Query("""
             SELECT DISTINCT si.stop.route
             FROM StopInformation si
             WHERE si.student.id = :idRecordStudent
             """)
-    List<Route> findRoutsByStudent(@Param("idRecordStudent") Long idRecordStudent);
+    List<Route> findRoutesByStudent(@Param("idRecordStudent") Long idRecordStudent);
 
     @Query(
             """

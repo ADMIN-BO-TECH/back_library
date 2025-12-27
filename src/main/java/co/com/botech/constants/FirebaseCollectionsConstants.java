@@ -6,7 +6,11 @@ public enum FirebaseCollectionsConstants {
     REGISTRO_SALIDAS_MANUALES_PASS("RegistroSalidasManualesPass"),
     UBICACION("Ubicacion"),
     EXCEPCIONES_PARADAS_DINAMICAS("ExcepcionesParadasDinamicas"),
-    BO_TECH_PASS("BO-TECH-PASS");
+    BO_TECH_PASS("BO-TECH-PASS"),
+    SCHEDULES("Schedules"),
+    KILOMETRAJE("Kilometraje"),
+    HISTORIAL("Historial"),
+    HISTORIAL_UBICACION("HistorialUbicacion");
 
     private final String collectionName;
 

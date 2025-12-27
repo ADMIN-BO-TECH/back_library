@@ -1,10 +1,17 @@
 package co.com.botech.util.generalUtils;
 
+import com.google.cloud.Timestamp;
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.Time;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
+@Slf4j
 public class DateTimeUtils {
     public static LocalDateTime dateTimePreparation(String date, boolean inicio) {
         LocalDateTime dateTime;
@@ -28,6 +35,19 @@ public class DateTimeUtils {
             dateTime = null;
         }
         return dateTime;
+    }
+
+    public static Timestamp setDateTimeFromDayAndHourForFirebase(String date, String hour) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String dateTimeString = date + " " + hour;
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
+            Instant instant = dateTime.atZone(ZoneId.of("America/Bogota")).toInstant();
+            return Timestamp.of(Date.from(instant));
+        } catch (Exception e) {
+            log.error("Error al procesar las fechas.", e);
+            throw new IllegalArgumentException("Error al procesar las fechas "+date+" "+hour);
+        }
     }
 
     private static LocalDateTime tryParseISO(String date) {

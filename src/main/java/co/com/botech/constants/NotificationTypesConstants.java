@@ -4,7 +4,8 @@ public enum NotificationTypesConstants {
     SCHOOL("Por Colegio"),
     STUDENTS("Por Id's de Estudiantes"),
     GRADES("Por Cursos"),
-    ATTENDANCE("Por Socket de Asistencia");
+    ATTENDANCE("Por Socket de Asistencia"),
+    ROUTE("Por Recorrido");
     private final String name;
 
     NotificationTypesConstants(String name) {
