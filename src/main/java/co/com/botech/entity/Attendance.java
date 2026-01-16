@@ -12,6 +12,9 @@ public class Attendance {
     @Column(name = "attendance_id")
     private Long id;
 
+    @Column(name = "user_type")
+    private String userType;
+
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "rfid_register_id")
     private RfidRegister rfidRegister;
 

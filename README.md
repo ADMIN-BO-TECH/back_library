@@ -74,6 +74,9 @@ Asegúrate de que el `pom.xml` tenga este bloque (el `<id>` debe coincidir con e
 
 ### 3.2 Publicar **RELEASE** (producción)
 ```bash
+#0) verificar
+./mvnw -U clean verify
+
 # 1) fijar versión estable
 ./mvnw -q versions:set -DnewVersion=0.2.0 -DgenerateBackupPoms=false
 

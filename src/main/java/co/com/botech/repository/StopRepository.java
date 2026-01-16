@@ -8,18 +8,40 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StopRepository extends JpaRepository<Stop, Long> {
-    /** Paradas activas por ruta, ordenadas */
+    /**
+     * Paradas activas por ruta, ordenadas
+     */
     @Query("""
-         select s from Stop s
-         where s.route.id = :routeId
-           and s.status = true
-         order by s.stopOrder asc
-         """)
+            select s from Stop s
+            where s.route.id = :routeId
+              and s.status = true
+            order by s.stopOrder asc
+            """)
     List<Stop> findByRouteIdActiveOrderByOrder(@Param("routeId") Long routeId);
 
-    /** Todas las paradas por ruta (sin filtro) */
+    /**
+     * Todas las paradas por ruta (sin filtro)
+     */
     List<Stop> findByRoute_Id(Long routeId);
 
-    /** Borrar por tipo de parada */
+    /**
+     * Borrar por tipo de parada
+     */
     int deleteByStopType_Id(Long stopTypeId);
+
+    @Query("""
+                SELECT DISTINCT si.stop
+                FROM StopInformation si
+                WHERE si.student.id = :idRecordStudent
+            """)
+    List<Stop> findStopsByStudent(@Param("idRecordStudent") Long idRecordStudent);
+
+    @Query("""
+                SELECT s FROM Stop s
+                WHERE s.route.id = :idRoute
+                AND s.status = TRUE
+                ORDER BY s.stopOrder asc
+            """)
+    List<Stop> findByRouteStateAndOrderedByOrderAsc(@Param("idRoute") Long idRoute);
+
 }

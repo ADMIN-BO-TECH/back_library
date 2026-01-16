@@ -1,4 +1,4 @@
-package co.com.botech.util;
+package co.com.botech.util.generalUtils;
 
 import lombok.experimental.UtilityClass;
 import java.util.Arrays;
@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class TextUtils {
     public static String capitalizeEachWord(String str) {
+        System.out.println(str+" Test");
         if (str == null || str.isBlank()) return str;
         return Arrays.stream(str.trim().split("\\s+"))
                 .map(w -> w.isEmpty() ? w : Character.toUpperCase(w.charAt(0)) + w.substring(1).toLowerCase())

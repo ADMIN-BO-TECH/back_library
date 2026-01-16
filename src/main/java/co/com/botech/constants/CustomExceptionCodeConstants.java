@@ -1,0 +1,17 @@
+package co.com.botech.constants;
+
+public enum CustomExceptionCodeConstants {
+    ENTITY_NOT_FOUND(404),
+    CONFLICT(409);
+
+    private final int code;
+
+    CustomExceptionCodeConstants(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+}
