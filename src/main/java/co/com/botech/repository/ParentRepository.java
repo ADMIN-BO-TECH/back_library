@@ -11,6 +11,6 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     boolean existsByDocumentNumberAndSchool_Id(String documentNumber, Long schoolId);
     boolean existsByDocumentNumberAndId(String documentNumber, Long employeeId);
     Optional<Parent> findByDocumentNumberAndSchool_id(String documentNumber, Long schoolId);
-
     List<Parent> findBySchool_Id(Long schoolId);
+    List<Parent> findByFamilyCode_Code(String familyCode);
 }

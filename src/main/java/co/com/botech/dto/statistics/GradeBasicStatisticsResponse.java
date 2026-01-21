@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GradeStatisticsResponse {
+public class GradeBasicStatisticsResponse {
     private String gradeLevel;
     private float attendancePercentage;
     private Long totalStudents;

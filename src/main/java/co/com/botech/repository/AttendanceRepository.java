@@ -1,6 +1,6 @@
 package co.com.botech.repository;
 
-import co.com.botech.customDto.UserTypeStatistics;
+import co.com.botech.customDto.*;
 import co.com.botech.entity.*;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
@@ -147,65 +147,429 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
         return findAll(attendanceSpecification, pageable);
     }
 
+    @Query("""
+                SELECT a
+                FROM Attendance a
+                WHERE a.student.id = :studentId
+                ORDER BY a.attendanceTime DESC
+            """)
+    List<Attendance> findLastAttendanceByStudentAndSchool(
+            @Param("studentId") Long studentId,
+            Pageable pageable
+    );
+
 
     @Query(value = """
+            WITH stats_by_user_type AS (
+                SELECT
+                    user_types.userType AS userType,
+
+                    CASE user_types.userType
+                        WHEN 'Estudiante' THEN (SELECT COUNT(*) FROM students WHERE school_id = :schoolId)
+                        WHEN 'Acudiente' THEN (SELECT COUNT(*) FROM parent WHERE school_id = :schoolId)
+                        WHEN 'Empleado' THEN (SELECT COUNT(*) FROM school_employees WHERE school_id = :schoolId)
+                        WHEN 'Persona Autorizada'
+                            THEN (SELECT COUNT(*) FROM authorized_persons WHERE school_id = :schoolId)
+                    END AS totalUsers,
+
+                    COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS entryRegisters,
+                    COUNT(CASE WHEN at.description = :outFilter THEN 1 END)  AS exitRegisters,
+
+                    CASE user_types.userType
+                        WHEN 'Estudiante' THEN COUNT(DISTINCT a.student_record_id)
+                        WHEN 'Acudiente' THEN COUNT(DISTINCT a.parent_id)
+                        WHEN 'Empleado' THEN COUNT(DISTINCT a.employee_id)
+                        WHEN 'Persona Autorizada' THEN COUNT(DISTINCT a.authorized_person_id)
+                    END AS distinctUsersWithRegisters
+
+                FROM (
+                    SELECT 'Estudiante' AS userType
+                    UNION ALL SELECT 'Acudiente'
+                    UNION ALL SELECT 'Empleado'
+                    UNION ALL SELECT 'Persona Autorizada'
+                ) user_types
+
+                LEFT JOIN attendance a
+                    ON a.user_type = user_types.userType
+                    AND a.school_id = :schoolId
+                    AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+
+                LEFT JOIN attendance_type at
+                    ON a.attendance_type_id = at.attendance_type_id
+
+                GROUP BY user_types.userType
+            )
 
             SELECT
-                      -- CREA COLUMNA 'userType'
-                      user_types.userType AS userType,
-                      -- ASIGNA VALOR DE 'totalUsers' DEPENDIENDO EL VALOR
-                      CASE user_types.userType
-                          WHEN 'Estudiante' THEN (SELECT COUNT(*) FROM students s WHERE s.school_id = :schoolId)
-                          WHEN 'Acudiente' THEN (SELECT COUNT(*) FROM parent p WHERE p.school_id = :schoolId)
-                          WHEN 'Empleado' THEN (SELECT COUNT(*) FROM school_employees e WHERE e.school_id = :schoolId)
-                          WHEN 'Persona Autorizada' THEN (SELECT COUNT(*) FROM authorized_persons ap WHERE ap.school_id = :schoolId)
-                          ELSE 0
-                      END AS totalUsers,
-                      -- CONDICION PARA RECUPERAR 'entryRegisters' y 'exitRegisters'
-                      CAST(COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS UNSIGNED) AS entryRegisters,
-                      CAST(COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS UNSIGNED)  AS exitRegisters
-                  FROM (
-                           -- SE CREA TABLA VIRTUAL PARA EVITAR VALORES NULOS EN ASISTENCIA
-                           SELECT 'Estudiante' AS userType
-                           UNION ALL
-                           SELECT 'Acudiente'
-                           UNION ALL
-                           SELECT 'Empleado'
-                           UNION ALL
-                           SELECT 'Persona Autorizada'
-                       ) AS user_types
-                           LEFT JOIN attendance a
-                                     ON a.user_type = user_types.userType
-                                         AND a.school_id = :schoolId
-                                         AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
-                           LEFT JOIN attendance_type at
-                                     ON a.attendance_type_id = at.attendance_type_id
-                  GROUP BY user_types.userType
-                  
-                  UNION ALL
-                  
-                  -- SE CREA LA COLUMNA 'Total' PARA REGISTROS GENERALES
-                  SELECT 'Total' AS userType,
-                         (
-                             (SELECT COUNT(*) FROM students s WHERE s.school_id = :schoolId) +
-                             (SELECT COUNT(*) FROM parent p WHERE p.school_id = :schoolId) +
-                             (SELECT COUNT(*) FROM school_employees e WHERE e.school_id = :schoolId) +
-                             (SELECT COUNT(*) FROM authorized_persons ap WHERE ap.school_id = :schoolId)
-                         ) AS totalUsers,
-                         CAST(SUM(totals.entryRegisters) AS UNSIGNED) AS entryRegisters,
-                         CAST(SUM(totals.exitRegisters) AS UNSIGNED)  AS exitRegisters
-                  FROM (
-                           SELECT
-                               CAST(COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS UNSIGNED) AS entryRegisters,
-                               CAST(COUNT(CASE WHEN at.description = :outFilter THEN 1 END) AS UNSIGNED)  AS exitRegisters
-                           FROM attendance a
-                                    JOIN attendance_type at ON a.attendance_type_id = at.attendance_type_id
-                           WHERE a.school_id = :schoolId
-                             AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
-                       ) AS totals;
-                  """,
+                userType,
+                totalUsers,
+                entryRegisters,
+                exitRegisters,
+                (entryRegisters + exitRegisters) AS totalRegisters,
+                distinctUsersWithRegisters,
+
+                CASE
+                    WHEN totalUsers = 0 THEN 0
+                    ELSE ROUND(
+                        distinctUsersWithRegisters * 100.0 / totalUsers,
+                        2
+                    )
+                END AS userUsePercentage,
+
+                CASE
+                    WHEN distinctUsersWithRegisters = 0 THEN 0
+                    ELSE ROUND(
+                        (entryRegisters + exitRegisters) * 1.0 / distinctUsersWithRegisters,
+                        2
+                    )
+                END AS userAverageRegisters
+
+            FROM stats_by_user_type
+
+            UNION ALL
+
+            SELECT
+                'Total' AS userType,
+                SUM(totalUsers),
+                SUM(entryRegisters),
+                SUM(exitRegisters),
+                SUM(entryRegisters + exitRegisters),
+                SUM(distinctUsersWithRegisters),
+
+                CASE
+                    WHEN SUM(totalUsers) = 0 THEN 0
+                    ELSE ROUND(
+                        SUM(distinctUsersWithRegisters) * 100.0 / SUM(totalUsers),
+                        2
+                    )
+                END AS userUsePercentage,
+
+                CASE
+                    WHEN SUM(distinctUsersWithRegisters) = 0 THEN 0
+                    ELSE ROUND(
+                        (SUM(entryRegisters) + SUM(exitRegisters)) * 1.0
+                            / SUM(distinctUsersWithRegisters),
+                        2
+                    )
+                END AS userAverageRegisters
+
+            FROM stats_by_user_type
+            """,
             nativeQuery = true)
     List<UserTypeStatistics> getUserStatistics(
+            @Param("schoolId") Long schoolId,
+            @Param("initDateTime") LocalDateTime initDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("enterFilter") String enterFilter,
+            @Param("outFilter") String outFilter
+    );
+
+    @Query(value = """
+            SELECT
+                s.student_id AS studentId,
+
+                CONCAT(s.first_name, ' ', s.last_name) AS fullName,
+                s.grade_level AS grade,
+
+                COUNT(CASE WHEN at.description = :enterFilter THEN 1 END) AS entryRegisters,
+                COUNT(CASE WHEN at.description = :outFilter THEN 1 END)  AS exitRegisters,
+                COUNT(
+                    CASE
+                        WHEN at.description IN (:enterFilter, :outFilter)
+                        THEN 1
+                    END
+                ) AS totalRegisters,
+
+                MAX(a.attendance_time) AS lastAttendanceTime
+
+            FROM attendance a
+                JOIN attendance_type at
+                    ON a.attendance_type_id = at.attendance_type_id
+                JOIN students s
+                    ON s.student_record_id = a.student_record_id
+
+            WHERE a.school_id = :schoolId
+              AND a.user_type = :userType
+              AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+
+            GROUP BY
+                s.student_id,
+                s.first_name,
+                s.last_name,
+                s.grade_level
+
+            ORDER BY totalRegisters DESC
+            """,
+            nativeQuery = true)
+    Page<TopStudentStatistics> findTopUserTypeByAttendance(
+            @Param("schoolId") Long schoolId,
+            @Param("initDateTime") LocalDateTime initDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("enterFilter") String enterFilter,
+            @Param("outFilter") String outFilter,
+            @Param("userType") String userType,
+            Pageable pageable
+    );
+
+    @Query(value = """
+            WITH gradeGeneralStats AS (
+                SELECT
+                    s.grade_level AS grade,
+                    COUNT(*) AS totalStudents
+                FROM students s
+                WHERE s.school_id = :schoolId
+                GROUP BY s.grade_level
+            )
+
+            SELECT
+                g.grade AS grade,
+
+                COUNT(
+                    DISTINCT CASE
+                        WHEN a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                         AND at.description IN (:enterFilter, :outFilter)
+                        THEN a.student_record_id
+                    END
+                ) AS studentsWithRegisters,
+
+                COUNT(
+                    CASE
+                        WHEN a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                         AND at.description IN (:enterFilter, :outFilter)
+                        THEN 1
+                    END
+                ) AS totalRegisters,
+
+                CASE
+                    WHEN g.totalStudents = 0 THEN 0
+                    ELSE ROUND(
+                        COUNT(
+                            DISTINCT CASE
+                                WHEN a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                                THEN a.student_record_id
+                            END
+                        ) * 100.0 / g.totalStudents,
+                        2
+                    )
+                END AS usagePercentage
+
+            FROM gradeGeneralStats g
+            LEFT JOIN students s
+                ON s.grade_level = g.grade
+               AND s.school_id = :schoolId
+            LEFT JOIN attendance a
+                ON a.student_record_id = s.student_record_id
+               AND a.school_id = :schoolId
+            LEFT JOIN attendance_type at
+                ON at.attendance_type_id = a.attendance_type_id
+
+            GROUP BY g.grade, g.totalStudents
+            ORDER BY g.grade;
+                        """,
+            nativeQuery = true)
+    List<GradeUsagesStatistics> getGradeUsageStatistics(
+            @Param("schoolId") Long schoolId,
+            @Param("initDateTime") LocalDateTime initDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("enterFilter") String enterFilter,
+            @Param("outFilter") String outFilter
+    );
+
+    @Query(value = """
+    WITH timeRanges AS (
+        SELECT DISTINCT
+            IF(
+                MINUTE(a.attendance_time) < 30,
+                DATE_FORMAT(a.attendance_time, '%H:00:00'),
+                DATE_FORMAT(a.attendance_time, '%H:30:00')
+            ) AS initTemporalRange,
+
+            IF(
+                MINUTE(a.attendance_time) < 30,
+                DATE_FORMAT(a.attendance_time + INTERVAL 1 HOUR, '%H:00:00'),
+                DATE_FORMAT(a.attendance_time + INTERVAL 1 HOUR, '%H:30:00')
+            ) AS endTemporalRange
+
+        FROM attendance a
+        WHERE a.school_id = :schoolId
+          AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+    )
+
+    SELECT
+        CONCAT(tr.initTemporalRange, ' - ', tr.endTemporalRange) AS temporalRange,
+
+        COUNT(
+            CASE
+                WHEN at.description IN (:enterFilter, :outFilter)
+                THEN 1
+            END
+        ) AS totalRegisters,
+
+        COUNT(CASE WHEN a.user_type = 'Estudiante' THEN 1 END)         AS studentRegisters,
+        COUNT(CASE WHEN a.user_type = 'Acudiente' THEN 1 END)          AS parentRegisters,
+        COUNT(CASE WHEN a.user_type = 'Empleado' THEN 1 END)           AS employeeRegisters,
+        COUNT(CASE WHEN a.user_type = 'Persona Autorizada' THEN 1 END) AS authorizedPersonRegisters
+
+    FROM timeRanges tr
+        JOIN attendance a
+            ON TIME(a.attendance_time) >= tr.initTemporalRange
+           AND TIME(a.attendance_time) <  tr.endTemporalRange
+        JOIN attendance_type at
+            ON at.attendance_type_id = a.attendance_type_id
+
+    WHERE a.school_id = :schoolId
+      AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+      AND at.description IN (:enterFilter, :outFilter)
+
+    GROUP BY temporalRange
+    ORDER BY totalRegisters DESC
+       """,
+            countQuery = """
+        SELECT COUNT(DISTINCT
+            IF(
+                MINUTE(attendance_time) < 30,
+                DATE_FORMAT(attendance_time, '%H:00:00'),
+                DATE_FORMAT(attendance_time, '%H:30:00')
+            )
+        )
+        FROM attendance a
+        JOIN attendance_type at
+            ON at.attendance_type_id = a.attendance_type_id
+        WHERE a.school_id = :schoolId
+          AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+          AND at.description IN (:enterFilter, :outFilter)
+    """,
+            nativeQuery = true)
+    Page<TimeRangeStatistics> findAttendanceByTimeRangeDesc(
+            @Param("schoolId") Long schoolId,
+            @Param("initDateTime") LocalDateTime initDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("enterFilter") String enterFilter,
+            @Param("outFilter") String outFilter,
+            Pageable pageable
+    );
+
+    @Query(value = """
+    WITH timeRanges AS (
+        SELECT DISTINCT
+            IF(
+                MINUTE(a.attendance_time) < 30,
+                DATE_FORMAT(a.attendance_time, '%H:00:00'),
+                DATE_FORMAT(a.attendance_time, '%H:30:00')
+            ) AS initTemporalRange,
+
+            IF(
+                MINUTE(a.attendance_time) < 30,
+                DATE_FORMAT(a.attendance_time + INTERVAL 1 HOUR, '%H:00:00'),
+                DATE_FORMAT(a.attendance_time + INTERVAL 1 HOUR, '%H:30:00')
+            ) AS endTemporalRange
+
+        FROM attendance a
+        WHERE a.school_id = :schoolId
+          AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+    )
+
+    SELECT
+        CONCAT(tr.initTemporalRange, ' - ', tr.endTemporalRange) AS temporalRange,
+
+        COUNT(
+            CASE
+                WHEN at.description IN (:enterFilter, :outFilter)
+                THEN 1
+            END
+        ) AS totalRegisters,
+
+        COUNT(CASE WHEN a.user_type = 'Estudiante' THEN 1 END)         AS studentRegisters,
+        COUNT(CASE WHEN a.user_type = 'Acudiente' THEN 1 END)          AS parentRegisters,
+        COUNT(CASE WHEN a.user_type = 'Empleado' THEN 1 END)           AS employeeRegisters,
+        COUNT(CASE WHEN a.user_type = 'Persona Autorizada' THEN 1 END) AS authorizedPersonRegisters
+
+    FROM timeRanges tr
+        JOIN attendance a
+            ON TIME(a.attendance_time) >= tr.initTemporalRange
+           AND TIME(a.attendance_time) <  tr.endTemporalRange
+        JOIN attendance_type at
+            ON at.attendance_type_id = a.attendance_type_id
+
+    WHERE a.school_id = :schoolId
+      AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+      AND at.description IN (:enterFilter, :outFilter)
+
+    GROUP BY temporalRange
+    ORDER BY totalRegisters ASC
+       """,
+            countQuery = """
+        SELECT COUNT(DISTINCT
+            IF(
+                MINUTE(attendance_time) < 30,
+                DATE_FORMAT(attendance_time, '%H:00:00'),
+                DATE_FORMAT(attendance_time, '%H:30:00')
+            )
+        )
+        FROM attendance a
+        JOIN attendance_type at
+            ON at.attendance_type_id = a.attendance_type_id
+        WHERE a.school_id = :schoolId
+          AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+          AND at.description IN (:enterFilter, :outFilter)
+    """,
+            nativeQuery = true)
+    Page<TimeRangeStatistics> findAttendanceByTimeRangeAsc(
+            @Param("schoolId") Long schoolId,
+            @Param("initDateTime") LocalDateTime initDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("enterFilter") String enterFilter,
+            @Param("outFilter") String outFilter,
+            Pageable pageable
+    );
+
+
+    @Query(value = """
+    WITH RECURSIVE days AS (
+        SELECT DATE(:initDateTime) AS day
+        UNION ALL
+        SELECT day + INTERVAL 1 DAY
+        FROM days
+        WHERE day < DATE(:endDateTime)
+    )
+
+    SELECT
+        d.day AS day,
+
+        COUNT(a.attendance_id) AS totalRegisters,
+
+        COUNT(CASE WHEN a.user_type = 'Estudiante' THEN 1 END)         AS studentRegisters,
+        COUNT(CASE WHEN a.user_type = 'Empleado' THEN 1 END)           AS employeeRegisters,
+        COUNT(CASE WHEN a.user_type = 'Acudiente' THEN 1 END)          AS parentRegisters,
+        COUNT(CASE WHEN a.user_type = 'Persona Autorizada' THEN 1 END) AS authorizedPersonRegisters
+
+    FROM days d
+        LEFT JOIN attendance a
+            ON DATE(a.attendance_time) = d.day
+           AND a.school_id = :schoolId
+           AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+        LEFT JOIN attendance_type at
+            ON at.attendance_type_id = a.attendance_type_id
+           AND at.description IN (:enterFilter, :outFilter)
+
+    GROUP BY d.day
+    ORDER BY d.day ASC
+    """,
+            countQuery = """
+        SELECT COUNT(*)
+        FROM (
+            WITH RECURSIVE days AS (
+                SELECT DATE(:initDateTime) AS day
+                UNION ALL
+                SELECT day + INTERVAL 1 DAY
+                FROM days
+                WHERE day < DATE(:endDateTime)
+            )
+            SELECT day FROM days
+        ) x
+    """,
+            nativeQuery = true)
+    List<DailyAttendanceStatistics> findAttendanceByDay(
             @Param("schoolId") Long schoolId,
             @Param("initDateTime") LocalDateTime initDateTime,
             @Param("endDateTime") LocalDateTime endDateTime,
