@@ -18,17 +18,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Esto crea automáticamente un settings.xml con el server-id "github"
-      # y asocia username/password a los env vars indicados.
-      - name: Set up JDK 17 + Maven server auth (GitHub Packages)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
-          server-id: github
-          server-username: GH_USER
-          server-password: GH_TOKEN
+
+      - name: Create Maven settings.xml for GitHub Packages
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << 'EOF'
+          <settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${env.GH_USER}</username>
+                <password>${env.GH_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+        env:
+          GH_USER: ${{ github.actor }}
+          GH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Extract version from commit message
         id: ver
@@ -38,10 +51,6 @@ jobs:
           echo "Commit message:"
           echo "$MSG"
 
-          # Formatos soportados:
-          # - release: 0.1.9
-          # - version=0.1.9
-          # - [version:0.1.9]
           VERSION="$(echo "$MSG" | grep -Eo '(release:\s*[0-9]+\.[0-9]+\.[0-9]+|version=([0-9]+\.[0-9]+\.[0-9]+)|\[version:([0-9]+\.[0-9]+\.[0-9]+)\])' \
             | head -n 1 \
             | sed -E 's/release:\s*//; s/version=//; s/\[version://; s/\]//')"
@@ -59,17 +68,11 @@ jobs:
       - name: Set Maven project version
         if: steps.ver.outputs.publish == 'true'
         run: |
-          mvn -B versions:set \
+          mvn -B -s ~/.m2/settings.xml versions:set \
             -DnewVersion="${{ steps.ver.outputs.version }}" \
             -DgenerateBackupPoms=false
-        env:
-          GH_USER: ${{ github.actor }}
-          GH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Build & Deploy
         if: steps.ver.outputs.publish == 'true'
         run: |
-          mvn -B clean deploy -DskipTests
-        env:
-          GH_USER: ${{ github.actor }}
-          GH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+          mvn -B -s ~/.m2/settings.xml clean deploy -DskipTests
