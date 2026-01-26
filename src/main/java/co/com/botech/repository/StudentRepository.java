@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    List<Student> findBySchoolIdAndFamilyCode(Long schoolId, String familyCode);
+    List<Student> findBySchool_IdAndFamilyCode_Code(Long schoolId, String familyCode);
     List<Student> findBySchool_Id(Long schoolId);
 
     Optional<Student> findById(Long id);
