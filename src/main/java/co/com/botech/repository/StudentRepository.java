@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    /**
-     * Buscar estudiantes por school_id
-     */
+    List<Student> findBySchoolIdAndFamilyCode(Long schoolId, String familyCode);
     List<Student> findBySchool_Id(Long schoolId);
 
     Optional<Student> findById(Long id);
