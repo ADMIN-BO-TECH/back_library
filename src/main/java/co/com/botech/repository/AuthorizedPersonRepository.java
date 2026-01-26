@@ -12,4 +12,5 @@ public interface AuthorizedPersonRepository extends JpaRepository<AuthorizedPers
     boolean existsByDocumentNumberAndId(String documentNumber, Long employeeId);
     Optional<AuthorizedPerson> findByDocumentNumberAndSchool_id(String documentNumber, Long schoolId);
     List<AuthorizedPerson> findBySchool_Id(Long schoolId);
+    List<AuthorizedPerson> findByFamilyCode_Id(Long id);
 }

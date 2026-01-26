@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StatisticsResponse {
+public class BasicStatisticsResponse {
     private float totalPercentageOfPresentStudents;
     private Long totalStudents;
     private Long presentStudents;
@@ -28,5 +28,5 @@ public class StatisticsResponse {
     private Long presentEmployees;
     private Long presentExternal;
     private Long presentParents;
-    private List<GradeStatisticsResponse> grades;
+    private List<GradeBasicStatisticsResponse> grades;
 }

@@ -1,11 +1,11 @@
 package co.com.botech.repository;
 
 import co.com.botech.entity.Authorization;
-import co.com.botech.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,5 +27,31 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
 
     @Query("SELECT DISTINCT a FROM Authorization a WHERE a.student.id = :idRecordStudent")
     List<Authorization> findAuthorizationsByStudent(@Param("idRecordStudent") Long idRecordStudent);
+
+    @Query("SELECT DISTINCT a FROM Authorization a " +
+            "WHERE a.student.familyCode.code = :familyCode " +
+            "AND a.student.school.id = :schoolId")
+    List<Authorization> findAuthorizationByFamilyCodeAndSchoolId(
+            @Param("familyCode") String familyCode,
+            @Param("schoolId") Long schoolId);
+
+
+    @Query("""
+                SELECT DISTINCT a
+                FROM Authorization a
+                WHERE a.student.id = :studentId
+                ORDER BY
+                  CASE
+                    WHEN a.authorizationStartDate <= CURRENT_TIMESTAMP
+                     AND a.authorizationEndDate   >= CURRENT_TIMESTAMP
+                    THEN 0
+                    ELSE 1
+                  END,
+                  a.authorizationEndDate DESC
+            """)
+    List<Authorization> findLastActiveOrExpiredAuthorizationsByStudentId(
+            @Param("studentId") Long studentId,
+            Pageable pageable
+    );
 
 }
