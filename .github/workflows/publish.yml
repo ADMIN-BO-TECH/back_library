@@ -33,15 +33,14 @@ jobs:
             <servers>
               <server>
                 <id>github</id>
-                <username>${GH_USER}</username>
-                <password>${GH_TOKEN}</password>
+                <username>${GITHUB_ACTOR}</username>
+                <password>${GITHUB_TOKEN}</password>
               </server>
             </servers>
           </settings>
           EOF
         env:
-          GH_USER: ${{ github.actor }}
-          GH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract version from commit message
         id: ver
@@ -61,13 +60,13 @@ jobs:
 
           if [ -z "$VERSION" ]; then
             echo "No version found in commit message. Skipping publish."
-            echo "publish=false" >> $GITHUB_OUTPUT
+            echo "publish=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo "Detected version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "publish=true" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
 
       - name: Set Maven project version
         if: steps.ver.outputs.publish == 'true'
