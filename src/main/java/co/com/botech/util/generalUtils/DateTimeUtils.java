@@ -9,7 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public class DateTimeUtils {
@@ -79,8 +81,6 @@ public class DateTimeUtils {
         }
         throw new IllegalArgumentException("Formato de fecha inválido: " + date);
     }
-
-
 }
 
 
