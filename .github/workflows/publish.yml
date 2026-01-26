@@ -25,24 +25,6 @@ jobs:
           distribution: "temurin"
           cache: "maven"
 
-      - name: Create Maven settings.xml for GitHub Packages
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << 'EOF'
-          <settings>
-            <servers>
-              <server>
-                <id>github</id>
-                <username>${env.GH_USER}</username>
-                <password>${env.GH_TOKEN}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
-        env:
-          GH_USER: ${{ github.actor }}
-          GH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-
       - name: Extract version from commit message
         id: ver
         shell: bash
@@ -64,6 +46,22 @@ jobs:
           echo "Detected version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "publish=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create Maven settings.xml for GitHub Packages (uses GITHUB_TOKEN)
+        if: steps.ver.outputs.publish == 'true'
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << EOF
+          <settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.GITHUB_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
 
       - name: Set Maven project version
         if: steps.ver.outputs.publish == 'true'
