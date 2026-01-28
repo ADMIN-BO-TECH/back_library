@@ -19,7 +19,7 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
                 UPDATE Permits AS pe
                 SET pe.permitStatus = :finalStatus,
                 pe.response = :response,
-                pe.repliedBy =: repliedBy
+                pe.repliedBy =:repliedBy
                 WHERE pe.id = :permitId
             """)
     int updateByStatus(@Param("permitId") Long permitId,

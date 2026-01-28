@@ -18,7 +18,7 @@ public enum PermitTypeConstants {
     public static boolean isValidType(String type) {
         if (type == null) return false;
         for (PermitTypeConstants permitType : PermitTypeConstants.values()) {
-            if (permitType.name().equalsIgnoreCase(type)) {
+            if (permitType.getDescription().equalsIgnoreCase(type)) {
                 return true;
             }
         }

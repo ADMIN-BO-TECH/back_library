@@ -48,7 +48,5 @@ public class AuthorizedPersonDTO {
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El codigo de familia contiene caracteres inválidos")
     private String type;
-    @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El colegio contiene caracteres inválidos")
     private String schoolName;
 }

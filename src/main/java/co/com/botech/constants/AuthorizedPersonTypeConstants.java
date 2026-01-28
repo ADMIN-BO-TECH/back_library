@@ -18,7 +18,7 @@ public enum AuthorizedPersonTypeConstants {
     public static boolean isValidType(String type) {
         if (type == null) return false;
         for (AuthorizedPersonTypeConstants authorizedPersonType : AuthorizedPersonTypeConstants.values()) {
-            if (authorizedPersonType.name().equalsIgnoreCase(type)) {
+            if (authorizedPersonType.getDescription().equalsIgnoreCase(type)) {
                 return true;
             }
         }

@@ -18,7 +18,7 @@ public enum PermitStatusConstants {
         public static boolean isValidStatus(String status) {
         if (status == null) return false;
         for (PermitStatusConstants permitStatus : PermitStatusConstants.values()) {
-            if (permitStatus.name().equalsIgnoreCase(status)) {
+            if (permitStatus.getDescription().equalsIgnoreCase(status)) {
                 return true;
             }
         }
