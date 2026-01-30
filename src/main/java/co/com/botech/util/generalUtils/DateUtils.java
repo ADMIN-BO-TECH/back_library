@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static co.com.botech.constants.DateTimeConstants.*;
 
@@ -36,6 +38,20 @@ public class DateUtils {
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Formato de hora no válido: " + hour, e);
         }
+    }
+
+    public static List<LocalDate> completeWeek(LocalDate dateInWeek) {
+        LocalDate sunday = initWeekSunday(dateInWeek);
+        List<LocalDate> days = new ArrayList<>(7);
+        for (int i = 0; i < 7; i++) {
+            days.add(sunday.plusDays(i));
+        }
+        return days;
+    }
+
+    private static LocalDate initWeekSunday(LocalDate date) {
+        int delta = date.getDayOfWeek().getValue() % 7;
+        return date.minusDays(delta);
     }
 }
 

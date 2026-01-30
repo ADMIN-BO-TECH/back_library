@@ -391,6 +391,25 @@ public class FirebaseService {
             throw new RuntimeException("Error al recuperar DocRef deFirebase", e);
         }
     }
+    public List<Map<String, Object>> findLastSpeedingExcessRegister(String collection, String subcollection, String id, double minSpeed, int limit, int offset) {
+        try {
+            ApiFuture<QuerySnapshot> future = firestore.collection(collection)
+                    .document(id)
+                    .collection(subcollection)
+                    .whereGreaterThan("speedInt", minSpeed)
+                    .orderBy("dateTime", Query.Direction.DESCENDING)
+                    .limit(limit)
+                    .offset(offset)
+                    .get();
+
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            return documents.stream()
+                    .map(QueryDocumentSnapshot::getData).collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al recuperar de Firebase", e);
+        }
+    }
 
     public List<Map<String, Object>> findVehicleHistory(String rootCollection, String collection, String rootId, double minSpeed, Timestamp initialDateTime, Timestamp finalDateTime) {
         try {

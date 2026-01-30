@@ -3,6 +3,8 @@ package co.com.botech.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity @Table(name = "started_routes_register")
 public class StartedRouteRegister {
@@ -27,6 +29,7 @@ public class StartedRouteRegister {
     @Column(name="start_time") private String startTime;
     @Column(name="end_time")   private String endTime;
     @Column(name="route_type") private String routeType;
+    @Column(name = "register_date") private LocalDate registerDate;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "school_id")
     private School school;

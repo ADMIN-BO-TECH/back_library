@@ -18,6 +18,5 @@ public class GeneralCardStatisticsSummary {
     private Long totalRegistersToday;
     private Long totalUsersWithRegistersToday;
     private Double studentUsagePercentage;
-    private Double gradeUsagePercentage;
     private Double averageRegistersPerPerson;
 }
