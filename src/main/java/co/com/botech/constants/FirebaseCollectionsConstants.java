@@ -10,7 +10,8 @@ public enum FirebaseCollectionsConstants {
     SCHEDULES("Schedules"),
     KILOMETRAJE("Kilometraje"),
     HISTORIAL("Historial"),
-    HISTORIAL_UBICACION("HistorialUbicacion");
+    HISTORIAL_UBICACION("HistorialUbicacion"),
+    ROUTES("routes");
 
     private final String collectionName;
 

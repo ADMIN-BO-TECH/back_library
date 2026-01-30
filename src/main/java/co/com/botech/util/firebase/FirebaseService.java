@@ -439,4 +439,34 @@ public class FirebaseService {
             throw new RuntimeException("Error al determinar estado de Schedule en Firebase", e);
         }
     }
+
+    public void upsertDocumentBasic(String collection, String id, Map<String, Object> data) {
+        try {
+            ApiFuture<WriteResult> future = firestore
+                    .collection(collection)
+                    .document(id)
+                    .set(data, SetOptions.merge());
+
+            ApiFutures.addCallback(
+                    future,
+                    new ApiFutureCallback<>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            log.error("[Firebase] Error upsert {}/{}: {}", collection, id, t.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(WriteResult result) {
+                            log.info("[Firebase] Upsert OK {}/{}", collection, id);
+                        }
+                    },
+                    MoreExecutors.directExecutor()
+            );
+
+            future.get();
+        } catch (Exception e) {
+            log.error("[Firebase] Error upsertDocumentBasic", e);
+            throw new FirebaseException("Error al upsert en Firebase");
+        }
+    }
 }
