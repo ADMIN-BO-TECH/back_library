@@ -19,4 +19,5 @@ public class RouteDTO {
     private String endTime;
     private String routeType;
     private String schoolName;
+    private boolean overlapConflicts;
 }
