@@ -11,7 +11,9 @@ public enum FirebaseCollectionsConstants {
     KILOMETRAJE("Kilometraje"),
     HISTORIAL("Historial"),
     HISTORIAL_UBICACION("HistorialUbicacion"),
-    ROUTES("routes");
+    ROUTES("routes"),
+    MAP_TRACE("TrazadoMapa"),
+    MAP_TRACE_COORDINATES("coordinates");
 
     private final String collectionName;
 
