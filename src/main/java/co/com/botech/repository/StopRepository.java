@@ -2,8 +2,10 @@ package co.com.botech.repository;
 
 import co.com.botech.entity.Stop;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,5 +45,21 @@ public interface StopRepository extends JpaRepository<Stop, Long> {
                 ORDER BY s.stopOrder asc
             """)
     List<Stop> findByRouteStateAndOrderedByOrderAsc(@Param("idRoute") Long idRoute);
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+                DELETE FROM Stop s
+                WHERE s.id  IN :stopIds
+            """)
+    int deleteByStopIds(@Param("stopIds") List<Long> stopIds);
+
+    @Query("""
+                SELECT s FROM Stop s
+                WHERE s.route.id = :idRoute
+                AND s.route.status = TRUE
+                AND s.status = TRUE
+                ORDER BY s.stopOrder asc
+            """)
+    List<Stop> findByStateRouteStateAndOrderedByOrderAsc(@Param("idRoute") Long idRoute);
 
 }
