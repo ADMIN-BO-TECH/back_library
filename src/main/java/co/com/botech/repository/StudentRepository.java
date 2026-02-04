@@ -1,7 +1,6 @@
 package co.com.botech.repository;
 
 import co.com.botech.customDto.GradeStudentsCount;
-import co.com.botech.entity.Authorization;
 import co.com.botech.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +12,7 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findBySchool_IdAndFamilyCode_Code(Long schoolId, String familyCode);
     List<Student> findBySchool_Id(Long schoolId);
+    List<Student> findByStudentIdInAndSchool_Id(List<Long> studentIds, Long schoolId);
 
     Optional<Student> findById(Long id);
 
