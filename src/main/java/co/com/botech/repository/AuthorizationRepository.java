@@ -28,9 +28,12 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
     @Query("SELECT DISTINCT a FROM Authorization a WHERE a.student.id = :idRecordStudent")
     List<Authorization> findAuthorizationsByStudent(@Param("idRecordStudent") Long idRecordStudent);
 
-    @Query("SELECT DISTINCT a FROM Authorization a " +
-            "WHERE a.student.familyCode.code = :familyCode " +
-            "AND a.student.school.id = :schoolId")
+    @Query("""
+    SELECT DISTINCT a
+    FROM Authorization a
+    WHERE a.student.family.familyCode = :familyCode
+      AND a.student.family.school.id = :schoolId
+""")
     List<Authorization> findAuthorizationByFamilyCodeAndSchoolId(
             @Param("familyCode") String familyCode,
             @Param("schoolId") Long schoolId);

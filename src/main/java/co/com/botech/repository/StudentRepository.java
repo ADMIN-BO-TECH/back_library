@@ -22,10 +22,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     boolean existsByIdAndStudentId(Long studentRecordId, Long studentId);
 
-    @Query("SELECT DISTINCT s.familyCode.id FROM Student s WHERE s.gradeLevel IN :gradeList")
+    @Query("SELECT DISTINCT s.family.id FROM Student s WHERE s.gradeLevel IN :gradeList")
     List<Long> findFamilyCodesByGrades(@Param("gradeList") List<String> gradeList);
 
-    @Query("SELECT DISTINCT s.familyCode.id FROM Student s WHERE s.studentId IN :studentSchoolIds")
+    @Query("SELECT DISTINCT s.family.id FROM Student s WHERE s.studentId IN :studentSchoolIds")
     List<Long> findFamilyCodesByStudentSchoolIds(@Param("studentSchoolIds") List<Long> studentSchoolIds);
 
     @Query("SELECT DISTINCT s.gradeLevel FROM Student s WHERE s.school.id = :schoolId")
