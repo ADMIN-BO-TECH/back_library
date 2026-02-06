@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface PermitRepository extends JpaRepository<Permits, Long> {
 
+    List<Permits> findByStudent_Family_FamilyCodeAndStudent_School_Id(String familyCode, Long schoolId);
+
     @Query("""
         SELECT p
         FROM Permits p
