@@ -30,9 +30,8 @@ public class AuthorizedPerson {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "family_code_id")
-    private FamilyCode familyCode;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_id")
+    private Family family;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

@@ -12,8 +12,8 @@ public class Student {
 
     @Column(name = "student_id") private Long studentId;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_code_id")
-    private FamilyCode familyCode;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_id")
+    private Family family;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "school_id")
     private School school;
@@ -26,4 +26,6 @@ public class Student {
     @Column(name = "transport")     private String transport;
     @Column(name = "pickup_alone")  private Boolean pickupAlone;
     @Column(name = "leave_alone")   private Boolean leaveAlone;
+    @Builder.Default @Column(name = "novedad", nullable = false)
+    private Boolean novedad = false;
 }

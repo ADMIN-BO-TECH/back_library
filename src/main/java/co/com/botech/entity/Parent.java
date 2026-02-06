@@ -22,8 +22,8 @@ public class Parent {
     @Column(name = "relationship_type")
     private String relationshipType;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_code_id")
-    private FamilyCode familyCode;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_id")
+    private Family family;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "school_id")
     private School school;

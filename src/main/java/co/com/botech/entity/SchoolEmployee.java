@@ -17,8 +17,8 @@ public class SchoolEmployee {
     @Column(name = "first_name")      private String firstName;
     @Column(name = "last_name")       private String lastName;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_code_id")
-    private FamilyCode familyCode;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "family_id")
+    private Family family;
 
     @Column(name = "email")    private String email;
     @Column(name = "position") private String position;
