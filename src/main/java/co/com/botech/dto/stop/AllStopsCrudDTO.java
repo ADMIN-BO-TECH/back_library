@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class AllStopsCrudDTO {
     private StopDTO stopInformation;
-    private List<Long> studentRecordIds;
-    private List<Long> schoolEmployeeIds;
+    private List<PersonCrudResponse> students;
+    private List<PersonCrudResponse> schoolEmployees;
 }

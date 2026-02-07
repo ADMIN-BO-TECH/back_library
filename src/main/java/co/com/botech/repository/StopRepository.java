@@ -25,6 +25,7 @@ public interface StopRepository extends JpaRepository<Stop, Long> {
      * Todas las paradas por ruta (sin filtro)
      */
     List<Stop> findByRoute_Id(Long routeId);
+    List<Stop> findByRoute_IdAndStatus(Long routeId, boolean status);
 
     /**
      * Borrar por tipo de parada

@@ -1,4 +1,4 @@
-package co.com.botech.dto.stop;
+package co.com.botech.dto.routeWaypoint;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
@@ -20,6 +20,9 @@ public class CreateRouteWaypointRequest {
 
     @Min(value = 1, message = "El orden de parada debe ser un número positivo")
     private int stopOrder;
+
+    @Min(value = 1, message = "El orden de parada especifico debe ser un número positivo")
+    private int specificOrder;
 
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "La dirección no puede contener caracteres especiales")
     private String address;

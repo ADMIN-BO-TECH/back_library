@@ -11,10 +11,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 public class GroupedStopsResponse {
+    private int finalOrder;
     private double latitude;
     private double longitude;
     private String address;
     private int time;
-    private int stopOrder;
+    private int stopOriginalOrder;
+    private boolean isRouteWayPoint;
     private List<GroupedStopRelationInterface> relatedEntities;
 }

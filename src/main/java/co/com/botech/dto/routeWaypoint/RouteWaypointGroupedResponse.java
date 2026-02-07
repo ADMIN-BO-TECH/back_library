@@ -12,4 +12,5 @@ public class RouteWaypointGroupedResponse implements GroupedStopRelationInterfac
     private Long relationId;
     private String name;
     private int stopOrder;
+    private int specificOrder;
 }
