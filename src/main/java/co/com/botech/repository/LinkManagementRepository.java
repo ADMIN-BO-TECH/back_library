@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface LinkManagementRepository extends JpaRepository<LinkManagement, Long> {
     List<LinkManagement> findByStatus(boolean status);
-
+    List<LinkManagement> findByVisibleInAppTrueAndStatusTrueOrderByUpdatedAtDesc();
     boolean existsByRoute_Id(Long routeId);
 
     @Modifying(clearAutomatically = true)
