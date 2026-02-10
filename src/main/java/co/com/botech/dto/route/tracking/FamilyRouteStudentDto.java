@@ -8,7 +8,10 @@ import lombok.*;
 @Builder
 public class FamilyRouteStudentDto {
     private String lastname;
+
     private String name;
+
     private String course;
+
     private FamilyRoutesResponse.RouteDto route;
 }
