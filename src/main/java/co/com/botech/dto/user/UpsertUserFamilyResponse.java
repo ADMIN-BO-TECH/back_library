@@ -10,8 +10,7 @@ import lombok.*;
 public class UpsertUserFamilyResponse {
 
     private Long userId;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String fcmToken;
     private String firebaseUid;
     private String familyCode;
