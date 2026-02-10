@@ -14,22 +14,15 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findBySchool_IdAndFamily_FamilyCode(Long schoolId, String familyCode);
     List<Student> findByFamily_Id(Long familyId);
     List<Student> findByStudentIdInAndSchool_Id(List<Long> studentIds, Long schoolId);
-
     Optional<Student> findByStudentIdAndSchool_Id(Long studentId, Long schoolId);
-
     boolean existsByStudentIdAndSchool_Id(Long studentId, Long schoolId);
-
     boolean existsByIdAndStudentId(Long studentRecordId, Long studentId);
-
     @Query("SELECT DISTINCT s.family.id FROM Student s WHERE s.gradeLevel IN :gradeList")
     List<Long> findFamilyIdsByGrades(@Param("gradeList") List<String> gradeList);
-
     @Query("SELECT DISTINCT s.family.id FROM Student s WHERE s.studentId IN :studentSchoolIds")
     List<Long> findFamilyIdsByStudentSchoolIds(@Param("studentSchoolIds") List<Long> studentSchoolIds);
-
     @Query("SELECT DISTINCT s.gradeLevel FROM Student s WHERE s.school.id = :schoolId")
     List<String> findDistinctGradeLevelsBySchoolId(@Param("schoolId") Long schoolId);
-
     @Query(value = "SELECT DISTINCT s.grade_level, CAST(COUNT(*) AS UNSIGNED) AS totalStudents FROM students s WHERE s.school_id = :schoolId", nativeQuery = true)
     List<GradeStudentsCount> countGradeLevelStatistics(@Param("schoolId") Long schoolId);
 }
