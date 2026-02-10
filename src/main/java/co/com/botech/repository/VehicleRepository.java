@@ -1,6 +1,7 @@
 package co.com.botech.repository;
 
 import co.com.botech.customDto.VehicleCompleteResponse;
+import co.com.botech.customDto.VehicleFleetAndRegisterResponse;
 import co.com.botech.entity.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -119,4 +120,14 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
                 WHERE v.fleet_number = :fleetNumber
             """, nativeQuery = true)
     Optional<VehicleCompleteResponse> findVehiclesCompleteByFleetNumber(@Param("fleetNumber") String fleetNumber);
+
+    @Query("""
+                SELECT  v.fleetNumber        AS fleetNumber,
+                        r.id                  AS rfidRegisterId,
+                        r.rfidTag             AS rfidTag
+                FROM Vehicle v
+                LEFT JOIN v.rfidRegister r
+                WHERE v.fleetNumber IN :fleetNumbers
+            """)
+    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(List<String> fleetNumbers);
 }

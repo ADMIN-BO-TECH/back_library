@@ -5,7 +5,7 @@
 
     <groupId>co.com.botech</groupId>
     <artifactId>botech-back-library</artifactId>
-    <version>0.1.27</version>
+    <version>0.1.32</version>
     <packaging>jar</packaging>
 
     <name>botech-back-library</name>
@@ -75,6 +75,26 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- JSON Utils -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.18.2</version>
+        </dependency>
+
+        <!-- Apache POI para manejo de Excel -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+
+        <!-- Firebase -->
         <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
@@ -87,6 +107,13 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Google Maps Services -->
+        <dependency>
+            <groupId>com.google.maps</groupId>
+            <artifactId>google-maps-services</artifactId>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 
