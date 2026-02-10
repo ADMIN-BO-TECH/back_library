@@ -14,5 +14,6 @@ public class NotificationHistoryResponse{
     private String body;
     private String categoryName;
     private LocalDateTime sentAt;
+
 }
 
