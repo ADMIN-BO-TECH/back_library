@@ -116,4 +116,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                                                    @Param("startTime") String startTime,
                                                    @Param("endTime") String endTime,
                                                    @Param("day") String day);
+
+    Optional<Route> findByIdAndSchool_Id(Long routeId, Long schoolId);
 }

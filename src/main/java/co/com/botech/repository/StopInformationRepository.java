@@ -161,4 +161,17 @@ public interface StopInformationRepository extends JpaRepository<StopInformation
             """)
     int deleteByStopIds(@Param("stopIds") List<Long> stopIds);
 
+    @Query("""
+        SELECT si
+        FROM StopInformation si
+        JOIN FETCH si.stop s
+        LEFT JOIN FETCH s.stopType st
+        LEFT JOIN FETCH si.student stu
+        LEFT JOIN FETCH stu.family famStu
+        LEFT JOIN FETCH si.schoolEmployee emp
+        LEFT JOIN FETCH emp.family famEmp
+        WHERE s.route.id = :routeId
+          AND s.status = true
+    """)
+    List<StopInformation> findActiveByRouteIdWithJoins(@Param("routeId") Long routeId);
 }

@@ -20,10 +20,6 @@ public interface StopRepository extends JpaRepository<Stop, Long> {
             order by s.stopOrder asc
             """)
     List<Stop> findByRouteIdActiveOrderByOrder(@Param("routeId") Long routeId);
-
-    /**
-     * Todas las paradas por ruta (sin filtro)
-     */
     List<Stop> findByRoute_Id(Long routeId);
     List<Stop> findByRoute_IdAndStatus(Long routeId, boolean status);
 
@@ -62,5 +58,5 @@ public interface StopRepository extends JpaRepository<Stop, Long> {
                 ORDER BY s.stopOrder asc
             """)
     List<Stop> findByStateRouteStateAndOrderedByOrderAsc(@Param("idRoute") Long idRoute);
-
+    List<Stop> findByRoute_IdAndStatusTrueOrderByStopOrderAsc(Long routeId);
 }
