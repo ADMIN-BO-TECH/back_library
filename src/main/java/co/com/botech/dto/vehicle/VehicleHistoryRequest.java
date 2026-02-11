@@ -1,5 +1,6 @@
 package co.com.botech.dto.vehicle;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -11,8 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 public class VehicleHistoryRequest {
 
-    @Positive(message = "El rfId debe ser un número positivo")
-    private Long rfidRegisterId;
+    @NotBlank(message = "El rfidTag es obligatorio")
+    private String rfidTag;
 
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "La fecha de inicio contiene caracteres inválidos")
     private String startDate;
