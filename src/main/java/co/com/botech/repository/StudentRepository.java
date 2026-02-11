@@ -17,12 +17,40 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByStudentIdAndSchool_Id(Long studentId, Long schoolId);
     boolean existsByStudentIdAndSchool_Id(Long studentId, Long schoolId);
     boolean existsByIdAndStudentId(Long studentRecordId, Long studentId);
-    @Query("SELECT DISTINCT s.family.id FROM Student s WHERE s.gradeLevel IN :gradeList")
+
+    @Query("""
+        SELECT DISTINCT s.family.id
+        FROM Student s
+        WHERE s.gradeLevel IN :gradeList
+          AND s.novedad = false
+    """)
     List<Long> findFamilyIdsByGrades(@Param("gradeList") List<String> gradeList);
-    @Query("SELECT DISTINCT s.family.id FROM Student s WHERE s.studentId IN :studentSchoolIds")
+
+    @Query("""
+        SELECT DISTINCT s.family.id
+        FROM Student s
+        WHERE s.studentId IN :studentSchoolIds
+          AND s.novedad = false
+    """)
     List<Long> findFamilyIdsByStudentSchoolIds(@Param("studentSchoolIds") List<Long> studentSchoolIds);
-    @Query("SELECT DISTINCT s.gradeLevel FROM Student s WHERE s.school.id = :schoolId")
+
+    @Query("""
+        SELECT DISTINCT s.gradeLevel
+        FROM Student s
+        WHERE s.school.id = :schoolId
+          AND s.novedad = false
+    """)
     List<String> findDistinctGradeLevelsBySchoolId(@Param("schoolId") Long schoolId);
-    @Query(value = "SELECT DISTINCT s.grade_level, CAST(COUNT(*) AS UNSIGNED) AS totalStudents FROM students s WHERE s.school_id = :schoolId", nativeQuery = true)
+
+    @Query(value = """
+        SELECT
+            s.grade_level AS grade_level,
+            CAST(COUNT(*) AS UNSIGNED) AS totalStudents
+        FROM students s
+        WHERE s.school_id = :schoolId
+          AND s.novedad = b'0'
+        GROUP BY s.grade_level
+        """,
+            nativeQuery = true)
     List<GradeStudentsCount> countGradeLevelStatistics(@Param("schoolId") Long schoolId);
 }

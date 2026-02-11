@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface RfidRegisterRepository extends JpaRepository<RfidRegister, Long> {
 
     List<RfidRegister> findByKindDevice_IdAndSchool_Id(Long kindDeviceId, Long schoolId);
+    Optional<RfidRegister> findByRfidTag(String rfidTag);
+    Optional<RfidRegister> findByRfidTagAndKindDevice_Id(String rfidTag, Long kindDeviceId);
 
 }
