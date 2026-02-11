@@ -12,7 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 public class VehicleRequestDTO {
 
-
     @Min(value = 1, message = "El id del vehículo debe ser un número positivo")
     private Long id;
 
@@ -30,9 +29,12 @@ public class VehicleRequestDTO {
     )
     private String fleetNumber;
 
-    @Min(value = 1, message = "El id del registro RFID debe ser un número positivo")
-    private Long rfidRegisterId;
-
+    @NotBlank(message = "El rfidTag es obligatorio")
+    @Pattern(
+            regexp = "^[A-Za-z0-9 .,_-]+$",
+            message = "El rfidTag no puede contener caracteres especiales"
+    )
+    private String rfidTag;
 
     @Pattern(
             regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$",
