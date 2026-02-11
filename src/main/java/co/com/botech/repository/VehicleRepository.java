@@ -129,5 +129,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
                 LEFT JOIN v.rfidRegister r
                 WHERE v.fleetNumber IN :fleetNumbers
             """)
-    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(List<String> fleetNumbers);
+    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(@Param("fleetNumbers")List<String> fleetNumbers);
 }
