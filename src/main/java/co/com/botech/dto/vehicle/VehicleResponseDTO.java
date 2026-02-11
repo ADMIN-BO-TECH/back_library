@@ -1,7 +1,5 @@
 package co.com.botech.dto.vehicle;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Getter
@@ -14,7 +12,6 @@ public class VehicleResponseDTO {
     private Long id;
     private String plateNumber;
     private String fleetNumber;
-    private Long rfidRegisterId;
     private String rfidTag;
     private String bodyType;
     private String engineDisplacement;
