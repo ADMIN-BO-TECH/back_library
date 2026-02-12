@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
-    Optional<Vehicle> findByRfidRegister_Id(Long rfidRegisterId);
+    Optional<Vehicle> findByRfidRegister_RfidRegisterId(Long rfidRegisterId);
 
     @Query(value = """
     SELECT
@@ -20,8 +20,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
         v.plate_number      AS plateNumber,
         v.fleet_number      AS fleetNumber,
 
-        r.rfid_tag          AS rfidTag,
-        r.id                AS rfidRegisterId,
+        rr.rfid_tag         AS rfidTag,
+        rr.rfid_register_id AS rfidRegisterId,
 
         vd.body_type        AS bodyType,
         vd.engine_displacement AS engineDisplacement,
@@ -45,9 +45,11 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
         vd.operation_card_modality AS operationCardModality,
         vd.operation_card_number AS operationCardNumber
     FROM vehicles v
-    LEFT JOIN vehicles_details vd ON v.vehicle_id = vd.vehicle_id
-    LEFT JOIN rfid_register r     ON v.rfid_register_id = r.id
-""", nativeQuery = true)
+    LEFT JOIN vehicles_details vd
+           ON v.vehicle_id = vd.vehicle_id
+    LEFT JOIN rfid_register rr
+           ON rr.rfid_register_id = v.rfid_register_id
+    """, nativeQuery = true)
     List<VehicleCompleteResponse> findAllVehiclesComplete();
 
     @Query(value = """
@@ -57,7 +59,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
             v.fleet_number      AS fleetNumber,
 
             rr.rfid_tag         AS rfidTag,
-            v.rfid_register_id  AS rfidRegisterId,
+            rr.rfid_register_id AS rfidRegisterId,
 
             vd.body_type        AS bodyType,
             vd.engine_displacement AS engineDisplacement,
@@ -96,7 +98,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
             v.fleet_number      AS fleetNumber,
 
             rr.rfid_tag         AS rfidTag,
-            v.rfid_register_id  AS rfidRegisterId,
+            rr.rfid_register_id AS rfidRegisterId,
 
             vd.body_type        AS bodyType,
             vd.engine_displacement AS engineDisplacement,
@@ -129,12 +131,13 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     Optional<VehicleCompleteResponse> findVehiclesCompleteByFleetNumber(@Param("fleetNumber") String fleetNumber);
 
     @Query("""
-        SELECT  v.fleetNumber AS fleetNumber,
-                r.id          AS rfidRegisterId,
-                r.rfidTag     AS rfidTag
-        FROM Vehicle v
-        LEFT JOIN v.rfidRegister r
-        WHERE v.fleetNumber IN :fleetNumbers
-    """)
-    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(@Param("fleetNumbers") List<String> fleetNumbers);
+    SELECT  v.fleetNumber AS fleetNumber,
+            r.id          AS rfidRegisterId,
+            r.rfidTag     AS rfidTag
+    FROM Vehicle v
+    LEFT JOIN v.rfidRegister r
+    WHERE v.fleetNumber IN :fleetNumbers
+""")
+    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(
+            @Param("fleetNumbers") List<String> fleetNumbers);
 }

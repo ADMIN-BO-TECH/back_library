@@ -2,6 +2,6 @@ package co.com.botech.customDto;
 
 public interface VehicleFleetAndRegisterResponse {
     String getFleetNumber();
-    String getRfidRegisterId();
+    Long getRfidRegisterId();
     String getRfidTag();
 }
