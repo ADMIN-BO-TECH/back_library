@@ -15,41 +15,39 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     Optional<Vehicle> findByRfidRegister_Id(Long rfidRegisterId);
 
     @Query(value = """
-        SELECT
-            v.vehicle_id        AS id,
-            v.plate_number      AS plateNumber,
-            v.fleet_number      AS fleetNumber,
+    SELECT
+        v.vehicle_id        AS id,
+        v.plate_number      AS plateNumber,
+        v.fleet_number      AS fleetNumber,
 
-            rr.rfid_tag         AS rfidTag,
-            v.rfid_register_id  AS rfidRegisterId,
+        r.rfid_tag          AS rfidTag,
+        r.id                AS rfidRegisterId,
 
-            vd.body_type        AS bodyType,
-            vd.engine_displacement AS engineDisplacement,
-            vd.vehicle_class    AS vehicleClass,
-            vd.color            AS color,
-            vd.fuel_type        AS fuelType,
-            vd.line             AS line,
-            vd.brand            AS brand,
-            vd.model_year       AS modelYear,
-            vd.chassis_number   AS chassisNumber,
-            vd.transit_license_number AS transitLicenseNumber,
-            vd.engine_number    AS engineNumber,
-            vd.serial_number    AS serialNumber,
-            vd.ownership        AS ownership,
-            vd.mechanical_inspection_number AS mechanicalInspectionNumber,
-            vd.transit_department AS transitDepartment,
-            vd.soat_expiration_date AS soatExpirationDate,
-            vd.soat_policy_number AS soatPolicyNumber,
-            vd.service_type     AS serviceType,
-            vd.operation_card_expiration AS operationCardExpiration,
-            vd.operation_card_modality AS operationCardModality,
-            vd.operation_card_number AS operationCardNumber
-        FROM vehicles v
-        LEFT JOIN rfid_register rr
-               ON rr.rfid_register_id = v.rfid_register_id
-        LEFT JOIN vehicles_details vd
-               ON v.vehicle_id = vd.vehicle_id
-        """, nativeQuery = true)
+        vd.body_type        AS bodyType,
+        vd.engine_displacement AS engineDisplacement,
+        vd.vehicle_class    AS vehicleClass,
+        vd.color            AS color,
+        vd.fuel_type        AS fuelType,
+        vd.line             AS line,
+        vd.brand            AS brand,
+        vd.model_year       AS modelYear,
+        vd.chassis_number   AS chassisNumber,
+        vd.transit_license_number AS transitLicenseNumber,
+        vd.engine_number    AS engineNumber,
+        vd.serial_number    AS serialNumber,
+        vd.ownership        AS ownership,
+        vd.mechanical_inspection_number AS mechanicalInspectionNumber,
+        vd.transit_department AS transitDepartment,
+        vd.soat_expiration_date AS soatExpirationDate,
+        vd.soat_policy_number AS soatPolicyNumber,
+        vd.service_type     AS serviceType,
+        vd.operation_card_expiration AS operationCardExpiration,
+        vd.operation_card_modality AS operationCardModality,
+        vd.operation_card_number AS operationCardNumber
+    FROM vehicles v
+    LEFT JOIN vehicles_details vd ON v.vehicle_id = vd.vehicle_id
+    LEFT JOIN rfid_register r     ON v.rfid_register_id = r.id
+""", nativeQuery = true)
     List<VehicleCompleteResponse> findAllVehiclesComplete();
 
     @Query(value = """
