@@ -1,12 +1,9 @@
 package co.com.botech.util.entityUtils;
 
-
 import co.com.botech.constants.CustomExceptionCodeConstants;
 import co.com.botech.customDto.VehicleCompleteResponse;
-import co.com.botech.entity.RfidRegister;
 import co.com.botech.entity.Vehicle;
 import co.com.botech.entity.VehicleDetail;
-import co.com.botech.repository.RfidRegisterRepository;
 import co.com.botech.repository.VehicleDetailRepository;
 import co.com.botech.repository.VehicleRepository;
 import co.com.botech.util.generalUtils.CustomException;
