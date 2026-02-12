@@ -8,7 +8,6 @@ public interface VehicleCompleteResponse {
     String getFleetNumber();
 
     String getRfidTag();
-    Long getRfidRegisterId();
 
     String getBodyType();
 
