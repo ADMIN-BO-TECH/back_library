@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
-    Optional<Vehicle> findByRfidRegister_RfidRegisterId(Long rfidRegisterId);
+    Optional<Vehicle> findByRfidRegisterId(Long rfidRegisterId);
 
     @Query(value = """
     SELECT
@@ -138,6 +138,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     LEFT JOIN v.rfidRegister r
     WHERE v.fleetNumber IN :fleetNumbers
 """)
-    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(
-            @Param("fleetNumbers") List<String> fleetNumbers);
+    List<VehicleFleetAndRegisterResponse> findRfidRegistersByFleetNumbers(@Param("fleetNumbers") List<String> fleetNumbers);
 }
