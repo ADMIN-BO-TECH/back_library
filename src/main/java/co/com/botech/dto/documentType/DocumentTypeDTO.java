@@ -9,5 +9,6 @@ import lombok.*;
 @Builder
 public class DocumentTypeDTO {
     private Long documentTypeId;
+    private String code;
     private String name;
 }

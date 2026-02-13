@@ -16,12 +16,9 @@ public class EmployeeDTO {
     @Min(value = 1, message = "El id del empleado debe ser un número positivo")
     private Long employeeId;
 
-    @NotNull(message = "El tipo de documento es obligatorio")
-    @Pattern(
-            regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$",
-            message = "El tipo de documento contiene caracteres inválidos"
-    )
-    private String documentType;
+    @NotNull
+    @Min(value = 1, message = "El id del tipo de documento debe ser un número positivo")
+    private Long documentTypeId;
 
     @NotNull(message = "El número de documento es obligatorio")
     @Pattern(
