@@ -20,4 +20,16 @@ public class DocumentTypeUtils {
                         "No se ha encontrado el documento de tipo " + documentTypeName));
     }
 
+    public DocumentType getDocumentTypeById(Long id) {
+        return documentTypeRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
+                        "No se ha encontrado el documento de tipo con id " + id));
+    }
+
+    public void existsDocumentTypeById(Long id) {
+        if (!documentTypeRepository.existsById(id)) {
+            throw new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
+                    "No se ha encontrado el documento de tipo con id " + id);
+        }
+    }
 }

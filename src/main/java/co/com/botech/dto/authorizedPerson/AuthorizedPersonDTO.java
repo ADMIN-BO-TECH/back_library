@@ -17,8 +17,8 @@ public class AuthorizedPersonDTO {
     @Min(value = 1, message = "El id de la persona autorizada debe ser un número positivo")
     private Long authorizedPersonId;
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El tipo de documento contiene caracteres inválidos")
-    private String documentType;
+    @Min(value = 1, message = "El id del tipo de documento debe ser un número positivo")
+    private Long documentTypeId;
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El numero de documento contiene caracteres inválidos")
     private String documentNumber;
