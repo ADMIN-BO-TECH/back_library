@@ -13,8 +13,8 @@ public class RouteDTO {
     private String routeDays;
     private Long vehicleId;
     private boolean status;
-    private int assistantId;
-    private int operatorId;
+    private Long assistantId;
+    private Long operatorId;
     private String startTime;
     private String endTime;
     private String routeType;
