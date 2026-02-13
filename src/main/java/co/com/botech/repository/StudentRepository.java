@@ -22,7 +22,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         SELECT DISTINCT s.family.id
         FROM Student s
         WHERE s.gradeLevel IN :gradeList
-          AND s.novedad = false
+          AND s.novelty = false
     """)
     List<Long> findFamilyIdsByGrades(@Param("gradeList") List<String> gradeList);
 
@@ -30,7 +30,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         SELECT DISTINCT s.family.id
         FROM Student s
         WHERE s.studentId IN :studentSchoolIds
-          AND s.novedad = false
+          AND s.novelty = false
     """)
     List<Long> findFamilyIdsByStudentSchoolIds(@Param("studentSchoolIds") List<Long> studentSchoolIds);
 
@@ -38,7 +38,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         SELECT DISTINCT s.gradeLevel
         FROM Student s
         WHERE s.school.id = :schoolId
-          AND s.novedad = false
+          AND s.novelty = false
     """)
     List<String> findDistinctGradeLevelsBySchoolId(@Param("schoolId") Long schoolId);
 
