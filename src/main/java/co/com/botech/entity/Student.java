@@ -27,5 +27,5 @@ public class Student {
     @Column(name = "pickup_alone")  private Boolean pickupAlone;
     @Column(name = "leave_alone")   private Boolean leaveAlone;
     @Builder.Default @Column(name = "novedad", nullable = false)
-    private Boolean novedad = false;
+    private Boolean novelty = false;
 }

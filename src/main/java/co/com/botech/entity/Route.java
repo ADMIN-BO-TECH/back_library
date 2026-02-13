@@ -22,8 +22,8 @@ public class Route {
     @Column(name = "route_days")
     private String routeDays;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vehicle_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "vehicle_id", nullable = true)
     private Vehicle vehicle;
 
     @Column(name = "status")
