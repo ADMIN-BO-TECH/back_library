@@ -21,8 +21,8 @@ public class Permits {
     @Column(name = "permit_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @Column(name = "description")

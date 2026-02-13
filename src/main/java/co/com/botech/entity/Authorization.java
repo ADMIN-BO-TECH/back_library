@@ -21,8 +21,8 @@ public class Authorization {
     @Column(name = "authorization_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
