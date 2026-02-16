@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +20,8 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
     """)
     List<Permits> findByStudent_School_Id(@Param("schoolId") Long schoolId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
     @Query("""
         UPDATE Permits AS pe
         SET pe.permitStatus = :finalStatus,
@@ -41,7 +43,8 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
     List<Permits> findByStudent_FamilyCode_IdAndStudent_School_Id(@Param("familyCodeId") Long familyCodeId,
                                                                   @Param("schoolId") Long schoolId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
     @Query("""
         UPDATE Permits AS pe
         SET pe.permitStatus = :finalStatus
