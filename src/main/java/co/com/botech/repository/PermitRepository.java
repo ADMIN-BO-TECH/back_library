@@ -51,4 +51,6 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
     """)
     int updateStatus(@Param("permitId") Long permitId,
                      @Param("finalStatus") String finalStatus);
+
+    List<Permits> findByStudent_Family_FamilyCodeInAndStudent_School_Id(List<String> familyCodes, Long schoolId);
 }

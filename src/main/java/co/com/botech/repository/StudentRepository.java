@@ -53,4 +53,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         """,
             nativeQuery = true)
     List<GradeStudentsCount> countGradeLevelStatistics(@Param("schoolId") Long schoolId);
+
+    List<Student> findBySchool_IdAndFamily_FamilyCodeIn(Long schoolId, List<String> familyCodes);
 }
