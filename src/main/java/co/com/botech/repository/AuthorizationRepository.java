@@ -57,4 +57,5 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
             Pageable pageable
     );
 
+    List<Authorization> findAuthorizationByFamilyCodesAndSchoolId(List<String> familyCodes, Long schoolId);
 }
