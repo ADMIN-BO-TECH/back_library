@@ -57,5 +57,14 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
             Pageable pageable
     );
 
-    List<Authorization> findAuthorizationByFamilyCodesAndSchoolId(List<String> familyCodes, Long schoolId);
+    @Query("""
+    SELECT a
+    FROM Authorization a
+    WHERE a.student.family.familyCode IN :familyCodes
+      AND a.student.school.id = :schoolId
+""")
+    List<Authorization> findAuthorizationByFamilyCodesAndSchoolId(
+            @Param("familyCodes") List<String> familyCodes,
+            @Param("schoolId") Long schoolId
+    );
 }
