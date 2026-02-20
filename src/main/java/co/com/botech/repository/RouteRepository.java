@@ -118,4 +118,5 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                                                    @Param("day") String day);
 
     Optional<Route> findByIdAndSchool_Id(Long routeId, Long schoolId);
+    List<Route> findBySchool_IdAndStatusTrue(Long schoolId);
 }
