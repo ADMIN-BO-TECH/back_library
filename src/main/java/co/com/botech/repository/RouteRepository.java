@@ -118,5 +118,14 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                                                    @Param("day") String day);
 
     Optional<Route> findByIdAndSchool_Id(Long routeId, Long schoolId);
-    List<Route> findBySchool_IdAndStatusTrue(Long schoolId);
+
+    @Query("""
+        select r from Route r
+        left join fetch r.vehicle
+        left join fetch r.assistant
+        left join fetch r.operator
+        left join fetch r.school
+        where r.school.id = :schoolId and r.status = true
+        """)
+    List<Route> findActiveBySchoolWithJoins(@Param("schoolId") Long schoolId);
 }
