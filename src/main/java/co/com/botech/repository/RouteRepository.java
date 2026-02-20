@@ -154,7 +154,7 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     left join r.vehicle v
     left join r.assistant a
     left join r.operator o
-    where s.id = :schoolId and r.status = true
+    where s.id = :schoolId
     order by r.id
     """)
     List<RouteInformation> findRouteInformationBySchool(@Param("schoolId") Long schoolId);
