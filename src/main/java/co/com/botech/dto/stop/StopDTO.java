@@ -14,7 +14,7 @@ public class StopDTO {
     private double longitude;
     private String address;
     private boolean status;
-    private int time;
+    private String time;
     private int stopOrder;
     private Long routeId;
     private String stopType;

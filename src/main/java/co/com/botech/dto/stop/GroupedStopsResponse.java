@@ -15,7 +15,7 @@ public class GroupedStopsResponse {
     private double latitude;
     private double longitude;
     private String address;
-    private int time;
+    private String time;
     private int stopOriginalOrder;
     private boolean isRouteWayPoint;
     private List<GroupedStopRelationInterface> relatedEntities;
