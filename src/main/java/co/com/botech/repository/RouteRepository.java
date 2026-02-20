@@ -1,5 +1,6 @@
 package co.com.botech.repository;
 
+import co.com.botech.dto.route.RouteFirebaseSyncDTO;
 import co.com.botech.dto.route.RouteInformation;
 import co.com.botech.entity.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -131,29 +132,71 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     List<Route> findActiveBySchoolWithJoins(@Param("schoolId") Long schoolId);
 
     @Query("""
-        select new co.com.botech.dto.route.RouteInformation(
-            cast(r.id as string),
-            r.routeName,
-            case when v is null then null else cast(v.id as string) end,
-            v.plateNumber,
-            v.fleetNumber,
-            case when a is null then null else cast(a.id as string) end,
-            a.firstName,
-            case when o is null then null else cast(o.id as string) end,
-            o.firstName,
-            r.routeDays,
-            r.startTime,
-            r.endTime,
-            r.routeType,
-            r.status,
-            s.name
-        )
-        from Route r
-        join r.school s
-        left join r.vehicle v
-        left join r.assistant a
-        left join r.operator o
-        where s.id = :schoolId and r.status = true
-        """)
+    select new co.com.botech.dto.route.RouteInformation(
+        cast(r.id as string),
+        r.routeName,
+        case when v is null then null else cast(v.id as string) end,
+        v.plateNumber,
+        v.fleetNumber,
+        case when a is null then null else cast(a.id as string) end,
+        a.firstName,
+        case when o is null then null else cast(o.id as string) end,
+        o.firstName,
+        r.routeDays,
+        r.startTime,
+        r.endTime,
+        r.routeType,
+        r.status,
+        s.name
+    )
+    from Route r
+    join r.school s
+    left join r.vehicle v
+    left join r.assistant a
+    left join r.operator o
+    where s.id = :schoolId and r.status = true
+    order by r.id
+    """)
     List<RouteInformation> findRouteInformationBySchool(@Param("schoolId") Long schoolId);
+
+    @Query("""
+    select new co.com.botech.dto.route.RouteFirebaseSyncDTO(
+        r.id,
+        r.routeName,
+        r.routeDays,
+        r.startTime,
+        r.endTime,
+        r.status,
+        r.routeType,
+        s.name,
+    
+        v.id,
+        v.plateNumber,
+        v.fleetNumber,
+    
+        a.id,
+        a.firstName,
+        a.documentNumber,
+        a.email,
+        a.position,
+        a.rfidTag,
+    
+        o.id,
+        o.firstName,
+        o.documentNumber,
+        o.email,
+        o.position,
+        o.rfidTag,
+    
+        rr.id
+    )
+    from Route r
+    join r.school s
+    left join r.vehicle v
+    left join v.rfidRegister rr
+    left join r.assistant a
+    left join r.operator o
+    where s.id = :schoolId and r.status = true
+    """)
+    List<RouteFirebaseSyncDTO> findRoutesForFirebaseSync(@Param("schoolId") Long schoolId);
 }
