@@ -18,14 +18,14 @@ public class StudentUtils {
     public Student getStudentByStudentSchoolIdAndSchoolIdPass(Long studentSchoolId, Long schoolId) {
         return studentRepository.findByStudentIdAndSchool_Id(studentSchoolId, schoolId)
                 .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
-                        "No se han encontrado estiudiantes con el id de colegio " + studentSchoolId));
+                        "No se han encontrado estudiantes con el id de colegio " + studentSchoolId));
     }
 
     public Student getStudentByStudentSchoolIdAndSchoolIdAttendanceSocket(Long studentSchoolId, Long schoolId, String details, String code) {
         String detailsValue = (details == null || details.isBlank()) ? "" : details;
         return studentRepository.findByStudentIdAndSchool_Id(studentSchoolId, schoolId)
                 .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
-                        code + "No se han encontrado estiudiantes con el id de colegio " + studentSchoolId +
+                        code + ". No se han encontrado estudiantes con el id de colegio " + studentSchoolId +
                                 (detailsValue.isEmpty() ? "" : " - " + detailsValue)));
     }
 }
