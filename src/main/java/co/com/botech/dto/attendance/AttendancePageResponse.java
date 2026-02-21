@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceResponse {
+public class AttendancePageResponse implements AttendanceResponseProjection {
     private Long attendanceRegisterId;
     private LocalDateTime attendanceDateTime;
     private String schoolIdentifier;

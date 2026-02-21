@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceExcelObject {
+public class AttendanceExcelObject implements AttendanceResponseProjection {
 
     @JsonProperty("Id de Registro")
     private Long attendanceRegisterId;

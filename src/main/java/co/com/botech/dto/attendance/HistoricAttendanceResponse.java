@@ -12,5 +12,5 @@ import java.util.List;
 public class HistoricAttendanceResponse {
     private Long totalRegisters;
     private int totalPages;
-    private List<AttendanceResponse> registers;
+    private List<AttendancePageResponse> registers;
 }
