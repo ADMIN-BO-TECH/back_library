@@ -266,6 +266,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
             predicates.add(builder.equal(schoolJoin.get("id"), schoolId));
 
+            query.orderBy(builder.desc(attendance.get("attendanceTime")));
+
             return builder.and(predicates.toArray(Predicate[]::new));
         };
 
