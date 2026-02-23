@@ -9,6 +9,7 @@ import lombok.*;
 public class RouteStudentDto {
     private Long studentRecordId;
     private Long studentId;
+    private Long schoolEmployeeId;
     private String name;
     private String lastName;
     private String familyCode;
