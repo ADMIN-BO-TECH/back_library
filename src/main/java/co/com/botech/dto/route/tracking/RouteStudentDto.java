@@ -13,6 +13,5 @@ public class RouteStudentDto {
     private String name;
     private String lastName;
     private String familyCode;
-    private String status;
     private StopDtoTracking stop;
 }

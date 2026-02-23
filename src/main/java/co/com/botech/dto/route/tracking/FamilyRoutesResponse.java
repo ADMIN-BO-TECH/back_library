@@ -8,7 +8,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class FamilyRoutesResponse {
-    private RouteDto route;
     private List<FamilyRouteStudentDto> students;
 
     @Data

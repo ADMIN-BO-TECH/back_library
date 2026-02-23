@@ -13,6 +13,7 @@ public class StopDtoTracking {
     private String time;
     private String address;
     private LocationDto location;
+    private String status;
 
     @Data
     @NoArgsConstructor
