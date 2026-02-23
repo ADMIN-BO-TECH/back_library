@@ -7,7 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RouteStudentDto {
-    private String id;
+    private Long studentRecordId;
+    private Long studentId;
     private String name;
     private String lastName;
     private String familyCode;

@@ -15,9 +15,10 @@ public class RouteStopsResponse {
     @AllArgsConstructor
     @Builder
     public static class RouteStopsData {
-        private String id;
+        private Long id;
         private String name;
-        private Integer number;
+        private String fleetNumber;
+        private String vehicleRfidTag;
         private List<StopDtoTracking> stops;
     }
 }
