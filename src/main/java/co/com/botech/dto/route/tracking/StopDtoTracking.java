@@ -9,7 +9,7 @@ import lombok.*;
 public class StopDtoTracking {
     private Long id;
     private Integer order;
-    private String type;
+    private Long type;
     private String time;
     private String address;
     private LocationDto location;
