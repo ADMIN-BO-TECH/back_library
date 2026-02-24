@@ -1,4 +1,5 @@
 package co.com.botech.dto.route.tracking;
+
 import lombok.*;
 
 @Data
@@ -6,12 +7,13 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class StopDtoTracking {
-    private String id;
+    private Long id;
     private Integer order;
-    private String type;
+    private Long type;
     private String time;
     private String address;
     private LocationDto location;
+    private String status;
 
     @Data
     @NoArgsConstructor

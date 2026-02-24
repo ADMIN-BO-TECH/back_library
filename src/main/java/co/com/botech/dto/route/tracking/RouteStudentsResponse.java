@@ -1,8 +1,6 @@
 package co.com.botech.dto.route.tracking;
 
-
 import lombok.*;
-
 import java.util.List;
 
 @Data
@@ -17,9 +15,10 @@ public class RouteStudentsResponse {
     @AllArgsConstructor
     @Builder
     public static class RouteStudentsData {
-        private String id;
+        private Long id;
         private String name;
-        private Integer number;
+        private String fleetNumber;
+        private String vehicleRfidTag;
         private List<RouteStudentDto> students;
     }
 }
