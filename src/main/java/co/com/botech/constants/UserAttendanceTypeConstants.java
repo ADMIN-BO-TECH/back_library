@@ -30,7 +30,7 @@ public enum UserAttendanceTypeConstants {
             Parent parent = attendance.getParent();
             response.setSchoolIdentifier(parent.getDocumentNumber());
             response.setUserName(parent.getFirstName() + " " + parent.getLastName());
-            response.setCategory(this.name());
+            response.setCategory(this.getName());
         }
     },
     AUTHORIZED_PERSON("Persona Autorizada") {
