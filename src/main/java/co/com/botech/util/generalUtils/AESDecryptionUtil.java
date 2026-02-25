@@ -29,6 +29,24 @@ public class AESDecryptionUtil {
         }
     }
 
+    public static String encrypt(String plainText) {
+        try {
+            String key = getSecretKey();
+
+            IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+
+            byte[] encrypted = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encrypted);
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Error al encriptar el documento", ex);
+        }
+    }
+
     private static String getSecretKey() {
         try (InputStream inputStream = AESDecryptionUtil.class.getClassLoader()
                 .getResourceAsStream("clave_aes.txt")) {
