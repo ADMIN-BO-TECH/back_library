@@ -22,4 +22,10 @@ public class StopTypeUtils {
                         "No se ha encontrado el tipo de parada " + stopTypeName));
     }
 
+    public StopType getStopTypeById(Long stopTypeId) {
+        return stopTypeRepository.findById(stopTypeId)
+                .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
+                        "No se ha encontrado el tipo de parada con Id " + stopTypeId));
+    }
+
 }
