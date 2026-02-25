@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class AESDecryptionUtil {
+public class AESUtils {
 
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final String INIT_VECTOR = "cJx7TuPZL1qKD9sA";
@@ -48,7 +48,7 @@ public class AESDecryptionUtil {
     }
 
     private static String getSecretKey() {
-        try (InputStream inputStream = AESDecryptionUtil.class.getClassLoader()
+        try (InputStream inputStream = AESUtils.class.getClassLoader()
                 .getResourceAsStream("clave_aes.txt")) {
 
             if (inputStream == null) {
