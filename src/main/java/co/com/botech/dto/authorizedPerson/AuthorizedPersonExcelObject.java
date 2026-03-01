@@ -6,13 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class AuthorizedPersonExcelObject {
     @JsonProperty("Id Persona Autorizada")
     @Min(value = 1, message = "El id de la persona autorizada debe ser un número positivo")
@@ -66,12 +65,6 @@ public class AuthorizedPersonExcelObject {
     )
     private String familyCode;
 
-    @JsonProperty("Fecha Creación")
-    private LocalDateTime createdAt;
-
-    @JsonProperty("Fecha Actualización")
-    private LocalDateTime updatedAt;
-
     @JsonProperty("Fecha Inicio Autorización")
     @NotNull
     @Pattern(
@@ -103,7 +96,4 @@ public class AuthorizedPersonExcelObject {
             message = "El tipo contiene caracteres inválidos"
     )
     private String type;
-
-    @JsonProperty("Nombre Colegio")
-    private String schoolName;
 }

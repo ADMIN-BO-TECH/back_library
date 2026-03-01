@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -129,20 +128,34 @@ public class UploadUtils<T> {
         try {
             T objectOfSelectedClass = this.selectedClass.getDeclaredConstructor().newInstance();
             for (int i = 0; i < this.setMethods.size(); i++) {
+                Cell cell = row.getCell(i);
+
                 if (validateNumericInputType(i)) {
-                    Object value = getNumericObjectType(i, row.getCell(i));
-                    objectOfSelectedClass.getClass().getMethod(this.setMethods.get(i), this.typeVariables.get(i)).invoke(objectOfSelectedClass, value);
-                } else if (row.getCell(i).getCellType() == CellType.NUMERIC) {
-                    objectOfSelectedClass.getClass().getMethod(this.setMethods.get(i), String.class).invoke(objectOfSelectedClass, formatter.formatCellValue(row.getCell(i)));
-                } else if (validateDateTimeInputType(i)) {
-                    String value = formatter.formatCellValue(row.getCell(i));
-                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-                    LocalDateTime parsedDate = LocalDateTime.parse(value, dateTimeFormatter);
+                    Object value = getNumericObjectType(i, cell);
                     objectOfSelectedClass.getClass()
-                            .getMethod(this.setMethods.get(i), LocalDateTime.class)
-                            .invoke(objectOfSelectedClass, parsedDate);
+                            .getMethod(this.setMethods.get(i), this.typeVariables.get(i))
+                            .invoke(objectOfSelectedClass, value);
+
+                } else if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        String cellValue;
+                        LocalDateTime dateValue = cell.getLocalDateTimeCellValue();
+                        cellValue = dateValue.toLocalDate().toString();
+                        objectOfSelectedClass.getClass()
+                                .getMethod(this.setMethods.get(i), String.class)
+                                .invoke(objectOfSelectedClass, cellValue);
+
+
+                    } else {
+                        objectOfSelectedClass.getClass().getMethod(this.setMethods.get(i), String.class).invoke(objectOfSelectedClass, formatter.formatCellValue(row.getCell(i)));
+                    }
+
                 } else {
-                    objectOfSelectedClass.getClass().getMethod(this.setMethods.get(i), String.class).invoke(objectOfSelectedClass, row.getCell(i).getStringCellValue());
+                    String cellValue = cell != null ? cell.getStringCellValue() : null;
+                    objectOfSelectedClass.getClass()
+                            .getMethod(this.setMethods.get(i), String.class)
+                            .invoke(objectOfSelectedClass, cellValue);
                 }
             }
             dataFormatValidation(objectOfSelectedClass, row.getRowNum() + 1);
@@ -185,10 +198,6 @@ public class UploadUtils<T> {
 
     private boolean validateNumericInputType(Integer columnIndex) {
         return this.typeVariables.get(columnIndex).equals(Long.class) || this.typeVariables.get(columnIndex).equals(Integer.class) || this.typeVariables.get(columnIndex).equals(Double.class);
-    }
-
-    private boolean validateDateTimeInputType(Integer columnIndex) {
-        return this.typeVariables.get(columnIndex).equals(LocalDateTime.class);
     }
 
     private void dataFormatValidation(T object, int rowError) {
