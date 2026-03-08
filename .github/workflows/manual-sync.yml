@@ -116,7 +116,7 @@ jobs:
             STATUS="❌ FAILED"
           fi
           echo "$REPOSITORY -> $STATUS" >> summary.txt
-      - name: Upload partial summary
+      - name: Summary Upload Artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -132,7 +132,7 @@ jobs:
 
     steps:
       - uses: actions/download-artifact@v4
-      - name: Build final report
+      - name: Build Final Report
         run: |
           
           echo "## Library Update Report" >> $GITHUB_STEP_SUMMARY
