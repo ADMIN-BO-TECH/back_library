@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface DocumentTypeRepository extends JpaRepository<DocumentType, Long> {
     Optional<DocumentType> findByCode(String code);
+    Optional<DocumentType> findByName(String name);
 }

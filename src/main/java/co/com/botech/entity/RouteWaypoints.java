@@ -17,5 +17,6 @@ public class RouteWaypoints {
     @Column(name="longitude") private Double longitude;
     @Column(name="address")   private String address;
     @Column(name="order_index") private Integer orderIndex;
+    @Column(name = "specific_order") private Integer specificOrder;
     @Column(name="name")        private String name;
 }

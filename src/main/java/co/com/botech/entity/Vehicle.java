@@ -12,5 +12,6 @@ public class Vehicle {
 
     @Column(name = "plate_number")  private String plateNumber;
     @Column(name = "fleet_number")  private String fleetNumber;
-    @Column(name = "rfid_tag")      private String rfidTag;
+    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "rfid_register_id")
+    private RfidRegister rfidRegister;
 }

@@ -14,7 +14,7 @@ public class Stop {
     @Column(name="longitude") private Double longitude;
     @Column(name="address")   private String address;
     @Column(name="status")    private Boolean status;
-    @Column(name="time")      private Integer time;
+    @Column(name="time")      private String time;
     @Column(name="stop_order")private Integer stopOrder;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "route_id")

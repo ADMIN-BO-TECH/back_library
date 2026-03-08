@@ -1,0 +1,11 @@
+<settings>
+  <servers>
+    <server>
+      <id>github</id>
+      <username>__TU_USUARIO_GH__</username>
+      <password>__TU_PAT__</password>
+    </server>
+  </servers>
+</settings>
+
+<!-- settings.local.xml -->
