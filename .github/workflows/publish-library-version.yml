@@ -127,4 +127,4 @@ jobs:
           echo "**Version:** ${{ steps.version-generation.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Environment" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.version-generation.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.version-generation.outputs.environment }} " >> $GITHUB_STEP_SUMMARY
