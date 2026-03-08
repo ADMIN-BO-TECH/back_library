@@ -42,29 +42,23 @@ jobs:
         id: set-matrix
         run: |
           repos=()
-          
           if [ "${{ inputs.ScheduleJobs }}" = "true" ]; then
-            repos+=("ScheduleJobs")
+          repos+=("ScheduleJobs")
           fi
-          
           if [ "${{ inputs.tracking-api }}" = "true" ]; then
-            repos+=("tracking-api")
+          repos+=("tracking-api")
           fi
-          
           if [ "${{ inputs.PassApi }}" = "true" ]; then
-            repos+=("PassApi")
+          repos+=("PassApi")
           fi
-          
           if [ "${{ inputs.seguimiento-api }}" = "true" ]; then
-            repos+=("seguimiento-api")
+          repos+=("seguimiento-api")
           fi
           
-          # Convertimos array a JSON simple
-          matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s .)
-          echo "Selected repos: $matrix_json"
-          
-          # Guardamos salida directamente como lista
-          printf 'matrix=%s\n' "$matrix_json" >> $GITHUB_OUTPUT
+          matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s -c .)
+          echo "Selected repositories: $matrix_json"
+
+          echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
 
 
   update-repositories:
