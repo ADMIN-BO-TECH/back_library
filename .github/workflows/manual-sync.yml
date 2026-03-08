@@ -72,14 +72,75 @@ jobs:
         repo: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
-      - name: Wait for Workflow Action
-        uses: kamilchodola/wait-for-workflow-action@1.1.0
+
+      - name: Call Repository Workflow
+        id: dispatch
+        run: |
+
+          ENVIRONMENT="${{ inputs.environment }}"
+          REPOSITORY="${{ matrix.repo }}"
+
+          echo "Triggering update for $REPOSITORY on branch $ENVIRONMENT"
+
+          RESPONSE=$(curl -s -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.BOTECH_TOKEN }}" \
+            https://api.github.com/repos/ADMIN-BO-TECH/$REPOSITORY/actions/workflows/continous-integration.yml/dispatches \
+            -d "{
+            \"ref\": \"${ENVIRONMENT}\",
+            \"inputs\": {
+              \"branch\": \"${ENVIRONMENT}\"
+            }
+          }")
+          
+          # Mostrar la respuesta completa
+          echo "Response: $RESPONSE"
+          
+          # Si quieres chequear si fue exitoso (204 No Content es la respuesta de GitHub)
+            if [[ "$RESPONSE" == *"\"message\""* ]]; then
+            echo "Failed to trigger workflow"
+            RESULT="FAILED"
+            else
+            echo "Workflow dispatched successfully"
+            RESULT="SUCCESS"
+            fi
+            
+            echo "result=$RESULT" >> $GITHUB_OUTPUT
+
+
+      - name: Add repository result to summary
+        if: always()
+        run: |
+          REPOSITORY="${{ matrix.repo }}"
+          RESULT="${{ steps.dispatch.outputs.result }}"
+          if [ "$RESULT" = "SUCCESS" ]; then
+            STATUS="✅ SUCCESS TO INVOKE"
+          else
+            STATUS="❌ FAILED TO INVOKE"
+          fi
+          echo "$REPOSITORY -> $STATUS" >> summary.txt
+      - name: Summary Upload Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          GITHUB_TOKEN: ${{ secrets.BOTECH_TOKEN }}
-          workflow_id: 'continous-integration.yml'
-          max_wait_minutes: '10'
-          interval: '5'
-          timeout: '60'
-          org_name: 'ADMIN-BO-TECH'
-          repo_name: "${{ matrix.repo }}"
-          ref: '${{ inputs.environment }}'
+          name: result-${{ matrix.repo }}
+          path: summary.txt
+
+
+  summary:
+    name: Final Summary
+    needs: update-repositories
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Build Final Report
+        run: |
+          
+          echo "## Library Update Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          for file in result-*/*.txt; do
+            cat "$file" >> $GITHUB_STEP_SUMMARY
+          done
