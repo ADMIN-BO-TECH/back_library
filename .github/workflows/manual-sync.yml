@@ -41,28 +41,30 @@ jobs:
       - name: Build Matrix
         id: set-matrix
         run: |
-
           repos=()
-
+          
           if [ "${{ inputs.ScheduleJobs }}" = "true" ]; then
             repos+=("ScheduleJobs")
           fi
-
+          
           if [ "${{ inputs.tracking-api }}" = "true" ]; then
             repos+=("tracking-api")
           fi
-
+          
           if [ "${{ inputs.PassApi }}" = "true" ]; then
             repos+=("PassApi")
           fi
-
+          
           if [ "${{ inputs.seguimiento-api }}" = "true" ]; then
             repos+=("seguimiento-api")
           fi
           
-          matrix-generated=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s .)
-          echo "Selected repos: $matrix-generated"
-          echo "matrix={\"repo\":$matrix-generated}" >> $GITHUB_OUTPUT
+          # Convertimos array a JSON simple
+          matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s .)
+          echo "Selected repos: $matrix_json"
+          
+          # Guardamos salida directamente como lista
+          printf 'matrix=%s\n' "$matrix_json" >> $GITHUB_OUTPUT
 
 
   update-repositories:
@@ -72,7 +74,8 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+      matrix:
+        repo: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
 
