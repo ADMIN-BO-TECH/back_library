@@ -1,0 +1,143 @@
+name: Update Repositories
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to update
+        required: true
+        type: choice
+        options:
+          - dev
+          - main
+
+      ScheduleJobs:
+        description: ScheduleJobs
+        type: boolean
+
+      tracking-api:
+        description: tracking-api
+        type: boolean
+
+      PassApi:
+        description: PassApi
+        type: boolean
+
+      seguimiento-api:
+        description: seguimiento-api
+        type: boolean
+
+
+jobs:
+
+  build-matrix:
+    name: Build Repositories Matrix
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - name: Build Matrix
+        id: set-matrix
+        run: |
+
+          repos=()
+
+          if [ "${{ inputs.ScheduleJobs }}" = "true" ]; then
+            repos+=("ScheduleJobs")
+          fi
+
+          if [ "${{ inputs.tracking-api }}" = "true" ]; then
+            repos+=("tracking-api")
+          fi
+
+          if [ "${{ inputs.PassApi }}" = "true" ]; then
+            repos+=("PassApi")
+          fi
+
+          if [ "${{ inputs.seguimiento-api }}" = "true" ]; then
+            repos+=("seguimiento-api")
+          fi
+          
+          matrix-generated=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s .)
+          echo "Selected repos: $matrix-generated"
+          echo "matrix={\"repo\":$matrix-generated}" >> $GITHUB_OUTPUT
+
+
+  update-repositories:
+    name: Sync Repositories
+    needs: build-matrix
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+
+    steps:
+
+      - name: Call Repository Workflow
+        id: dispatch
+        run: |
+
+          ENVIRONMENT="${{ inputs.environment }}"
+          REPOSITORY="${{ matrix.repo }}"
+
+          echo "Triggering update for $REPOSITORY on branch $ENVIRONMENT"
+
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.BOTECH_TOKEN }}" \
+          https://api.github.com/repos/ADMIN-BO-TECH/$REPOSITORY/dispatches \
+          -d "{
+            \"event_type\": \"library-update\",
+            \"client_payload\": {
+              \"branch\": \"$ENVIRONMENT\"
+            }
+          }")
+          
+          echo "Response: $RESPONSE"
+          if [ "$RESPONSE" = "204" ]; then
+            RESULT="SUCCESS"
+          else
+            RESULT="FAILED"
+          fi
+          echo "result=$RESULT" >> $GITHUB_OUTPUT
+
+
+      - name: Add repository result to summary
+        if: always()
+        run: |
+          REPOSITORY="${{ matrix.repo }}"
+          RESULT="${{ steps.dispatch.outputs.result }}"
+          if [ "$RESULT" = "SUCCESS" ]; then
+            STATUS="✅ SUCCESS"
+          else
+            STATUS="❌ FAILED"
+          fi
+          echo "$REPOSITORY -> $STATUS" >> summary.txt
+      - name: Summary Upload Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.repo }}
+          path: summary.txt
+
+
+  summary:
+    name: Final Summary
+    needs: update-repositories
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Build Final Report
+        run: |
+          
+          echo "## Library Update Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          for file in result-*/*.txt; do
+            cat "$file" >> $GITHUB_STEP_SUMMARY
+          done
