@@ -41,28 +41,24 @@ jobs:
       - name: Build Matrix
         id: set-matrix
         run: |
-
           repos=()
-
           if [ "${{ inputs.ScheduleJobs }}" = "true" ]; then
-            repos+=("ScheduleJobs")
+          repos+=("ScheduleJobs")
           fi
-
           if [ "${{ inputs.tracking-api }}" = "true" ]; then
-            repos+=("tracking-api")
+          repos+=("tracking-api")
           fi
-
           if [ "${{ inputs.PassApi }}" = "true" ]; then
-            repos+=("PassApi")
+          repos+=("PassApi")
           fi
-
           if [ "${{ inputs.seguimiento-api }}" = "true" ]; then
-            repos+=("seguimiento-api")
+          repos+=("seguimiento-api")
           fi
           
-          matrix-generated=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s .)
-          echo "Selected repos: $matrix-generated"
-          echo "matrix={\"repo\":$matrix-generated}" >> $GITHUB_OUTPUT
+          matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s -c .)
+          echo "Selected repositories: $matrix_json"
+
+          echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
 
 
   update-repositories:
@@ -72,7 +68,8 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+      matrix:
+        repo: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
 
@@ -85,24 +82,30 @@ jobs:
 
           echo "Triggering update for $REPOSITORY on branch $ENVIRONMENT"
 
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ secrets.BOTECH_TOKEN }}" \
-          https://api.github.com/repos/ADMIN-BO-TECH/$REPOSITORY/dispatches \
-          -d "{
-            \"event_type\": \"library-update\",
-            \"client_payload\": {
-              \"branch\": \"$ENVIRONMENT\"
+          RESPONSE=$(curl -s -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.BOTECH_TOKEN }}" \
+            https://api.github.com/repos/ADMIN-BO-TECH/$REPOSITORY/actions/workflows/continous-integration.yml/dispatches \
+            -d "{
+            \"ref\": \"${ENVIRONMENT}\",
+            \"inputs\": {
+              \"branch\": \"${ENVIRONMENT}\"
             }
           }")
           
+          # Mostrar la respuesta completa
           echo "Response: $RESPONSE"
-          if [ "$RESPONSE" = "204" ]; then
-            RESULT="SUCCESS"
-          else
+          
+          # Si quieres chequear si fue exitoso (204 No Content es la respuesta de GitHub)
+            if [[ "$RESPONSE" == *"\"message\""* ]]; then
+            echo "Failed to trigger workflow"
             RESULT="FAILED"
-          fi
-          echo "result=$RESULT" >> $GITHUB_OUTPUT
+            else
+            echo "Workflow dispatched successfully"
+            RESULT="SUCCESS"
+            fi
+            
+            echo "result=$RESULT" >> $GITHUB_OUTPUT
 
 
       - name: Add repository result to summary
@@ -111,9 +114,9 @@ jobs:
           REPOSITORY="${{ matrix.repo }}"
           RESULT="${{ steps.dispatch.outputs.result }}"
           if [ "$RESULT" = "SUCCESS" ]; then
-            STATUS="✅ SUCCESS"
+            STATUS="✅ SUCCESS TO INVOKE"
           else
-            STATUS="❌ FAILED"
+            STATUS="❌ FAILED TO INVOKE"
           fi
           echo "$REPOSITORY -> $STATUS" >> summary.txt
       - name: Summary Upload Artifact
