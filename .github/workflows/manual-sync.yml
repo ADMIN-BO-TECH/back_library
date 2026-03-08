@@ -72,6 +72,17 @@ jobs:
         repo: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
+      - name: Wait for Workflow Action
+        uses: kamilchodola/wait-for-workflow-action@1.1.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.BOTECH_TOKEN }}
+          workflow_id: 'continous-integration.yml'
+          max_wait_minutes: '10'
+          interval: '5'
+          timeout: '60'
+          org_name: 'ADMIN-BO-TECH'
+          repo_name: "${{ matrix.repo }}"
+          ref: '${{ ENVIRONMENT }}'
 
       - name: Call Repository Workflow
         id: dispatch
