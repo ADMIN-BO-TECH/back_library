@@ -82,4 +82,4 @@ jobs:
           timeout: '60'
           org_name: 'ADMIN-BO-TECH'
           repo_name: "${{ matrix.repo }}"
-          ref: '${{ ENVIRONMENT }}'
+          ref: '${{ inputs.environment }}'
