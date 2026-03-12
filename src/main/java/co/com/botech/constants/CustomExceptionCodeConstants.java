@@ -5,7 +5,7 @@ public enum CustomExceptionCodeConstants {
     ENTITY_NOT_FOUND(404),
     CONFLICT(409),
     INVALID_REQUEST(405),
-    TESTING(1);
+    TESTING(5);
 
     private final int code;
 
