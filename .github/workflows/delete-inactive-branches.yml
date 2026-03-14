@@ -30,7 +30,7 @@ jobs:
             now_ts=$(date +%s)
             diff_days=$(( (now_ts - last_commit_ts) / 86400 ))
 
-            if [ "$diff_days" -gt 1 ]; then
+            if [ "$diff_days" -gt 30 ]; then
               echo "Eliminando rama: $branch ($diff_days días inactiva)"
               gh api -X DELETE repos/$REPO/git/refs/heads/$branch
               DELETED_BRANCHES+="- $branch ($diff_days días)\n"
