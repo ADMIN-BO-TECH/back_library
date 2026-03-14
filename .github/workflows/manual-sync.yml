@@ -73,7 +73,7 @@ jobs:
 
     steps:
       - name: Trigger Repository CI
-        id: dispatch
+        id: ci
         uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: ADMIN-BO-TECH
@@ -85,7 +85,7 @@ jobs:
           wait_interval: 30
 
       - name: Trigger Update And Deploy
-        id: dispatch
+        id: build
         uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: ADMIN-BO-TECH
@@ -95,41 +95,3 @@ jobs:
           ref: ${{ inputs.environment }}
           client_payload: '{"branch": "${{ inputs.environment }}"}'
           wait_interval: 30
-
-
-      - name: Add repository result to summary
-        if: always()
-        run: |
-          REPOSITORY="${{ matrix.repo }}"
-          RESULT="${{ steps.dispatch.outputs.result }}"
-          if [ "$RESULT" = "SUCCESS" ]; then
-            STATUS="✅ SUCCESS TO INVOKE"
-          else
-            STATUS="❌ FAILED TO INVOKE"
-          fi
-          echo "$REPOSITORY -> $STATUS" >> summary.txt
-      - name: Summary Upload Artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: result-${{ matrix.repo }}
-          path: summary.txt
-
-
-  summary:
-    name: Final Summary
-    needs: update-repositories
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - uses: actions/download-artifact@v4
-      - name: Build Final Report
-        run: |
-          
-          echo "## Library Update Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          for file in result-*/*.txt; do
-            cat "$file" >> $GITHUB_STEP_SUMMARY
-          done
