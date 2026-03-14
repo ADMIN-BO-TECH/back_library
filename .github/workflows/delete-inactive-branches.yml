@@ -1,0 +1,73 @@
+name: Delete Inactive Branches
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+jobs:
+  clean-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Inactive Branches
+        env:
+          GH_TOKEN: ${{ secrets.BOTECH_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          DELETED_BRANCHES=""
+          DELETED_TAGS=""
+          
+          branches=$(gh api repos/$REPO/branches --paginate --jq '.[].name')
+          
+          for branch in $branches; do
+            if [[ "$branch" == "main" || "$branch" == "dev" ]]; then
+              continue
+            fi
+          
+            last_commit_date=$(gh api repos/$REPO/commits/$branch --jq '.commit.committer.date')
+            last_commit_ts=$(date -d "$last_commit_date" +%s)
+            now_ts=$(date +%s)
+            diff_days=$(( (now_ts - last_commit_ts) / 86400 ))
+
+            if [ "$diff_days" -gt 1 ]; then
+              echo "Eliminando rama: $branch ($diff_days días inactiva)"
+              gh api -X DELETE repos/$REPO/git/refs/heads/$branch
+              DELETED_BRANCHES+="- $branch ($diff_days días)\n"
+          
+              if [[ "$branch" == *"/"* ]]; then
+                TICKET=${branch%%/*}
+                TAG_PATTERN="BOTECH-TICKET-$TICKET"
+          
+                tags=$(gh api repos/$REPO/tags --paginate --jq ".[].name | select(startswith(\"$TAG_PATTERN\"))")
+          
+                for tag in $tags; do
+                  gh api -X DELETE repos/$REPO/git/refs/tags/$tag
+                  DELETED_TAGS+="- $tag\n"
+                done
+              fi
+            fi
+          done
+
+          MESSAGE="*Continuous Integration Summary*
+          🏭 Repository: $REPO
+          🪬 Event: ${{ github.event_name }}"
+
+          if [ -n "$DELETED_BRANCHES" ]; then
+            MESSAGE="$MESSAGE
+            *Ramas eliminadas:*
+            $DELETED_BRANCHES"
+          else
+            MESSAGE="$MESSAGE
+            No se eliminó ninguna rama."
+          fi
+
+          if [ -n "$DELETED_TAGS" ]; then
+            MESSAGE="$MESSAGE
+            *Tags eliminados:*
+            $DELETED_TAGS"
+          fi
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"text\": \"$MESSAGE\"}" \
+            "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
