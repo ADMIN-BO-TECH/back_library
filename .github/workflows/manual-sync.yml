@@ -72,40 +72,29 @@ jobs:
         repo: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
-
-      - name: Call Repository Workflow
+      - name: Trigger Repository CI
         id: dispatch
-        run: |
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
+        with:
+          owner: ADMIN-BO-TECH
+          repo: ${{ matrix.repo }}
+          github_token: ${{ secrets.BOTECH_TOKEN }}
+          workflow_file_name: continous-integration.yml
+          ref: ${{ inputs.environment }}
+          client_payload: '{"branch": "${{ inputs.environment }}"}'
+          wait_interval: 30
 
-          ENVIRONMENT="${{ inputs.environment }}"
-          REPOSITORY="${{ matrix.repo }}"
-
-          echo "Triggering update for $REPOSITORY on branch $ENVIRONMENT"
-
-          RESPONSE=$(curl -s -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.BOTECH_TOKEN }}" \
-            https://api.github.com/repos/ADMIN-BO-TECH/$REPOSITORY/actions/workflows/continous-integration.yml/dispatches \
-            -d "{
-            \"ref\": \"${ENVIRONMENT}\",
-            \"inputs\": {
-              \"branch\": \"${ENVIRONMENT}\"
-            }
-          }")
-          
-          # Mostrar la respuesta completa
-          echo "Response: $RESPONSE"
-          
-          # Si quieres chequear si fue exitoso (204 No Content es la respuesta de GitHub)
-            if [[ "$RESPONSE" == *"\"message\""* ]]; then
-            echo "Failed to trigger workflow"
-            RESULT="FAILED"
-            else
-            echo "Workflow dispatched successfully"
-            RESULT="SUCCESS"
-            fi
-            
-            echo "result=$RESULT" >> $GITHUB_OUTPUT
+      - name: Trigger Update And Deploy
+        id: dispatch
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
+        with:
+          owner: ADMIN-BO-TECH
+          repo: ${{ matrix.repo }}
+          github_token: ${{ secrets.BOTECH_TOKEN }}
+          workflow_file_name: update-library-version-and-publish.yml
+          ref: ${{ inputs.environment }}
+          client_payload: '{"branch": "${{ inputs.environment }}"}'
+          wait_interval: 30
 
 
       - name: Add repository result to summary
