@@ -7,6 +7,7 @@ on:
 
 jobs:
   clean-branches:
+    name: Delete Inactive Branches
     runs-on: ubuntu-latest
     steps:
       - name: Delete Inactive Branches
@@ -29,7 +30,7 @@ jobs:
             now_ts=$(date +%s)
             diff_days=$(( (now_ts - last_commit_ts) / 86400 ))
 
-            if [ "$diff_days" -gt 1 ]; then
+            if [ "$diff_days" -gt 30 ]; then
               echo "Eliminando rama: $branch ($diff_days días inactiva)"
               gh api -X DELETE repos/$REPO/git/refs/heads/$branch
               DELETED_BRANCHES+="- $branch ($diff_days días)\n"
@@ -41,6 +42,7 @@ jobs:
                 tags=$(gh api repos/$REPO/tags --paginate --jq ".[].name | select(startswith(\"$TAG_PATTERN\"))")
           
                 for tag in $tags; do
+                  echo "Eliminando tag: tag"
                   gh api -X DELETE repos/$REPO/git/refs/tags/$tag
                   DELETED_TAGS+="- $tag\n"
                 done
