@@ -16,7 +16,6 @@ public class LinkManagement {
     @Column(name="link_url")     private String linkUrl;
     @Column(name="visible_in_app") private Boolean visibleInApp;
     @Column(name="description")  private String description;
-    @Column(name="access_key")   private String accessKey;
     @Column(name="updated_at") private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "route_id")
