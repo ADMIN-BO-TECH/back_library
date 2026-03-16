@@ -4,16 +4,16 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LinkManagementDTO {
     private Long linkId;
-    private boolean status;
-    private String linkUrl;
-    private String updatedAt;
-    private boolean visibleInApp;
-    private String description;
-    private String accessKey;
     private Long routeId;
+    private String RouteName;
+    private String linkUrl;
+    private Boolean status;
+    private String updatedAt;
+    private Boolean visibleInApp;
+    private String description;
 }
