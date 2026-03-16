@@ -199,4 +199,13 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     where s.id = :schoolId and r.status = true
     """)
     List<RouteFirebaseSyncDTO> findRoutesForFirebaseSync(@Param("schoolId") Long schoolId);
+
+    @Query("""
+    SELECT r
+    FROM Route r
+    LEFT JOIN FETCH r.vehicle v
+    LEFT JOIN FETCH v.rfidRegister rr
+    WHERE r.id = :routeId
+""")
+    Optional<Route> findByIdWithVehicleAndRfid(@Param("routeId") Long routeId);
 }
