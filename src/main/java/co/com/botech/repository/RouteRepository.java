@@ -208,4 +208,19 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     WHERE r.id = :routeId
 """)
     Optional<Route> findByIdWithVehicleAndRfid(@Param("routeId") Long routeId);
+
+    @Query("""
+    SELECT DISTINCT si.stop.route
+    FROM StopInformation si
+    WHERE si.student.id = :idRecordStudent
+      AND si.stop.route.status = true
+      AND FUNCTION('TIME', FUNCTION('STR_TO_DATE', si.stop.route.startTime, '%l:%i %p'))
+            <= FUNCTION('TIME', FUNCTION('STR_TO_DATE', :currentHour, '%l:%i %p'))
+      AND FUNCTION('TIME', FUNCTION('STR_TO_DATE', si.stop.route.endTime, '%l:%i %p'))
+            >= FUNCTION('TIME', FUNCTION('STR_TO_DATE', :currentHour, '%l:%i %p'))
+""")
+    List<Route> findActiveRoutesByStudentAndCurrentHour(
+            @Param("idRecordStudent") Long idRecordStudent,
+            @Param("currentHour") String currentHour
+    );
 }
