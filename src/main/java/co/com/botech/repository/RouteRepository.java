@@ -210,17 +210,24 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     Optional<Route> findByIdWithVehicleAndRfid(@Param("routeId") Long routeId);
 
     @Query("""
-    SELECT DISTINCT si.stop.route
+    SELECT DISTINCT r
     FROM StopInformation si
-    WHERE si.student.id = :idRecordStudent
-      AND si.stop.route.status = true
-      AND FUNCTION('TIME', FUNCTION('STR_TO_DATE', si.stop.route.startTime, '%l:%i %p'))
-            <= FUNCTION('TIME', FUNCTION('STR_TO_DATE', :currentHour, '%l:%i %p'))
-      AND FUNCTION('TIME', FUNCTION('STR_TO_DATE', si.stop.route.endTime, '%l:%i %p'))
-            >= FUNCTION('TIME', FUNCTION('STR_TO_DATE', :currentHour, '%l:%i %p'))
+    JOIN si.stop s
+    JOIN s.route r
+    WHERE si.student.id = :studentId
+      AND r.status = TRUE
+      AND LOCATE(:day, REPLACE(LOWER(r.routeDays), ' ', '')) > 0
+      AND FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p') IS NOT NULL
+      AND FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p') IS NOT NULL
+      AND FUNCTION('STR_TO_DATE', :hour, '%l:%i %p') IS NOT NULL
+      AND FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
+            <= FUNCTION('STR_TO_DATE', :hour, '%l:%i %p')
+      AND FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
+            >= FUNCTION('STR_TO_DATE', :hour, '%l:%i %p')
 """)
-    List<Route> findActiveRoutesByStudentAndCurrentHour(
-            @Param("idRecordStudent") Long idRecordStudent,
-            @Param("currentHour") String currentHour
+    List<Route> findActiveRoutesByStudentAndHour(
+            @Param("studentId") Long studentId,
+            @Param("day") String day,
+            @Param("hour") String hour
     );
 }
