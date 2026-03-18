@@ -5,5 +5,7 @@ public enum UserType {
     SCHOOL_EMPLOYEE,
     ADMIN,
     STUDENT,
-    COORDINATOR
+    COORDINATOR,
+    CLIENT_EMPLOYEE,
+    BOSS
 }
