@@ -11,5 +11,5 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class GetByStudentRequest {
-    private Long studentRecordId;
+    private String studentRecordId;
 }
