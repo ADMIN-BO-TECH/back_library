@@ -243,6 +243,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                 LEFT JOIN r.vehicle v
                 WHERE r.id = :routeId
             """)
-    List<RouteWithVehicleBasicInfoResponse> getRouteWithVehicleBasicInfoResponse(@Param("routeId") Long routeId);
+    RouteWithVehicleBasicInfoResponse getRouteWithVehicleBasicInfoResponse(@Param("routeId") Long routeId);
 }
 
