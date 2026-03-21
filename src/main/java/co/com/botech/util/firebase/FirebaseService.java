@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -350,6 +352,47 @@ public class FirebaseService {
             return Optional.of(new FirebaseObjectUtils.LatLng(lat, lon));
         } catch (Exception e) {
             log.error("Error leyendo ubicación por ID en Firebase (col={}, id={})", FirebaseCollectionsConstants.UBICACION.getName(), docId, e);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<FirebaseObjectUtils.LocationInfo> getLocationInfo(String docId) {
+        try {
+            DocumentSnapshot doc = firestore.collection(FirebaseCollectionsConstants.UBICACION.getName())
+                    .document(docId.trim())
+                    .get()
+                    .get();
+
+            if (!doc.exists() || doc.getData() == null) return Optional.empty();
+
+            Double lat = toDouble(doc.get("latitude"));
+            Double lon = toDouble(doc.get("longitude"));
+            String status = doc.getString("status");
+
+            Timestamp ts = doc.getTimestamp("dateTime");
+
+            String timestamp = null;
+            Long secondsAge = null;
+
+            if (ts != null) {
+                Instant instant = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
+                timestamp = instant.toString();
+                secondsAge = Duration.between(instant, Instant.now()).getSeconds();
+            }
+
+            if (lat == null || lon == null) return Optional.empty();
+
+            return Optional.of(new FirebaseObjectUtils.LocationInfo(
+                    lat,
+                    lon,
+                    timestamp,
+                    status,
+                    secondsAge
+            ));
+
+        } catch (Exception e) {
+            log.error("Error leyendo ubicación por ID en Firebase (col={}, id={})",
+                    FirebaseCollectionsConstants.UBICACION.getName(), docId, e);
             return Optional.empty();
         }
     }
