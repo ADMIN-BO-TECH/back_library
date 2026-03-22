@@ -12,5 +12,5 @@ public class LocationResponse {
     private double lng;
     private String timestamp;
     private Long ageSeconds;
-    private boolean string;
+    private String status;
 }
