@@ -13,4 +13,7 @@ public class FirebaseObjectUtils {
     public record LatLng(double lat, double lon) {
     }
 
+    public record LocationInfo(double lat, double lon, String timestamp, String status, Long secondsAge) {
+    }
+
 }
