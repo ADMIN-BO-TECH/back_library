@@ -1,5 +1,6 @@
 package co.com.botech.repository;
 
+import co.com.botech.customDto.RouteWithVehicleBasicInfoResponse;
 import co.com.botech.dto.route.RouteFirebaseSyncDTO;
 import co.com.botech.dto.route.RouteInformation;
 import co.com.botech.entity.Route;
@@ -51,22 +52,22 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     Optional<Route> findByIdAndStatus(Long id, Boolean status);
 
     @Query("""
-        SELECT r
-        FROM Route r
-        WHERE r.status = TRUE
-          AND LOCATE(:day, REPLACE(LOWER(r.routeDays),' ','')) > 0
-          AND (
-               (:vehicleId != 1 AND r.vehicle.id = :vehicleId)
-            OR (:operatorId != 1 AND r.operator.id = :operatorId)
-            OR (:assistantId != 1 AND r.assistant.id = :assistantId)
-          )
-          AND (
-                FUNCTION('STR_TO_DATE', :startTime, '%l:%i %p')
-                  < FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
-            AND FUNCTION('STR_TO_DATE', :endTime, '%l:%i %p')
-                  > FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
-          )
-    """)
+                SELECT r
+                FROM Route r
+                WHERE r.status = TRUE
+                  AND LOCATE(:day, REPLACE(LOWER(r.routeDays),' ','')) > 0
+                  AND (
+                       (:vehicleId != 1 AND r.vehicle.id = :vehicleId)
+                    OR (:operatorId != 1 AND r.operator.id = :operatorId)
+                    OR (:assistantId != 1 AND r.assistant.id = :assistantId)
+                  )
+                  AND (
+                        FUNCTION('STR_TO_DATE', :startTime, '%l:%i %p')
+                          < FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
+                    AND FUNCTION('STR_TO_DATE', :endTime, '%l:%i %p')
+                          > FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
+                  )
+            """)
     List<Route> findConflictingRoutesForCreate(@Param("vehicleId") Long vehicleId,
                                                @Param("operatorId") Long operatorId,
                                                @Param("assistantId") Long assistantId,
@@ -75,23 +76,23 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                                                @Param("day") String day);
 
     @Query("""
-        SELECT r
-        FROM Route r
-        WHERE r.status = TRUE
-          AND r.id <> :routeId
-          AND LOCATE(:day, REPLACE(LOWER(r.routeDays),' ','')) > 0
-          AND (
-               (:vehicleId != 1 AND r.vehicle.id = :vehicleId)
-            OR (:operatorId != 1 AND r.operator.id = :operatorId)
-            OR (:assistantId != 1 AND r.assistant.id = :assistantId)
-          )
-          AND (
-                FUNCTION('STR_TO_DATE', :startTime, '%l:%i %p')
-                  < FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
-            AND FUNCTION('STR_TO_DATE', :endTime, '%l:%i %p')
-                  > FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
-          )
-    """)
+                SELECT r
+                FROM Route r
+                WHERE r.status = TRUE
+                  AND r.id <> :routeId
+                  AND LOCATE(:day, REPLACE(LOWER(r.routeDays),' ','')) > 0
+                  AND (
+                       (:vehicleId != 1 AND r.vehicle.id = :vehicleId)
+                    OR (:operatorId != 1 AND r.operator.id = :operatorId)
+                    OR (:assistantId != 1 AND r.assistant.id = :assistantId)
+                  )
+                  AND (
+                        FUNCTION('STR_TO_DATE', :startTime, '%l:%i %p')
+                          < FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
+                    AND FUNCTION('STR_TO_DATE', :endTime, '%l:%i %p')
+                          > FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
+                  )
+            """)
     List<Route> findConflictingRoutesForUpdate(@Param("vehicleId") Long vehicleId,
                                                @Param("operatorId") Long operatorId,
                                                @Param("assistantId") Long assistantId,
@@ -101,19 +102,19 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                                                @Param("day") String day);
 
     @Query("""
-        SELECT r
-        FROM Route r
-        WHERE r.status = TRUE
-          AND r.vehicle.id = :vehicleId
-          AND :vehicleId != 1
-          AND (
-                FUNCTION('STR_TO_DATE', :startTime, '%l:%i %p')
-                  < FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
-            AND FUNCTION('STR_TO_DATE', :endTime, '%l:%i %p')
-                  > FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
-          )
-          AND LOCATE(LOWER(:day), REPLACE(LOWER(r.routeDays),' ','')) > 0
-    """)
+                SELECT r
+                FROM Route r
+                WHERE r.status = TRUE
+                  AND r.vehicle.id = :vehicleId
+                  AND :vehicleId != 1
+                  AND (
+                        FUNCTION('STR_TO_DATE', :startTime, '%l:%i %p')
+                          < FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
+                    AND FUNCTION('STR_TO_DATE', :endTime, '%l:%i %p')
+                          > FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
+                  )
+                  AND LOCATE(LOWER(:day), REPLACE(LOWER(r.routeDays),' ','')) > 0
+            """)
     List<Route> findConflictingRoutesByVehicleOnly(@Param("vehicleId") Long vehicleId,
                                                    @Param("startTime") String startTime,
                                                    @Param("endTime") String endTime,
@@ -122,90 +123,126 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     Optional<Route> findByIdAndSchool_Id(Long routeId, Long schoolId);
 
     @Query("""
-        select r from Route r
-        left join fetch r.vehicle
-        left join fetch r.assistant
-        left join fetch r.operator
-        left join fetch r.school
-        where r.school.id = :schoolId and r.status = true
-        """)
+            select r from Route r
+            left join fetch r.vehicle
+            left join fetch r.assistant
+            left join fetch r.operator
+            left join fetch r.school
+            where r.school.id = :schoolId and r.status = true
+            """)
     List<Route> findActiveBySchoolWithJoins(@Param("schoolId") Long schoolId);
 
     @Query("""
-    select new co.com.botech.dto.route.RouteInformation(
-        cast(r.id as string),
-        r.routeName,
-        case when v is null then null else cast(v.id as string) end,
-        v.plateNumber,
-        v.fleetNumber,
-        case when a is null then null else cast(a.id as string) end,
-        a.firstName,
-        case when o is null then null else cast(o.id as string) end,
-        o.firstName,
-        r.routeDays,
-        r.startTime,
-        r.endTime,
-        r.routeType,
-        r.status,
-        s.name
-    )
-    from Route r
-    join r.school s
-    left join r.vehicle v
-    left join r.assistant a
-    left join r.operator o
-    where s.id = :schoolId
-    order by r.id
-    """)
+            select new co.com.botech.dto.route.RouteInformation(
+                cast(r.id as string),
+                r.routeName,
+                case when v is null then null else cast(v.id as string) end,
+                v.plateNumber,
+                v.fleetNumber,
+                case when a is null then null else cast(a.id as string) end,
+                a.firstName,
+                case when o is null then null else cast(o.id as string) end,
+                o.firstName,
+                r.routeDays,
+                r.startTime,
+                r.endTime,
+                r.routeType,
+                r.status,
+                s.name
+            )
+            from Route r
+            join r.school s
+            left join r.vehicle v
+            left join r.assistant a
+            left join r.operator o
+            where s.id = :schoolId
+            order by r.id
+            """)
     List<RouteInformation> findRouteInformationBySchool(@Param("schoolId") Long schoolId);
 
     @Query("""
-    select new co.com.botech.dto.route.RouteFirebaseSyncDTO(
-        r.id,
-        r.routeName,
-        r.routeDays,
-        r.startTime,
-        r.endTime,
-        r.status,
-        r.routeType,
-        s.name,
-    
-        v.id,
-        v.plateNumber,
-        v.fleetNumber,
-    
-        a.id,
-        a.firstName,
-        a.documentNumber,
-        a.email,
-        a.position,
-        a.rfidTag,
-    
-        o.id,
-        o.firstName,
-        o.documentNumber,
-        o.email,
-        o.position,
-        o.rfidTag,
-    
-        rr.id
-    )
-    from Route r
-    join r.school s
-    left join r.vehicle v
-    left join v.rfidRegister rr
-    left join r.assistant a
-    left join r.operator o
-    where s.id = :schoolId and r.status = true
-    """)
+            select new co.com.botech.dto.route.RouteFirebaseSyncDTO(
+                r.id,
+                r.routeName,
+                r.routeDays,
+                r.startTime,
+                r.endTime,
+                r.status,
+                r.routeType,
+                s.name,
+            
+                v.id,
+                v.plateNumber,
+                v.fleetNumber,
+            
+                a.id,
+                a.firstName,
+                a.documentNumber,
+                a.email,
+                a.position,
+                a.rfidTag,
+            
+                o.id,
+                o.firstName,
+                o.documentNumber,
+                o.email,
+                o.position,
+                o.rfidTag,
+            
+                rr.id
+            )
+            from Route r
+            join r.school s
+            left join r.vehicle v
+            left join v.rfidRegister rr
+            left join r.assistant a
+            left join r.operator o
+            where s.id = :schoolId and r.status = true
+            """)
     List<RouteFirebaseSyncDTO> findRoutesForFirebaseSync(@Param("schoolId") Long schoolId);
 
     @Query("""
-    SELECT r
-    FROM Route r
-    LEFT JOIN FETCH r.vehicle v
-    LEFT JOIN FETCH v.rfidRegister rr
-    WHERE r.id = :routeId
-""")
+                SELECT r
+                FROM Route r
+                LEFT JOIN FETCH r.vehicle v
+                LEFT JOIN FETCH v.rfidRegister rr
+                WHERE r.id = :routeId
+            """)
     Optional<Route> findByIdWithVehicleAndRfid(@Param("routeId") Long routeId);
+
+    @Query("""
+                SELECT DISTINCT r
+                FROM StopInformation si
+                JOIN si.stop s
+                JOIN s.route r
+                WHERE si.student.id = :studentId
+                  AND r.status = TRUE
+                  AND LOCATE(:day, REPLACE(LOWER(r.routeDays), ' ', '')) > 0
+                  AND FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p') IS NOT NULL
+                  AND FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p') IS NOT NULL
+                  AND FUNCTION('STR_TO_DATE', :hour, '%l:%i %p') IS NOT NULL
+                  AND FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
+                        <= FUNCTION('STR_TO_DATE', :hour, '%l:%i %p')
+                  AND FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
+                        >= FUNCTION('STR_TO_DATE', :hour, '%l:%i %p')
+            """)
+    List<Route> findActiveRoutesByStudentAndHour(
+            @Param("studentId") Long studentId,
+            @Param("day") String day,
+            @Param("hour") String hour
+    );
+
+    @Query("""
+                SELECT 
+                r.id routeId,
+                r.routeName routeName,
+                r.status routeStatus,
+                v.fleetNumber vehicleFleetNumber,
+                v.plateNumber vehiclePlateNumber
+                FROM Route r
+                LEFT JOIN r.vehicle v
+                WHERE r.id = :routeId
+            """)
+    RouteWithVehicleBasicInfoResponse getRouteWithVehicleBasicInfoResponse(@Param("routeId") Long routeId);
 }
+

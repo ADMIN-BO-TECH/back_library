@@ -19,6 +19,10 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
     """)
     List<Permits> findByStudent_School_Id(@Param("schoolId") Long schoolId);
 
+
+    List<Permits> findPermitsByStudent_Id(Long studentRecordId);
+
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query("""

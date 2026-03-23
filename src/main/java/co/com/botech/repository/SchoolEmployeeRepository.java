@@ -21,4 +21,8 @@ public interface SchoolEmployeeRepository extends JpaRepository<SchoolEmployee, 
         WHERE ap.family.id = :familyId
     """)
     List<SchoolEmployee> findByFamilyCode_Id(@Param("familyId") Long familyId);
+    Optional<SchoolEmployee> findFirstBySchool_IdAndFamily_FamilyCodeInOrderByIdAsc(
+            Long schoolId,
+            List<String> familyCodes
+    );
 }
