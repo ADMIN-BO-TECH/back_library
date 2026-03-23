@@ -27,6 +27,18 @@ on:
         description: seguimiento-api
         type: boolean
 
+      SocketAsistencia:
+        description: 8078-SocketAsistencia
+        type: boolean
+
+      cardinal-api :
+        description: cardinal-api
+        type: boolean
+
+      n8n-api:
+        description: n8n-api
+        type: boolean
+
 
 jobs:
 
@@ -53,6 +65,15 @@ jobs:
           fi
           if [ "${{ inputs.seguimiento-api }}" = "true" ]; then
           repos+=("seguimiento-api")
+          fi
+          if [ "${{ inputs.SocketAsistencia }}" = "true" ]; then
+          repos+=("8078-SocketAsistencia")
+          fi
+          if [ "${{ inputs.cardinal-api }}" = "true" ]; then
+          repos+=("cardinal-api")
+          fi
+          if [ "${{ inputs.n8n-api }}" = "true" ]; then
+          repos+=("n8n-api")
           fi
           
           matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s -c .)
