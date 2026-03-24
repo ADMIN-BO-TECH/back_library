@@ -15,6 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT DISTINCT uf.user FROM UserFamily uf WHERE uf.family.school.id = :schoolId")
     List<User> findUsersBySchool(@Param("schoolId") Long schoolId);
 
-    @Query("SELECT DISTINCT uf.user FROM UserFamily uf WHERE uf.family.school.id = :schoolId AND uf.family.id IN :familyIds")
-    List<User> findUsersBySchoolAndFamilies(@Param("schoolId") Long schoolId, @Param("familyIds") List<Long> familyIds);
+    @Query("SELECT DISTINCT uf.user FROM UserFamily uf WHERE uf.family.id IN :familyIds")
+    List<User> findUsersByFamilies(@Param("familyIds") List<Long> familyIds);
 }
