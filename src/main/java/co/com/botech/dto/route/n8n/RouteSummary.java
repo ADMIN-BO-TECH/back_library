@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ActiveRouteSummary {
+public class RouteSummary {
     private Long routeId;
     private String name;
     private String status;
