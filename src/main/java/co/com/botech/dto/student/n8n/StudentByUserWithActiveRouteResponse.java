@@ -16,7 +16,6 @@ public class StudentByUserWithActiveRouteResponse {
     private String lastName;
     private String schoolName;
     private String grade;
-    private String status;
     private List<RouteSummary> activeRoute;
     private List<RouteSummary> inactiveRoute;
 }
