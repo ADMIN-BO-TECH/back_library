@@ -244,5 +244,24 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                 WHERE r.id = :routeId
             """)
     RouteWithVehicleBasicInfoResponse getRouteWithVehicleBasicInfoResponse(@Param("routeId") Long routeId);
+
+    @Query("""
+                SELECT DISTINCT r
+                FROM StopInformation si
+                JOIN si.stop s
+                JOIN s.route r
+                WHERE si.student.id = :studentId
+                  AND r.status = TRUE
+                  AND (
+                        LOCATE(:day, REPLACE(LOWER(r.routeDays), ' ', '')) = 0
+                        OR FUNCTION('STR_TO_DATE', :hour, '%l:%i %p') < FUNCTION('STR_TO_DATE', r.startTime, '%l:%i %p')
+                        OR FUNCTION('STR_TO_DATE', :hour, '%l:%i %p') > FUNCTION('STR_TO_DATE', r.endTime, '%l:%i %p')
+                  )
+            """)
+    List<Route> findInactiveRoutesBySchedule(
+            @Param("studentId") Long studentId,
+            @Param("day") String day,
+            @Param("hour") String hour
+    );
 }
 
