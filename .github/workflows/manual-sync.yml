@@ -39,6 +39,10 @@ on:
         description: n8n-api
         type: boolean
 
+      boss-api:
+        description: boss-api
+        type: boolean
+
 
 jobs:
 
@@ -74,6 +78,9 @@ jobs:
           fi
           if [ "${{ inputs.n8n-api }}" = "true" ]; then
           repos+=("n8n-api")
+          fi
+          if [ "${{ inputs.boss-api }}" = "true" ]; then
+          repos+=("boss-api")
           fi
           
           matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s -c .)
