@@ -1,7 +1,9 @@
 package co.com.botech.dto.student.n8n;
 
-import co.com.botech.dto.route.n8n.ActiveRouteSummary;
+import co.com.botech.dto.route.n8n.RouteSummary;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,5 +17,6 @@ public class StudentByUserWithActiveRouteResponse {
     private String schoolName;
     private String grade;
     private String status;
-    private ActiveRouteSummary activeRoute;
+    private List<RouteSummary> activeRoute;
+    private List<RouteSummary> inactiveRoute;
 }
