@@ -46,10 +46,10 @@ public class UploadUtils<T> {
 
     public void defaultConstructor(Class<T> selectedClass) {
         this.selectedClass = selectedClass;
-        List<String> headers = GeneralUtils.getHeaders(selectedClass);
-        this.getMethods = GeneralUtils.setGetMethods(headers);
-        this.columnNamesExpected = GeneralUtils.getColumnNames(this.selectedClass);
-        this.setMethods = GeneralUtils.setSetMethods(headers);
+        List<String> headers = co.com.botech.util.excelutils.GeneralUtils.getHeaders(selectedClass);
+        this.getMethods = co.com.botech.util.excelutils.GeneralUtils.setGetMethods(headers);
+        this.columnNamesExpected = co.com.botech.util.excelutils.GeneralUtils.getColumnNames(this.selectedClass);
+        this.setMethods = co.com.botech.util.excelutils.GeneralUtils.setSetMethods(headers);
         this.typeVariables = GeneralUtils.getTypes(selectedClass);
         this.formatter = new DataFormatter();
     }
@@ -101,7 +101,7 @@ public class UploadUtils<T> {
         } catch (ExcelDataException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error leyendo datos de excel - UploadUtils: " + e);
+            log.error("Error leyendo datos de excel - UploadUtilsLocal: " + e);
             throw new ExcelDataException("Error leyendo datos de excel: Verificar Formato");
         }
         return excelDataList;
@@ -178,7 +178,7 @@ public class UploadUtils<T> {
             throw e;
         } catch (Exception e) {
             int rowError = row.getRowNum() + 1;
-            log.error("Error organizando datos de excel - UploadUtils: Inconsistencia en los datos: " + e);
+            log.error("Error organizando datos de excel - UploadUtilsLocal: Inconsistencia en los datos: " + e);
             throw new ExcelDataException(
                     "Error organizando datos de excel: Inconsistencia en los datos en la fila " + rowError
             );
@@ -278,7 +278,7 @@ public class UploadUtils<T> {
             try {
                 return (Long) studentResponse.getClass().getMethod(this.getMethods.get(0)).invoke(studentResponse);
             } catch (Exception e) {
-                log.error("Error organizando IdList para validación - UploadUtils: ");
+                log.error("Error organizando IdList para validación - UploadUtilsLocal: ");
                 throw new ExcelDataException(("Error organizando IdList para validación"));
             }
         }).toList();
@@ -290,7 +290,7 @@ public class UploadUtils<T> {
             try {
                 return idList.contains(register.getClass().getMethod(this.getMethods.get(0)).invoke(register));
             } catch (Exception e) {
-                log.error("Error preparando lista de objetos - UploadUtils: ", e);
+                log.error("Error preparando lista de objetos - UploadUtilsLocal: ", e);
                 throw new ExcelDataException(("Error preparando lista de objetos"));
             }
         }).toList();
