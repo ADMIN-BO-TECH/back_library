@@ -127,45 +127,61 @@ public class UploadUtils<T> {
     private T mapRowToObject(Row row) {
         try {
             T objectOfSelectedClass = this.selectedClass.getDeclaredConstructor().newInstance();
+
             for (int i = 0; i < this.setMethods.size(); i++) {
+
                 Cell cell = row.getCell(i);
+                Class<?> fieldType = this.typeVariables.get(i);
+                Object value = null;
 
                 if (validateNumericInputType(i)) {
-                    Object value = getNumericObjectType(i, cell);
-                    objectOfSelectedClass.getClass()
-                            .getMethod(this.setMethods.get(i), this.typeVariables.get(i))
-                            .invoke(objectOfSelectedClass, value);
+                    value = getNumericObjectType(i, cell);
+                } else if (fieldType.equals(Boolean.class)) {
 
-                } else if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                    String cellValue = cell != null
+                            ? formatter.formatCellValue(cell).trim().toUpperCase()
+                            : null;
 
-                    if (DateUtil.isCellDateFormatted(cell)) {
-                        String cellValue;
-                        LocalDateTime dateValue = cell.getLocalDateTimeCellValue();
-                        cellValue = dateValue.toLocalDate().toString();
-                        objectOfSelectedClass.getClass()
-                                .getMethod(this.setMethods.get(i), String.class)
-                                .invoke(objectOfSelectedClass, cellValue);
-
-
+                    if (cellValue == null || cellValue.isEmpty()) {
+                        value = null;
+                    } else if (cellValue.equals("SI") || cellValue.equals("TRUE")) {
+                        value = Boolean.TRUE;
+                    } else if (cellValue.equals("NO") || cellValue.equals("FALSE")) {
+                        value = Boolean.FALSE;
                     } else {
-                        objectOfSelectedClass.getClass().getMethod(this.setMethods.get(i), String.class).invoke(objectOfSelectedClass, formatter.formatCellValue(row.getCell(i)));
+                        throw new ExcelDataException(
+                                "Error en la fila " + (row.getRowNum() + 1) +
+                                        ": Solo se permite SI o NO para campos booleanos"
+                        );
                     }
+                } else if (cell != null && cell.getCellType() == CellType.NUMERIC
+                        && DateUtil.isCellDateFormatted(cell)) {
+
+                    LocalDateTime dateValue = cell.getLocalDateTimeCellValue();
+                    value = dateValue.toLocalDate().toString();
 
                 } else {
-                    String cellValue = cell != null ? cell.getStringCellValue() : null;
-                    objectOfSelectedClass.getClass()
-                            .getMethod(this.setMethods.get(i), String.class)
-                            .invoke(objectOfSelectedClass, cellValue);
+
+                    value = cell != null
+                            ? formatter.formatCellValue(cell)
+                            : null;
                 }
+                objectOfSelectedClass.getClass()
+                        .getMethod(this.setMethods.get(i), fieldType)
+                        .invoke(objectOfSelectedClass, value);
             }
+
             dataFormatValidation(objectOfSelectedClass, row.getRowNum() + 1);
             return objectOfSelectedClass;
+
         } catch (ExcelDataException e) {
             throw e;
         } catch (Exception e) {
             int rowError = row.getRowNum() + 1;
             log.error("Error organizando datos de excel - UploadUtils: Inconsistencia en los datos: " + e);
-            throw new ExcelDataException("Error organizando datos de excel: Inconsistencia en los datos en la fila " + rowError);
+            throw new ExcelDataException(
+                    "Error organizando datos de excel: Inconsistencia en los datos en la fila " + rowError
+            );
         }
     }
 
