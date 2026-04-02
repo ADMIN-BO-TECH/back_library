@@ -8,9 +8,10 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class StudentExcelObject {
 
     @JsonProperty("Id de Registro del Estudiante")

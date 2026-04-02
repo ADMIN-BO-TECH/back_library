@@ -9,9 +9,10 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class ParentExcelObject {
 
     @JsonProperty("Id del Acudiente")
