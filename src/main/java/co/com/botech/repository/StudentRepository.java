@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findBySchool_Id(Long schoolId);
+    Optional<Student> findByRfidTagAndSchool_Id(String rfidTag, Long schoolId);
     List<Student> findBySchool_IdAndFamily_FamilyCode(Long schoolId, String familyCode);
     List<Student> findByFamily_Id(Long familyId);
     List<Student> findByStudentIdInAndSchool_Id(List<Long> studentIds, Long schoolId);
