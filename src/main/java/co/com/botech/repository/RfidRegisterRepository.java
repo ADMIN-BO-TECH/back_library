@@ -14,5 +14,6 @@ public interface RfidRegisterRepository extends JpaRepository<RfidRegister, Long
     Optional<RfidRegister> findByRfidTag(String rfidTag);
     Optional<RfidRegister> findByRfidTagAndKindDevice_Id(String rfidTag, Long kindDeviceId);
     Optional<RfidRegister> findByRfidTagIgnoreCase(String rfidTag);
-
+    List<RfidRegister> findByRfidRegisterIdInAndKindDevice_IdAndSchool_Id(
+            List<Long> ids, Long kindDeviceId, Long schoolId);
 }
