@@ -122,7 +122,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             if (typeAttendanceFilterTerms != null && !typeAttendanceFilterTerms.isEmpty()) {
                 predicates.add(builder.or(typeAttendanceFilterTerms.stream()
                                 .map(filterValue -> builder.like(
-                                        builder.lower(attendanceTypeJoin.get("type").get("description")),
+                                        builder.lower(attendanceTypeJoin.get("description")),
                                         "%" + filterValue.toLowerCase() + "%"
                                 ))
                                 .toArray(Predicate[]::new)
@@ -247,7 +247,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
             if (typeAttendanceFilterTerms != null && !typeAttendanceFilterTerms.isEmpty()) {
                 predicates.add(builder.or(typeAttendanceFilterTerms.stream()
                                 .map(filterValue -> builder.like(
-                                        builder.lower(attendanceTypeJoin.get("type").get("description")),
+                                        builder.lower(attendanceTypeJoin.get("description")),
                                         "%" + filterValue.toLowerCase() + "%"
                                 ))
                                 .toArray(Predicate[]::new)
