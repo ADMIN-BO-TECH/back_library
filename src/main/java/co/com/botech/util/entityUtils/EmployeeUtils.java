@@ -7,6 +7,8 @@ import co.com.botech.util.generalUtils.CustomException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @AllArgsConstructor
 public class EmployeeUtils {
@@ -19,5 +21,9 @@ public class EmployeeUtils {
                 .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
                         code + ". No se han encontrado empleados con el número de documento " + documentNumber +
                                 (detailsValue.isEmpty() ? "" : " - " + detailsValue)));
+    }
+
+    public Optional<Employee> getEmployeeOptionalByDocumentNumberSocket(String documentNumber) {
+        return employeeRepository.findByDocumentNumber(documentNumber);
     }
 }

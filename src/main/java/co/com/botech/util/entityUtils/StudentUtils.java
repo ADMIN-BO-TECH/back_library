@@ -21,15 +21,12 @@ public class StudentUtils {
                         "No se han encontrado estudiantes con el id de colegio " + studentSchoolId));
     }
 
-    public Student getStudentByStudentSchoolIdAndSchoolIdAttendanceSocket(String document, Long schoolId, String details, String code, int option) {
+    public Student getStudentByStudentSchoolIdAndSchoolIdAttendanceSocket(String document, Long schoolId, String details, String code) {
         String detailsValue = (details == null || details.isBlank()) ? "" : details;
 
-        return (option == 1
-                ? studentRepository.findByStudentIdAndSchool_Id(Long.valueOf(document), schoolId)
-                : studentRepository.findByRfidTagAndSchool_Id(document, schoolId))
+        return studentRepository.findByRfidTagAndSchool_Id(document, schoolId)
                 .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
-                        code + ". No se han encontrado estudiantes con el " +
-                                (option == 1 ? "id de colegio " : "rfid ") + document +
+                        code + ". No se han encontrado estudiantes con el rfid " + document +
                                 (detailsValue.isEmpty() ? "" : " - " + detailsValue)));
     }
 }
