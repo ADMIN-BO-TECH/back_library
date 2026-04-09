@@ -13,7 +13,9 @@ public enum FirebaseCollectionsConstants {
     HISTORIAL_UBICACION("HistorialUbicacion"),
     ROUTES("routes"),
     MAP_TRACE("TrazadoMapa"),
-    MAP_TRACE_COORDINATES("coordinates");
+    MAP_TRACE_COORDINATES("coordinates"),
+    UNRECOGNIZED_RFID("unrecognizedRfids");
+
 
     private final String collectionName;
 
