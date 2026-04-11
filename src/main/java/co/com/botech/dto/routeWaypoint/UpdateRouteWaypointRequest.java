@@ -14,9 +14,6 @@ public class UpdateRouteWaypointRequest {
     private Long id;
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "Los nombres de paradas no puede contener caracteres especiales")
     private String name;
-    @Min(value = 1, message = "El id del recorrido debe ser un número positivo")
-    private Long routeId;
-
     @Min(value = 1, message = "El orden de parada debe ser un número positivo")
     private int stopOrder;
 
