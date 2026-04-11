@@ -25,4 +25,10 @@ public class RouteWaypointsUtils {
                     "No se ha encontrado punto auxiliar de ruta con id: " + routeWaypointId);
         }
     }
+
+    public void validateRouteWaypointExistsToRoute(Long routeWaypointId, Long routeId) {
+        RouteWaypoints routeWaypoints = routeWaypointsRepository.findByRouteIdAndId(routeId, routeWaypointId)
+                .orElseThrow(() -> new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
+                        "No se ha encontrado punto auxiliar de ruta con ID: " + routeWaypointId + " para la ruta con ID: " + routeId));
+    }
 }
