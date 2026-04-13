@@ -7,5 +7,6 @@ public enum UserType {
     STUDENT,
     COORDINATOR,
     CLIENT_EMPLOYEE,
-    BOSS
+    BOSS,
+    RRHH
 }
