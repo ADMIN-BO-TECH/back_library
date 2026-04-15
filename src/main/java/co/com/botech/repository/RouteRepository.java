@@ -263,5 +263,13 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
             @Param("day") String day,
             @Param("hour") String hour
     );
+
+    @Query("SELECT r FROM Route r " +
+            "WHERE r.status = true " +
+            "AND (r.assistant.id = :employeeId OR r.operator.id = :employeeId) " +
+            "AND r.routeDays LIKE CONCAT('%', :day, '%')")
+    List<Route> findActiveRoutesByEmployeeAndDay(
+            @Param("employeeId") Long employeeId,
+            @Param("day") String day);
 }
 
