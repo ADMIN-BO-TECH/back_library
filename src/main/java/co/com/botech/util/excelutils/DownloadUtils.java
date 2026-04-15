@@ -56,8 +56,9 @@ public class DownloadUtils<T> {
                                 cell.setCellValue((Integer) values.get(i));
                             } else if ("Long".equals(type)) {
                                 cell.setCellValue((Long) values.get(i));
-                            } else if ("Double".equals(type)) {
-                                cell.setCellValue((Double) values.get(i));
+                            } else if ("Boolean".equals(type)) {
+                                Boolean boolValue = (Boolean) values.get(i);
+                                cell.setCellValue(boolValue ? "SI" : "NO");
                             } else {
                                 cell.setCellValue(values.get(i).toString());
                             }
@@ -117,8 +118,10 @@ public class DownloadUtils<T> {
                             if ("Integer".equals(type)) cell.setCellValue((Integer) v);
                             else if ("Long".equals(type)) cell.setCellValue((Long) v);
                             else if ("Double".equals(type)) cell.setCellValue((Double) v);
-                            else if ("Boolean".equals(type)) cell.setCellValue((Boolean) v);
-                            else cell.setCellValue(v.toString());
+                            else if ("Boolean".equals(type)) {
+                                Boolean boolValue = (Boolean) v;
+                                cell.setCellValue(boolValue ? "SI" : "NO");
+                            } else cell.setCellValue(v.toString());
                         }
                     }
                     rowIndex++;
