@@ -8,7 +8,7 @@ import lombok.Getter;
 public class EmployeeActiveRouteResponse {
     private String routeId;
     private String routeName;
-    private Long idVehiculo;
+    private Long idVehicle;
     private String routeDays;
     private String startTime;
     private String endTime;
