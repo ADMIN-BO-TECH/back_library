@@ -4,16 +4,22 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SpeedingRequest {
+public class SpeedingListRequest {
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El numFlota contiene caracteres inválidos")
-    private String fleetNumber;
+    private List<
+            @Pattern(
+                    regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n\\-:]+$",
+                    message = "Cada número de flota contiene caracteres inválidos"
+            )
+                    String> fleetNumbers;
 
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "La fecha de inicio contiene caracteres inválidos")
