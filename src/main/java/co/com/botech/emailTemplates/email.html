@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+    <title>Notificación de BO-TECH TRACKING</title>
+    <style>
+        table, td, div, h1, p {
+            font-family: Arial, sans-serif;
+            mso-line-height-rule: exactly; /* Outlook */
+        }
+        /* Para evitar problemas de escalado de imagen en Outlook */
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+        /* Reseteo básico para clientes de correo */
+        body {
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table {
+            border-spacing: 0;
+            mso-table-lspace: 0pt;
+            mso-tstyle-alt-padding: 0;
+            mso-table-rspace: 0pt;
+        }
+        .outer-table {
+            border-collapse: collapse;
+            border: 0;
+            border-spacing: 0;
+            background: #f4f4f4; /* Un gris claro para el fondo del correo */
+        }
+        .inner-card {
+            border-collapse: collapse;
+            border: 1px solid #e0e0e0; /* Borde más sutil */
+            border-spacing: 0;
+            text-align: left;
+            background: #ffffff;
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra sutil */
+            overflow: hidden; /* Asegura que los bordes redondeados se vean bien */
+        }
+        .header-section {
+            padding: 20px 30px; /* Reducido un poco para balancear */
+            background: #2D679E; /* Un azul más oscuro y elegante */
+            color: #ffffff;
+            text-align: center; /* Centra el contenido del header */
+        }
+        .header-section h1 {
+            font-size: 28px; /* Un poco más grande para el título principal */
+            margin: 0;
+            line-height: 1.2;
+            color: #ffffff;
+            padding-right: 15px; /* Espacio para el logo si va a la derecha */
+        }
+        .header-logo {
+            max-width: 150px; /* Tamaño máximo para el logo */
+            height: auto;
+            display: block; /* Para evitar espacios extra bajo la imagen */
+            float: right; /* Flota a la derecha dentro de su celda */
+            margin-left: 20px; /* Espacio a la izquierda del logo */
+        }
+        .content-section {
+            padding: 36px 30px 42px 30px;
+        }
+        .content-text h1 {
+            font-size: 24px;
+            margin: 0 0 20px 0;
+            color: #153643;
+        }
+        .content-text p {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            line-height: 24px;
+            color: #333333; /* Un gris oscuro para el texto principal */
+        }
+        .footer-section {
+            padding: 20px 30px; /* Menos padding que el header */
+            background: #2D679E; /* Mismo color que el header */
+            color: #ffffff;
+            text-align: center; /* Centra el footer */
+        }
+        .footer-section p {
+            margin: 0;
+            font-size: 12px; /* Más pequeño para el footer */
+            line-height: 16px;
+            color: #ffffff;
+        }
+        .footer-section a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        .disclaimer-section {
+            padding: 20px;
+            font-size: 10px;
+            line-height: 14px;
+            color: #777777; /* Un gris medio para el aviso */
+            text-align: justify; /* Justificado para mejor lectura */
+        }
+        .disclaimer-section b {
+            color: #555555;
+        }
+        /* Media Queries para diseño responsivo (si es soportado por el cliente de correo) */
+        @media screen and (max-width: 600px) {
+            .main-wrapper {
+                width: 100% !important;
+            }
+            .header-section {
+                padding: 20px 20px !important;
+            }
+            .header-logo {
+                float: none !important; /* Desactiva el float para móviles */
+                margin: 10px auto 0 !important; /* Centra el logo debajo del título */
+                display: block !important;
+            }
+            .header-section h1 {
+                font-size: 24px !important;
+                padding-right: 0 !important;
+                text-align: center !important;
+            }
+            .content-section, .footer-section, .disclaimer-section {
+                padding: 20px !important;
+            }
+            .inner-card {
+                box-shadow: none !important; /* Quita la sombra en móviles si es demasiado */
+            }
+        }
+    </style>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;">
+<center style="width:100%;background-color:#f4f4f4;">
+    <table role="presentation" class="outer-table" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;background:#f4f4f4;">
+        <tr>
+            <td align="center" style="padding:0;">
+                <table role="presentation" class="main-wrapper" style="width:600px;border-collapse:collapse;border:0;border-spacing:0;margin-left:auto;margin-right:auto;">
+                    <tr>
+                        <td style="padding:20px 0;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:0;">
+                            <table role="presentation" class="inner-card" style="width:100%;border-collapse:collapse;border:1px solid #e0e0e0;border-spacing:0;text-align:left;background:#ffffff;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.1);overflow:hidden;">
+                                <tr>
+                                    <td class="header-section" style="padding:20px 30px;background:#2D679E;color:#ffffff;text-align:center;">
+                                        <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;">
+                                            <tr>
+                                                <td style="width: calc(100% - 170px); vertical-align: middle; padding-right: 15px;">
+                                                    <h1 style="font-size:28px;margin:0;line-height:1.2;color:#ffffff;">BO-TECH TRACKING</h1>
+                                                </td>
+                                                <td style="width:170px; vertical-align: middle; text-align: right;">
+                                                    <img src="https://botech.com.co/img/botech.png" alt="Botech Logo" class="header-logo" style="width:100%; max-width:150px; height:auto;display:block;margin-left:auto;"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="content-section" style="padding:36px 30px 42px 30px;">
+                                        <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;">
+                                            <tr>
+                                                <td class="content-text" style="padding:0 0 36px 0;color:#153643;">
+                                                    <h1 style="font-size:24px;margin:0 0 20px 0;font-family:Arial,sans-serif;">BO-TECH TRACKING Notificación</h1>
+                                                    <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;color:#333333;" th:utext="${message}"></p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="footer-section" style="padding:20px 30px;background:#2D679E;color:#ffffff;text-align:center;">
+                                        <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;font-size:9px;font-family:Arial,sans-serif;">
+                                            <tr>
+                                                <td style="padding:0;text-align:center;">
+                                                    <p style="margin:0;font-size:12px;line-height:16px;font-family:Arial,sans-serif;color:#ffffff;">
+                                                        &reg; BO-TECH, Colombia 2025<br/><a href="https://botech.com.co" style="color:#ffffff;text-decoration:underline;">BO-TECH</a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:20px 0;">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table role="presentation" class="outer-table" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;background:#f4f4f4;">
+        <tr>
+            <td align="center" style="padding:0;">
+                <table role="presentation" class="main-wrapper" style="width:600px;border-collapse:collapse;border:0;border-spacing:0;margin-left:auto;margin-right:auto;">
+
+                    <!-- 🔗 Redes sociales -->
+                    <tr>
+                        <td style="text-align: center; padding: 20px 0;">
+                            <p style="font-size: 12px; color: #333; margin-bottom: 8px;">Síguenos en nuestras redes sociales</p>
+                            <a href="https://www.instagram.com/botech_col?igsh=bjh5OHFzbm5peDM1" target="_blank" style="margin: 0 8px;">
+                                <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg" alt="Instagram" width="24" height="24" style="vertical-align: middle;" />
+                            </a>
+                            <a href="https://www.linkedin.com/company/botechco/" target="_blank" style="margin: 0 8px;">
+                                <img src="https://cdn-icons-png.flaticon.com/512/4401/4401412.png" alt="LinkedIn" width="24" height="24" style="vertical-align: middle;" />
+                            </a>
+                            <a href="https://wa.me/573169000187" target="_blank" style="margin: 0 8px;">
+                                <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/whatsapp.svg" alt="WhatsApp" width="24" height="24" style="vertical-align: middle;" />
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- 🛡 Aviso de confidencialidad -->
+                    <tr>
+                        <td class="disclaimer-section" style="padding: 20px; font-size: 10px; line-height: 14px; color: #777777; text-align: justify; font-family: Arial, sans-serif;">
+                            <!-- Animación visual antes del mensaje -->
+                            <div style="text-align: center; opacity: 0; animation: fadeInTitle 2s ease-in-out forwards; animation-delay: 0.5s;">
+                                <h2 style="font-size: 16px; color: #555;">⚠️ Información Confidencial</h2>
+                            </div>
+
+                            <style>
+                                @keyframes fadeInTitle {
+                                    from { opacity: 0; }
+                                    to { opacity: 1; }
+                                }
+                            </style>
+
+                            <b>Aviso importante:</b> El contenido de este documento y/o sus anexos es confidencial y está destinado exclusivamente a la persona natural o jurídica a la que se dirige.
+                            Si usted no es el destinatario intencional, por favor reenvíe el mensaje de inmediato y elimine tanto el documento como sus anexos.
+                            Queda estrictamente prohibida cualquier retención, copia, reproducción, difusión, distribución o uso indebido del contenido, lo cual puede ser sancionado por la ley.
+                            BO-TECH manifiesta que los anexos han sido revisados y se estima que están libres de virus. No obstante, el destinatario asume la responsabilidad por cualquier pérdida o daño derivado de su uso.
+
+                            <br/><br/>
+
+                            <b>Important Notice:</b> The contents of this document and/or its attachments are confidential and intended solely for the individual or organization to whom they are addressed.
+                            If you are not the intended recipient, please forward it immediately and delete the message and its attachments.
+                            Any retention, copying, reproduction, dissemination, distribution, or misuse of this information is strictly prohibited and may be punishable by law.
+                            BO-TECH has reviewed the attachments and believes them to be virus-free. However, the recipient assumes full responsibility for any damages caused by their use.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</center>
+</body>
+</html>

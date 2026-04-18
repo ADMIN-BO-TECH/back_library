@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bienvenido al Programa Beta - BO-TECH</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f6fc;">
+
+<!-- Wrapper Table -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f6fc;">
+    <tr>
+        <td style="padding: 20px 0;">
+            <!-- Main Container -->
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600"
+                   style="margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+
+                <!-- Header -->
+                <tr>
+                    <td style="background: linear-gradient(135deg, #4A5F7F 0%, #5B7399 100%); padding: 30px 24px 24px; text-align: center;">
+                        <a th:href="${URL_SITIO}" style="display: inline-block; text-decoration: none;">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-a7LBCSVFTq2T1BAy6xaYG3c2OW389x.png"
+                                 alt="BO-TECH"
+                                 style="width: 180px; height: auto; display: block; margin: 0 auto;">
+                        </a>
+                        <h1 style="margin: 16px 0 0; font-size: 24px; font-weight: 700; color: #ffffff; line-height: 1.3;">
+                            ¡Bienvenido al Programa Beta!
+                        </h1>
+                        <p style="margin: 8px 0 0; font-size: 14px; color: #e6ecff; line-height: 1.4;">
+                            Gracias por acompañarnos en este sueño
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Welcome Message -->
+                <tr>
+                    <td style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); padding: 24px;">
+                        <p style="margin: 0 0 12px; font-size: 14px; color: #334155; line-height: 1.6;">
+                            Durante más de dos años hemos trabajado incansablemente para mejorar nuestros sistemas y ofrecer una experiencia confiable, segura y moderna.
+                        </p>
+                        <p style="margin: 0 0 12px; font-size: 14px; color: #334155; line-height: 1.6;">
+                            Hoy, con más de <strong>2.000 usuarios activos diarios</strong> y una <strong>disponibilidad del 98%</strong>, damos un paso más con el lanzamiento de esta nueva versión en la que hemos trabajado durante más de cuatro meses.
+                        </p>
+                        <p style="margin: 0 0 12px; font-size: 14px; color: #334155; line-height: 1.6;">
+                            <strong>Gracias a ti</strong>, que hoy te unes como usuario de prueba, por hacer parte de este camino. Cada comentario, cada idea y cada minuto que dedicas nos ayuda a seguir creciendo y mejorando.
+                        </p>
+                        <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.6; text-align: right; font-style: italic;">
+                            Con gratitud,<br>
+                            Santi B.
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Step 1 -->
+                <tr>
+                    <td style="padding: 0 24px 16px;">
+                        <table role="presentation" width="100%" style="background-color: #fef3c7; border-radius: 8px;">
+                            <tr>
+                                <td style="padding: 16px;">
+                                    <p style="margin: 0; font-size: 14px; color: #78350f; line-height: 1.4;">
+                                        <strong>Importante:</strong> Abre este correo directamente desde tu <strong>iPhone o Android</strong> para que los enlaces funcionen correctamente.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- iPhone -->
+                <tr>
+                    <td style="padding: 0 24px 16px;">
+                        <table role="presentation" width="100%" style="background-color: #eff6ff; border: 2px solid #3b82f6; border-radius: 8px;">
+                            <tr>
+                                <td style="padding: 20px;">
+                                    <h3 style="margin: 0 0 16px; font-size: 18px; font-weight: 700; color: #1e40af;">📱 Para usuarios de iPhone</h3>
+
+                                    <div style="margin-bottom: 16px;">
+                                        <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #1e3a8a;">Paso 1: Instala TestFlight</h4>
+                                        <p style="margin: 0 0 8px; font-size: 14px; color: #1e40af;">TestFlight es la app oficial de Apple para probar aplicaciones beta.</p>
+                                        <div style="text-align: center; padding-top: 8px;">
+                                            <a href="https://apps.apple.com/app/testflight/id899247664"
+                                               style="display: inline-block; background-color: #1e40af; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
+                                                Descargar TestFlight
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 16px;">
+                                        <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #1e3a8a;">Paso 2: Únete al programa beta</h4>
+                                        <p style="margin: 0 0 8px; font-size: 14px; color: #1e40af;">Una vez instalado TestFlight, toca el siguiente enlace para unirte:</p>
+                                        <div style="text-align: center; padding-top: 8px;">
+                                            <a th:href="${URL_TESTFLIGHT}"
+                                               style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
+                                                Unirme al Beta (TestFlight)
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Android -->
+                <tr>
+                    <td style="padding: 0 24px 16px;">
+                        <table role="presentation" width="100%" style="background-color: #ecfdf5; border: 2px solid #10b981; border-radius: 8px;">
+                            <tr>
+                                <td style="padding: 20px;">
+                                    <h3 style="margin: 0 0 16px; font-size: 18px; font-weight: 700; color: #047857;">🤖 Para usuarios de Android</h3>
+                                    <p style="font-size: 14px; color: #047857;">Toca el siguiente enlace desde tu teléfono Android:</p>
+                                    <div style="text-align: center; padding-top: 8px;">
+                                        <a th:href="${URL_ANDROID_BETA}"
+                                           style="display: inline-block; background-color: #10b981; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
+                                            Descargar App Beta (Android)
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Account -->
+                <tr>
+                    <td style="padding: 0 24px 16px;">
+                        <table role="presentation" width="100%" style="background-color: #f1f5f9; border-radius: 8px;">
+                            <tr>
+                                <td style="padding: 20px;">
+                                    <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 700;">🔑 Creación de cuenta</h3>
+                                    <p>Una vez instalada la app, necesitarás crear tu cuenta:</p>
+                                    <div style="background-color: #ffffff; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                                        <p style="margin: 0 0 4px; font-weight: 600;">Tu código de familia:</p>
+                                        <p style="margin: 0; font-size: 18px; font-weight: 700; color: #1e40af;" th:text="${CODIGO_FAMILIA}"></p>
+                                    </div>
+                                    <ol style="padding-left: 20px;">
+                                        <li>En la app, toca el botón "Registrarse"</li>
+                                        <li>Ingresa tus datos personales</li>
+                                        <li>Ingresa tu <strong>código de familia:</strong> <span th:text="${CODIGO_FAMILIA}"></span></li>
+                                        <li>Completa el registro y ¡listo!</li>
+                                    </ol>
+                                    <div style="text-align: center;">
+                                        <a th:href="${URL_CREAR_CUENTA}"
+                                           style="display: inline-block; background-color: #0f172a; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
+                                            Ver Tutorial de Registro
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Support -->
+                <tr>
+                    <td style="padding: 8px 24px 16px;">
+                        <hr style="border: none; border-top: 1px solid #e2e8f0; margin-bottom: 16px;">
+                        <p style="font-size: 13px; color: #51617f;">
+                            ¿Necesitas ayuda? Escríbenos a
+                            <a th:href="'mailto:' + ${EMAIL_SOPORTE}" th:text="${EMAIL_SOPORTE}" style="color: #1e40af; text-decoration: underline;"></a>
+                            o visita nuestro
+                            <a th:href="${URL_AYUDA}" style="color: #1e40af; text-decoration: underline;">Centro de Ayuda</a>.
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background-color: #f8fafc; padding: 16px 24px;">
+                        <p style="font-size: 12px; color: #6b7b99;">
+                            Recibiste este correo porque te uniste al programa beta de BO-TECH.
+                            Si no deseas recibir más mensajes, puedes
+                            <a th:href="${URL_DESUSCRIPCION}" style="color: #1e40af; text-decoration: underline;">darte de baja aquí</a>.
+                        </p>
+                        <p th:utext="'BO-TECH · ' + ${DIRECCION_EMPRESA} + ' · ' + ${CIUDAD_PAIS}"
+                           style="font-size: 12px; color: #6b7b99;">
+                        </p>
+                        <p style="font-size: 12px; color: #6b7b99;">
+                            Creado con ❤️ por el equipo de BO-TECH.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

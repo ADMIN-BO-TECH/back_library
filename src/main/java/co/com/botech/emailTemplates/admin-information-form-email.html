@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario informativo - Contacto recibido</title>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-wrapper {
+            background-color: #ffffff;
+            max-width: 650px;
+            margin: 40px auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0052cc, #007bff);
+            color: #fff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+        }
+        .content {
+            padding: 25px 35px;
+        }
+        .section {
+            background-color: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .section h3 {
+            color: #007bff;
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+        .info-item {
+            margin-bottom: 8px;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #111827;
+        }
+        .message {
+            background-color: #eef2ff;
+            padding: 15px;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            color: #1f2937;
+        }
+        .footer {
+            text-align: center;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            font-size: 12px;
+            padding: 15px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="header">
+        <h1>📬 Respuesta a formulario informativo</h1>
+    </div>
+
+    <div class="content">
+        <div class="section">
+            <h3>Información de contacto</h3>
+            <div class="info-item"><span class="info-label">Nombre:</span> <span th:text="${NAME}">Nombre del usuario</span></div>
+            <div class="info-item"><span class="info-label">Correo:</span> <span th:text="${USER_EMAIL}">correo@ejemplo.com</span></div>
+            <div class="info-item"><span class="info-label">Teléfono:</span> <span th:text="${PHONE}">123456789</span></div>
+        </div>
+
+        <div class="section">
+            <h3>Detalles académicos</h3>
+            <div class="info-item"><span class="info-label">Colegio:</span> <span th:text="${SCHOOL}">Nombre del colegio</span></div>
+            <div class="info-item"><span class="info-label">Sistema:</span> <span th:text="${SYSTEM}">Sistema educativo</span></div>
+        </div>
+
+        <div class="section">
+            <h3>Mensaje del usuario</h3>
+            <div class="message" th:text="${MESSAGE}">
+                Este es el mensaje que el usuario dejó en el formulario.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Este correo fue generado automáticamente. Por favor, no responda a este mensaje.</p>
+    </div>
+</div>
+</body>
+</html>
