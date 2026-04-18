@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class StudentDTO {
-    @Min(value = 1, message = "El ID de Registro del estudiante debe ser un número positivo")
+    @Min(value = 0, message = "El ID de Registro del estudiante debe ser un número positivo")
     private Long studentRecordId;
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El nombre no puede contener caracteres especiales")
