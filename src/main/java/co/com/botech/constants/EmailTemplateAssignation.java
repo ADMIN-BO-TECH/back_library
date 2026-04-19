@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 public enum EmailTemplateAssignation {
 
-    ADMIN_INFO("admin-information-form-email", null),
+    ADMIN_INFO("admin-information-form-email.html", null),
     GENERAL_EMAIL("email", null),
-    BETA_TESTERS("welcome-beta-testers", null),
-    WELCOME_EMPLOYEES("welcome-empleados-email", null),
-    WELCOME_PARENTS("welcome-parents-email", SendParentEmailRequest.class);
+    BETA_TESTERS("welcome-beta-testers.html", null),
+    WELCOME_EMPLOYEES("welcome-empleados-email.html", null),
+    WELCOME_PARENTS("welcome-parents-email.html", SendParentEmailRequest.class);
 
     private final String templateName;
     private final Class<? extends EmailVariables> variablesClass;
