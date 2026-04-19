@@ -1,11 +1,13 @@
 package co.com.botech.dto.email.templateStructure;
 
 import co.com.botech.dto.email.EmailVariables;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SendAdminInformationEmailRequest implements EmailVariables {
     private String name;
     private String school;
