@@ -8,8 +8,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SendParentEmailRequest implements EmailVariables {
+public class SendEmployeeEmailRequest implements EmailVariables {
     private String familyCode;
-    private List<String> studentNames;
     private String schoolName;
+    private String siteUrl;
+    private String countryCity;
 }
