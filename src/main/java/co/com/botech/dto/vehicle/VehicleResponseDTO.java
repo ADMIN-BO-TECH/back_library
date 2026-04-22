@@ -1,9 +1,13 @@
 package co.com.botech.dto.vehicle;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +17,8 @@ public class VehicleResponseDTO {
     private String plateNumber;
     private String fleetNumber;
     private String rfidTag;
+
+    // Datos generales
     private String bodyType;
     private String engineDisplacement;
     private String vehicleClass;
@@ -22,16 +28,33 @@ public class VehicleResponseDTO {
     private String brand;
     private String modelYear;
     private String chassisNumber;
-    private String transitLicenseNumber;
     private String engineNumber;
     private String serialNumber;
-    private String ownership;
-    private String mechanicalInspectionNumber;
-    private String transitDepartment;
-    private String soatExpirationDate;
-    private String soatPolicyNumber;
     private String serviceType;
-    private String operationCardExpiration;
+
+    // Documentación legal
+    private String transitLicenseNumber;
+    private String transitDepartment;
+    private String ownership;
+
+    // SOAT
+    private LocalDate soatExpirationDate;
+    private String soatPolicyNumber;
+
+    // Tarjeta de operación
+    private LocalDate operationCardExpiration;
     private String operationCardModality;
     private String operationCardNumber;
+
+    // Técnico-mecánica
+    private String mechanicalInspectionNumber;
+    private LocalDate mechanicalInspectionExpiration;
+
+    // Kilometraje
+    private Integer mileage;
+    private LocalDateTime mileageLastUpdated;
+
+    // Capacidad y estado
+    private Integer vehicleCapacity;
+    private String vehicleStatus;
 }
