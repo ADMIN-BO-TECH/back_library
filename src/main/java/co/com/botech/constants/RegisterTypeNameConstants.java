@@ -12,4 +12,4 @@ public enum RegisterTypeNameConstants {
     public String getName() {
         return name;
     }
-    }
+}

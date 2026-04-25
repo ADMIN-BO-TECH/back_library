@@ -11,10 +11,6 @@ public enum AuthorizedPersonTypeConstants {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public static boolean isValidType(String type) {
         if (type == null) return false;
         for (AuthorizedPersonTypeConstants authorizedPersonType : AuthorizedPersonTypeConstants.values()) {
@@ -23,5 +19,9 @@ public enum AuthorizedPersonTypeConstants {
             }
         }
         return false;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
