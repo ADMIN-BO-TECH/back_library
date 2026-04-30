@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 public class AttendanceByFamilyCodeResponse {
 
     private String fullName;
-
     private String dateTime;
-
     private String readerName;
-
     private String attendanceType;
+    private Double latitude;
+    private Double longitude;
+    private String address;
 }
