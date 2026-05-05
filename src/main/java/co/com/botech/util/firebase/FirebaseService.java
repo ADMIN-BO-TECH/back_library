@@ -1,12 +1,18 @@
 package co.com.botech.util.firebase;
 
 import co.com.botech.constants.FirebaseCollectionsConstants;
+import co.com.botech.constants.StorageConstants;
+import co.com.botech.util.generalUtils.BucketStorageUtils;
 import co.com.botech.util.generalUtils.FirebaseObjectUtils;
+import co.com.botech.util.utilObjects.StorageImageObject;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.google.common.util.concurrent.MoreExecutors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +34,9 @@ import static co.com.botech.util.generalUtils.FirebaseObjectUtils.toDouble;
 public class FirebaseService {
 
     private final Firestore firestore;
+    private final Storage storage;
+    private final StorageConstants storageConstants;
+    private final BucketStorageUtils bucketStorageUtils;
 
     public boolean existsInCollectionBasic(String id, String collection) {
         try {
@@ -434,6 +443,7 @@ public class FirebaseService {
             throw new RuntimeException("Error al recuperar DocRef deFirebase", e);
         }
     }
+
     public List<Map<String, Object>> findLastSpeedingExcessRegister(String collection, String subcollection, String id, double minSpeed, int limit, int offset) {
         try {
             ApiFuture<QuerySnapshot> future = firestore.collection(collection)
@@ -512,5 +522,90 @@ public class FirebaseService {
             throw new FirebaseException("Error al upsert en Firebase");
         }
     }
+
+    public String uploadAnnouncementImage(
+            StorageImageObject file,
+            Long schoolId,
+            Long announcementId,
+            String schoolName
+    ) {
+
+        validateImage(file);
+
+        try {
+            // 1. Generar path interno (NO URL)
+            String objectPath = BucketStorageUtils.buildPathAnnouncementName(
+                    file.getOriginalFilename(),
+                    schoolId,
+                    announcementId,
+                    schoolName
+            );
+
+            String bucketName = StorageConstants.BUCKET_NAME;
+
+            BlobId blobId = BlobId.of(bucketName, objectPath);
+
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                    .setContentType(file.getContentType())
+                    .build();
+
+            storage.create(blobInfo, file.getBytes());
+
+            log.info("[Firebase] Imagen subida correctamente a {}", objectPath);
+
+            return String.format(
+                    "https://storage.googleapis.com/%s/%s",
+                    bucketName,
+                    objectPath
+            );
+
+        } catch (Exception e) {
+            log.error("[Firebase] Error subiendo imagen de anuncio", e);
+            throw new FirebaseException("Error al subir imagen a Firebase Storage");
+        }
+    }
+
+    public void deleteAnnouncementImage(String objectPath) {
+
+        try {
+            String bucketName = StorageConstants.BUCKET_NAME;
+
+            BlobId blobId = BlobId.of(bucketName, objectPath);
+
+            boolean deleted = storage.delete(blobId);
+
+            if (!deleted) {
+                log.warn("[Firebase] No se encontró imagen para eliminar: {}", objectPath);
+            } else {
+                log.info("[Firebase] Imagen eliminada correctamente: {}", objectPath);
+            }
+
+        } catch (Exception e) {
+            log.error("[Firebase] Error eliminando imagen de anuncio", e);
+            throw new FirebaseException("Error al eliminar imagen en Firebase Storage");
+        }
+    }
+
+    private void validateImage(StorageImageObject file) {
+
+        if (file == null) {
+            throw new IllegalArgumentException("Archivo requerido");
+        }
+
+        if (file.getContentType() == null ||
+                !StorageConstants.ALLOWED_IMAGE_TYPES.contains(file.getContentType())) {
+
+            throw new IllegalArgumentException(
+                    "Archivo no es una imagen válida. Tipos permitidos: JPEG, PNG, WebP"
+            );
+        }
+
+        if (file.getSize() > StorageConstants.MAX_IMAGE_SIZE) {
+            throw new IllegalArgumentException(
+                    "Archivo excede el tamaño máximo permitido (5MB)"
+            );
+        }
+    }
 }
+
 

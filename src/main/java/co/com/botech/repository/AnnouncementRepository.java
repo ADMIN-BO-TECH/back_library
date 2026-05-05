@@ -36,13 +36,11 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
 
     List<Announcement> findBySchoolIdOrderByPublishDateDesc(Long schoolId);
 
-    // 🔹 Colegio + estado
     List<Announcement> findBySchoolIdAndStatusOrderByPublishDateDesc(
             Long schoolId,
             AnnouncementStatus status
     );
 
-    // 🔹 Filtros dinámicos
     @Query("""
                 SELECT a FROM Announcement a
                 WHERE a.school.id = :schoolId
@@ -56,7 +54,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
             String tag
     );
 
-    // 🔹 Para tracking (solo publicados y fecha válida)
     @Query("""
                 SELECT a FROM Announcement a
                 WHERE a.school.id = :schoolId
