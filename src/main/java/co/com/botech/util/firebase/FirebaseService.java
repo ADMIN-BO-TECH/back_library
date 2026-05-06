@@ -533,7 +533,6 @@ public class FirebaseService {
         validateImage(file);
 
         try {
-            // 1. Generar path interno (NO URL)
             String objectPath = BucketStorageUtils.buildPathAnnouncementName(
                     file.getOriginalFilename(),
                     schoolId,
