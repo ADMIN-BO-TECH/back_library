@@ -14,7 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class UserUtils {
-    private  final UserRepository userRepository;
+    private final UserRepository userRepository;
+
     public List<String> getUserTokens(List<User> userList) {
         return userList.stream().map(
                 User::getFcmToken
@@ -27,5 +28,21 @@ public class UserUtils {
                         CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
                         "No se ha encontrado el usuario con ID " + userId
                 ));
+    }
+
+    public String resolveAuthorName(String firebaseUid) {
+        if (firebaseUid == null || firebaseUid.isEmpty()) {
+            return "Usuario desconocido";
+        }
+
+        try {
+            return userRepository.findByFirebaseUid(firebaseUid)
+                    .map(user -> user.getFirstName() + " " + user.getLastName())
+                    .orElse("Usuario desconocido");
+
+        } catch (Exception e) {
+            log.warn("No se pudo resolver el nombre para UID: {}. Error: {}", firebaseUid, e.getMessage());
+            return "Usuario desconocido";
+        }
     }
 }

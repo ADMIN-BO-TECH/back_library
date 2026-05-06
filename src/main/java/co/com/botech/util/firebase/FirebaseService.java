@@ -525,7 +525,7 @@ public class FirebaseService {
             StorageImageObject file,
             Long schoolId,
             Long announcementId,
-            String schoolName
+            String clientName
     ) {
 
         validateImage(file);
@@ -535,7 +535,7 @@ public class FirebaseService {
                     file.getOriginalFilename(),
                     schoolId,
                     announcementId,
-                    schoolName
+                    clientName
             );
 
             String bucketName = StorageConstants.BUCKET_NAME;
