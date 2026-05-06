@@ -15,15 +15,16 @@ public enum AnnouncementStatus {
         this.description = description;
     }
 
-    public static boolean isValidStatus(String status) {
-        if (status == null) return false;
+    public static AnnouncementStatus fromValue(String value) {
+        if (value == null) return null;
 
-        for (AnnouncementStatus announcementStatus : AnnouncementStatus.values()) {
-            if (announcementStatus.name().equalsIgnoreCase(status)
-                    || announcementStatus.getDescription().equalsIgnoreCase(status)) {
-                return true;
+        for (AnnouncementStatus status : AnnouncementStatus.values()) {
+            if (status.name().equalsIgnoreCase(value)
+                    || status.getDescription().equalsIgnoreCase(value)) {
+                return status;
             }
         }
-        return false;
+
+        throw new IllegalArgumentException("Invalid AnnouncementStatus: " + value);
     }
 }
