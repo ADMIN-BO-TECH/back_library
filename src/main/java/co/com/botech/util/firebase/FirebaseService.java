@@ -35,7 +35,6 @@ public class FirebaseService {
 
     private final Firestore firestore;
     private final Storage storage;
-    private final StorageConstants storageConstants;
     private final BucketStorageUtils bucketStorageUtils;
 
     public boolean existsInCollectionBasic(String id, String collection) {
