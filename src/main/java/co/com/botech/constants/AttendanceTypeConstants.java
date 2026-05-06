@@ -1,5 +1,6 @@
 package co.com.botech.constants;
 
+
 public enum AttendanceTypeConstants {
     SUBIDA_BUS("Subida Bus"),
     BAJADA_BUS("Bajada Bus"),
