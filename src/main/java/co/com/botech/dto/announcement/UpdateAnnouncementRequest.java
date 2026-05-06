@@ -31,9 +31,6 @@ public class UpdateAnnouncementRequest {
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "La fecha de publicación debe tener el formato yyyy-MM-dd")
     private String publishDate;
 
-    @Min(value = 1, message = "El id del colegio debe ser un número positivo")
-    private Long schoolId;
-
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El estado no puede contener caracteres especiales")
     private String status;
 }

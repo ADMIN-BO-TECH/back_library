@@ -29,7 +29,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
     @Query("""
                 SELECT a FROM Announcement a
                 WHERE a.school.id = :schoolId
-                AND  a.status = :status
+                AND (:status IS NULL OR a.status = :status)
                 AND a.publishDate <= CURRENT_TIMESTAMP
                 AND (:tag IS NULL OR LOWER(a.tags) LIKE LOWER(CONCAT('%', :tag, '%')))
             """)

@@ -1,13 +1,14 @@
 package co.com.botech.constants;
 
+import co.com.botech.util.generalUtils.CustomException;
 import lombok.Getter;
 
 @Getter
 public enum AnnouncementStatus {
 
-    DRAFT("Borrador"),
-    PUBLISHED("Publicado"),
-    ARCHIVED("Archivado");
+    DRAFT("DRAFT"),
+    PUBLISHED("PUBLISHED"),
+    ARCHIVED("ARCHIVED");
 
     private final String description;
 
@@ -25,6 +26,6 @@ public enum AnnouncementStatus {
             }
         }
 
-        throw new IllegalArgumentException("Invalid AnnouncementStatus: " + value);
+        throw new CustomException(CustomExceptionCodeConstants.ENTITY_NOT_FOUND, "Invalid AnnouncementStatus: " + value);
     }
 }
