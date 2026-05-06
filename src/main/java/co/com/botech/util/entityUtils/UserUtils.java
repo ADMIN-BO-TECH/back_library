@@ -22,7 +22,7 @@ public class UserUtils {
     }
 
     public User getUserById(Long userId) {
-        return userRepository.findByFirebaseUid(String.valueOf(userId))
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(
                         CustomExceptionCodeConstants.ENTITY_NOT_FOUND,
                         "No se ha encontrado el usuario con ID " + userId
