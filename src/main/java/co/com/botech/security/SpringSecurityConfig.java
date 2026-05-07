@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.jwt.BadJwtException;
@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Slf4j
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass({SecurityFilterChain.class, HttpSecurity.class})
 public class SpringSecurityConfig {
 

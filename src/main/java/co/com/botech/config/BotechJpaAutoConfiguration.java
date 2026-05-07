@@ -7,12 +7,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScanPackages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-@AutoConfiguration(before = HibernateJpaAutoConfiguration.class)
+@AutoConfiguration
 @ConditionalOnClass({Entity.class, JpaRepository.class})
 public class BotechJpaAutoConfiguration {
 
