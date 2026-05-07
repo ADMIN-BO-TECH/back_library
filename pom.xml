@@ -75,6 +75,29 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Boot core + AutoConfigure: para @AutoConfiguration y EntityScanPackages.
+             optional=true: no se arrastra a los consumidores (ellos ya lo tienen vía spring-boot) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>3.2.5</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>3.2.5</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring Web: necesario para compilar RestTemplate en BotechAppAutoConfiguration -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.1.6</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- JSON Utils -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
