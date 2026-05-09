@@ -17,4 +17,40 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT DISTINCT uf.user FROM UserFamily uf WHERE uf.family.id IN :familyIds")
     List<User> findUsersByFamilies(@Param("familyIds") List<Long> familyIds);
+
+    @Query("""
+            SELECT DISTINCT uf.user FROM UserFamily uf
+            WHERE uf.family.school.id = :schoolId
+            AND EXISTS (
+                SELECT nc FROM NotificationCategory nc
+                WHERE nc.id = :categoryId
+                AND nc.globalEnabled = true
+            )
+            AND NOT EXISTS (
+                SELECT udc FROM UserDisabledCategory udc
+                WHERE udc.user = uf.user
+                AND udc.notificationCategory.id = :categoryId
+            )
+            """)
+    List<User> findEnabledUsersBySchoolAndCategory(
+            @Param("schoolId") Long schoolId,
+            @Param("categoryId") Long categoryId);
+
+    @Query("""
+            SELECT DISTINCT uf.user FROM UserFamily uf
+            WHERE uf.family.id IN :familyIds
+            AND EXISTS (
+                SELECT nc FROM NotificationCategory nc
+                WHERE nc.id = :categoryId
+                AND nc.globalEnabled = true
+            )
+            AND NOT EXISTS (
+                SELECT udc FROM UserDisabledCategory udc
+                WHERE udc.user = uf.user
+                AND udc.notificationCategory.id = :categoryId
+            )
+            """)
+    List<User> findEnabledUsersByFamiliesAndCategory(
+            @Param("familyIds") List<Long> familyIds,
+            @Param("categoryId") Long categoryId);
 }
