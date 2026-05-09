@@ -12,4 +12,7 @@ public class NotificationCategory {
 
     @Column(name = "category_name")
     private String categoryName;
+
+    @Column(name = "global_enabled")
+    private Boolean globalEnabled;
 }
