@@ -52,7 +52,7 @@ public class JwtDecoderConfig {
                 JwtValidators.createDefaultWithIssuer(props.getIssuer());
 
         OAuth2TokenValidator<Jwt> systemValidator =
-                new JwtClaimEqualsValidator("system", props.getExpectedSystem());
+                new JwtClaimEqualsValidator("system", props.getAllowedSystems());
 
         delegate.setJwtValidator(new DelegatingOAuth2TokenValidator<>(issuerValidator, systemValidator));
 
