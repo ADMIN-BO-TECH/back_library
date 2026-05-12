@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @AutoConfiguration
 @ConditionalOnClass({Entity.class, JpaRepository.class})
-@ComponentScan(basePackages = "co.com.botech.util")
+@ComponentScan(basePackages = {"co.com.botech.util", "co.com.botech.security"})
 public class BotechJpaAutoConfiguration {
 }
