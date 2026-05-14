@@ -1,6 +1,7 @@
 package co.com.botech.config;
 
 import com.google.maps.GeoApiContext;
+import co.com.botech.util.geocoding.GeocodingService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,5 +17,11 @@ public class BotechGeocodingAutoConfiguration {
         return new GeoApiContext.Builder()
                 .apiKey(System.getenv("GEOCODING_API_KEY"))
                 .build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GeocodingService geocodingService(GeoApiContext geoApiContext) {
+        return new GeocodingService(geoApiContext);
     }
 }
