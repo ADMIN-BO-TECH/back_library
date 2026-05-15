@@ -13,4 +13,5 @@ public class NotificationBodyRequest {
     private String body;
     private String email;
     private String notificationCategory;
+    private String notificationChannel;
 }

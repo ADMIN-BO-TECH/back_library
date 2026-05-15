@@ -5,5 +5,6 @@ import lombok.*;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class UpdateCategoryPreferenceDTO {
     private String categoryName;
+    private String channelName;
     private Boolean enabled;
 }
