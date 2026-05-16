@@ -26,22 +26,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 WHERE nc.id = :categoryId
                 AND (nc.globalEnabled = true OR nc.globalEnabled IS NULL)
             )
-            AND EXISTS (
-                SELECT ch FROM NotificationChannel ch
-                WHERE ch.id = :channelId
-                AND (ch.globalEnabled = true OR ch.globalEnabled IS NULL)
-            )
             AND NOT EXISTS (
                 SELECT udn FROM UserDisabledNotification udn
                 WHERE udn.user = uf.user
                 AND udn.notificationCategory.id = :categoryId
-                AND udn.notificationChannel.id = :channelId
             )
             """)
-    List<User> findEnabledUsersBySchoolAndCategoryAndChannel(
+    List<User> findEnabledUsersBySchoolAndCategory(
             @Param("schoolId") Long schoolId,
-            @Param("categoryId") Long categoryId,
-            @Param("channelId") Long channelId);
+            @Param("categoryId") Long categoryId);
 
     @Query("""
             SELECT DISTINCT uf.user FROM UserFamily uf
@@ -51,20 +44,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 WHERE nc.id = :categoryId
                 AND (nc.globalEnabled = true OR nc.globalEnabled IS NULL)
             )
-            AND EXISTS (
-                SELECT ch FROM NotificationChannel ch
-                WHERE ch.id = :channelId
-                AND (ch.globalEnabled = true OR ch.globalEnabled IS NULL)
-            )
             AND NOT EXISTS (
                 SELECT udn FROM UserDisabledNotification udn
                 WHERE udn.user = uf.user
                 AND udn.notificationCategory.id = :categoryId
-                AND udn.notificationChannel.id = :channelId
             )
             """)
-    List<User> findEnabledUsersByFamiliesAndCategoryAndChannel(
+    List<User> findEnabledUsersByFamiliesAndCategory(
             @Param("familyIds") List<Long> familyIds,
-            @Param("categoryId") Long categoryId,
-            @Param("channelId") Long channelId);
+            @Param("categoryId") Long categoryId);
 }

@@ -16,7 +16,4 @@ public class UserDisabledNotification {
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "notification_category_id")
     private NotificationCategory notificationCategory;
-
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "notification_channel_id")
-    private NotificationChannel notificationChannel;
 }
