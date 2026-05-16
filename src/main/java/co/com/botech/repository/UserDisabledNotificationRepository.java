@@ -20,7 +20,7 @@ public interface UserDisabledNotificationRepository extends JpaRepository<UserDi
                     AND udn.user_id = :userId
                 ) THEN 0 ELSE 1 END AS enabled
             FROM notification_category nc
-            WHERE nc.global_enabled = true
+            WHERE nc.global_enabled = true OR nc.global_enabled IS NULL
             """, nativeQuery = true)
     List<UserNotificationPreference> findUserNotificationPreferences(@Param("userId") Long userId);
 
