@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UpdateCategoryPreferenceDTO {
+public class UserPreferenceResponse {
     private String categoryName;
     private Boolean enabled;
 }
