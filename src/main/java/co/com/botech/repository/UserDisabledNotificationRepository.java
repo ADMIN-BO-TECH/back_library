@@ -14,11 +14,12 @@ public interface UserDisabledNotificationRepository extends JpaRepository<UserDi
     @Query(value = """
             SELECT
                 nc.category_name AS categoryName,
-                CASE WHEN udn.user_disabled_notification_id IS NULL THEN 1 ELSE 0 END AS enabled
+                CASE WHEN EXISTS (
+                    SELECT 1 FROM user_disabled_notification udn
+                    WHERE udn.notification_category_id = nc.notification_category_id
+                    AND udn.user_id = :userId
+                ) THEN 0 ELSE 1 END AS enabled
             FROM notification_category nc
-            LEFT JOIN user_disabled_notification udn
-                ON udn.notification_category_id = nc.notification_category_id
-                AND udn.user_id = :userId
             WHERE nc.global_enabled = true
             """, nativeQuery = true)
     List<UserNotificationPreference> findUserNotificationPreferences(@Param("userId") Long userId);
