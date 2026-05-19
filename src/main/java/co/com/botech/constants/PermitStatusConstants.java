@@ -11,11 +11,7 @@ public enum PermitStatusConstants {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-        public static boolean isValidStatus(String status) {
+    public static boolean isValidStatus(String status) {
         if (status == null) return false;
         for (PermitStatusConstants permitStatus : PermitStatusConstants.values()) {
             if (permitStatus.getDescription().equalsIgnoreCase(status)) {
@@ -23,5 +19,9 @@ public enum PermitStatusConstants {
             }
         }
         return false;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

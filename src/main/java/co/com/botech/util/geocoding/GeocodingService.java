@@ -6,13 +6,11 @@ import com.google.maps.model.LatLng;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import com.google.maps.GeoApiContext;
 
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class GeocodingService {
 
     private final GeoApiContext geocodingContext;

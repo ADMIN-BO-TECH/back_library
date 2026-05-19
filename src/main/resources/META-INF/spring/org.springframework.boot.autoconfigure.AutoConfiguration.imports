@@ -1,0 +1,6 @@
+co.com.botech.config.BotechAppAutoConfiguration
+co.com.botech.config.BotechAsyncAutoConfiguration
+co.com.botech.config.BotechFirebaseAutoConfiguration
+co.com.botech.config.BotechGeocodingAutoConfiguration
+co.com.botech.config.BotechJpaAutoConfiguration
+co.com.botech.security.SpringSecurityConfig
