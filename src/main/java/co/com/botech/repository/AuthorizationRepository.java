@@ -10,10 +10,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AuthorizationRepository extends JpaRepository<Authorization, Long> {
-    @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.id = :authorizedPersonId AND (NOW() BETWEEN a.authorizationStartDate AND a.authorizationEndDate)")
+
+    @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.id = :authorizedPersonId AND a.authorizedPerson.active = true AND (NOW() BETWEEN a.authorizationStartDate AND a.authorizationEndDate)")
     List<Authorization> findDateActiveAuthorizationsByAuthorizedPersonId(@Param("authorizedPersonId") Long authorizedPersonId);
 
-    @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.school.id = :schoolId")
+    @Query("SELECT a FROM Authorization a WHERE a.authorizedPerson.school.id = :schoolId AND a.authorizedPerson.active = true AND a.student.active = true")
     List<Authorization> findBySchool_Id(Long schoolId);
 
     @Query("SELECT a.authorizationStartDate as dateValue FROM Authorization a " +
@@ -33,6 +34,8 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
     FROM Authorization a
     WHERE a.student.family.familyCode = :familyCode
       AND a.student.family.school.id = :schoolId
+      AND a.student.active = true
+      AND a.authorizedPerson.active = true
 """)
     List<Authorization> findAuthorizationByFamilyCodeAndSchoolId(
             @Param("familyCode") String familyCode,
@@ -62,6 +65,8 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
     FROM Authorization a
     WHERE a.student.family.familyCode IN :familyCodes
       AND a.student.school.id = :schoolId
+      AND a.student.active = true
+      AND a.authorizedPerson.active = true
 """)
     List<Authorization> findAuthorizationByFamilyCodesAndSchoolId(
             @Param("familyCodes") List<String> familyCodes,

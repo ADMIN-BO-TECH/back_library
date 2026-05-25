@@ -10,18 +10,26 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface PermitRepository extends JpaRepository<Permits, Long> {
-    List<Permits> findByStudent_Family_FamilyCodeAndStudent_School_Id(String familyCode, Long schoolId);
+
+    @Query("""
+        SELECT p FROM Permits p
+        WHERE p.student.family.familyCode = :familyCode
+          AND p.student.school.id = :schoolId
+          AND p.student.active = true
+    """)
+    List<Permits> findByStudent_Family_FamilyCodeAndStudent_School_Id(
+            @Param("familyCode") String familyCode,
+            @Param("schoolId") Long schoolId);
 
     @Query("""
         SELECT p
         FROM Permits p
         WHERE p.student.family.school.id = :schoolId
+          AND p.student.active = true
     """)
     List<Permits> findByStudent_School_Id(@Param("schoolId") Long schoolId);
 
-
     List<Permits> findPermitsByStudent_Id(Long studentRecordId);
-
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
@@ -42,6 +50,7 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
         FROM Permits p
         WHERE p.student.family.id = :familyCodeId
           AND p.student.family.school.id = :schoolId
+          AND p.student.active = true
     """)
     List<Permits> findByStudent_FamilyCode_IdAndStudent_School_Id(@Param("familyCodeId") Long familyCodeId,
                                                                   @Param("schoolId") Long schoolId);
@@ -56,5 +65,13 @@ public interface PermitRepository extends JpaRepository<Permits, Long> {
     int updateStatus(@Param("permitId") Long permitId,
                      @Param("finalStatus") String finalStatus);
 
-    List<Permits> findByStudent_Family_FamilyCodeInAndStudent_School_Id(List<String> familyCodes, Long schoolId);
+    @Query("""
+        SELECT p FROM Permits p
+        WHERE p.student.family.familyCode IN :familyCodes
+          AND p.student.school.id = :schoolId
+          AND p.student.active = true
+    """)
+    List<Permits> findByStudent_Family_FamilyCodeInAndStudent_School_Id(
+            @Param("familyCodes") List<String> familyCodes,
+            @Param("schoolId") Long schoolId);
 }

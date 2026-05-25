@@ -301,11 +301,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                             FROM students
                             WHERE school_id = :schoolId
                               AND novedad = b'0'
+                              AND active = 1
                         )
-                        WHEN 'Acudiente' THEN (SELECT COUNT(*) FROM parent WHERE school_id = :schoolId)
-                        WHEN 'Empleado' THEN (SELECT COUNT(*) FROM school_employees WHERE school_id = :schoolId)
+                        WHEN 'Acudiente' THEN (SELECT COUNT(*) FROM parent WHERE school_id = :schoolId AND active = 1)
+                        WHEN 'Empleado' THEN (SELECT COUNT(*) FROM school_employees WHERE school_id = :schoolId AND active = 1)
                         WHEN 'Persona Autorizada'
-                            THEN (SELECT COUNT(*) FROM authorized_persons WHERE school_id = :schoolId)
+                            THEN (SELECT COUNT(*) FROM authorized_persons WHERE school_id = :schoolId AND active = 1)
                     END AS totalUsers,
 
                     COUNT(CASE
@@ -339,12 +340,13 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                     AND a.school_id = :schoolId
                     AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
 
-                -- Solo valida estudiante si es userType Estudiante, y si el student existe y novedad = 0.
+                -- Solo valida estudiante si es userType Estudiante, y si el student existe, novedad = 0 y active = 1.
                 LEFT JOIN students st
                     ON user_types.userType = 'Estudiante'
                    AND st.student_record_id = a.student_record_id
                    AND st.school_id = :schoolId
                    AND st.novedad = b'0'
+                   AND st.active = 1
 
                 LEFT JOIN attendance_type at
                     ON a.attendance_type_id = at.attendance_type_id
@@ -445,6 +447,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                     ON s.student_record_id = a.student_record_id
                    AND s.school_id = :schoolId
                    AND s.novedad = b'0'
+                   AND s.active = 1
 
             WHERE a.school_id = :schoolId
               AND a.user_type = :userType
@@ -481,6 +484,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                 FROM students s
                 WHERE s.school_id = :schoolId
                   AND s.novedad = b'0'
+                  AND s.active = 1
                 GROUP BY s.grade_level
             )
 
@@ -521,6 +525,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
                 ON s.grade_level = g.grade
                AND s.school_id = :schoolId
                AND s.novedad = b'0'
+               AND s.active = 1
             LEFT JOIN attendance a
                 ON a.student_record_id = s.student_record_id
                AND a.school_id = :schoolId
@@ -593,6 +598,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
            AND s.student_record_id = a.student_record_id
            AND s.school_id = :schoolId
            AND s.novedad = b'0'
+           AND s.active = 1
 
     WHERE a.school_id = :schoolId
       AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
@@ -617,6 +623,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
            AND s.student_record_id = a.student_record_id
            AND s.school_id = :schoolId
            AND s.novedad = b'0'
+           AND s.active = 1
         WHERE a.school_id = :schoolId
           AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
           AND at.description IN (:enterFilter, :outFilter)
@@ -683,6 +690,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
            AND s.student_record_id = a.student_record_id
            AND s.school_id = :schoolId
            AND s.novedad = b'0'
+           AND s.active = 1
 
     WHERE a.school_id = :schoolId
       AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
@@ -707,6 +715,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
            AND s.student_record_id = a.student_record_id
            AND s.school_id = :schoolId
            AND s.novedad = b'0'
+           AND s.active = 1
         WHERE a.school_id = :schoolId
           AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
           AND at.description IN (:enterFilter, :outFilter)
@@ -761,6 +770,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
            AND s.student_record_id = a.student_record_id
            AND s.school_id = :schoolId
            AND s.novedad = b'0'
+           AND s.active = 1
         LEFT JOIN attendance_type at
             ON at.attendance_type_id = a.attendance_type_id
            AND at.description IN (:enterFilter, :outFilter)
