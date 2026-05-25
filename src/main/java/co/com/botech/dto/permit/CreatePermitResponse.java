@@ -10,4 +10,5 @@ import lombok.*;
 public class CreatePermitResponse {
     private String message;
     private String email;
+    private Boolean approved;
 }
