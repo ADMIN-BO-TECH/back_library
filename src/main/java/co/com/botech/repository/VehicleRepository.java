@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     Optional<Vehicle> findByRfidRegister_Id(Long rfidRegisterId);
+    Optional<Vehicle> findByRfidRegister_RfidTag(String rfidRegisterId);
+
 
     @Query(value = """                                                                                                                                                                                                           
       SELECT      

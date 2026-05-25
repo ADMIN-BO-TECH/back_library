@@ -1,6 +1,7 @@
 package co.com.botech.dto.notification;
 
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationHistoryResponse{
+public class NotificationHistoryResponse {
     private Long id;
     private String title;
     private String body;

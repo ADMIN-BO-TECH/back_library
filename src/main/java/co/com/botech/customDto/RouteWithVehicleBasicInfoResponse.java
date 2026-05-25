@@ -6,5 +6,4 @@ public interface RouteWithVehicleBasicInfoResponse {
     Boolean getRouteStatus();
     String getVehicleFleetNumber();
     String getVehiclePlateNumber();
-
 }
