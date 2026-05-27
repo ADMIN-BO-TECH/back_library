@@ -2,8 +2,8 @@ package co.com.botech.constants;
 
 public enum PermitStatusConstants {
 
-    ACTIVE("Activo"),
-    INACTIVE("Inactivo"),
+    AUTHORIZED("Autorizado"),
+    REFUSED("Rechazado"),
     PENDING("Pendiente");
     private final String description;
 

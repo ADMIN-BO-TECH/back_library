@@ -2,9 +2,10 @@ package co.com.botech.constants;
 
 public enum PermitTypeConstants {
 
-    SICKNESS("Enfermedad"),
-    ROUTE_CHANGE("Cambio de Recorrido"),
-    ABSENCE("Inasistencia");
+    EARLY_EXIT("Salida temprana"),
+    ABSENCE("Inasistencia"),
+    INFORMATIVE("Informativa"),
+    ROUTE_CHANGE("Cambio de Recorrido");
     private final String description;
 
     PermitTypeConstants(String description) {

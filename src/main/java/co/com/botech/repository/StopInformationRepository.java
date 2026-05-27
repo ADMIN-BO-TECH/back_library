@@ -118,11 +118,17 @@ public interface StopInformationRepository extends JpaRepository<StopInformation
 
                      LEFT JOIN students stu
                                ON st.student_record_id = stu.student_record_id
+                               AND stu.active = 1
 
                      LEFT JOIN school_employees emp
                                ON st.school_employee_id = emp.employee_id
+                               AND emp.active = 1
 
-            WHERE s.route_id = :routeId;
+            WHERE s.route_id = :routeId
+              AND (
+                (st.student_record_id IS NULL OR stu.student_record_id IS NOT NULL)
+                AND (st.school_employee_id IS NULL OR emp.employee_id IS NOT NULL)
+              );
                         """, nativeQuery = true)
     List<StopInformationByRoute> findStopRelationsByRoute(@Param("routeId") Long routeId);
 
@@ -172,6 +178,8 @@ public interface StopInformationRepository extends JpaRepository<StopInformation
         LEFT JOIN FETCH emp.family famEmp
         WHERE s.route.id = :routeId
           AND s.status = true
+          AND (stu IS NULL OR stu.active = true)
+          AND (emp IS NULL OR emp.active = true)
     """)
     List<StopInformation> findActiveByRouteIdWithJoins(@Param("routeId") Long routeId);
 }

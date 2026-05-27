@@ -49,4 +49,7 @@ public class AuthorizedPerson {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     private School school;
+    @Builder.Default
+    @Column(name = "active", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean active = true;
 }

@@ -28,4 +28,7 @@ public class Student {
     @Column(name = "leave_alone")   private Boolean leaveAlone;
     @Builder.Default @Column(name = "novedad", nullable = false)
     private Boolean novelty = false;
+    @Builder.Default
+    @Column(name = "active", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean active = true;
 }
