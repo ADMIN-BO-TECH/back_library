@@ -736,48 +736,61 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
      * Excluye totalmente registros de estudiantes con novedad=true.
      */
     @Query(value = """
-    WITH RECURSIVE days AS (
-        SELECT DATE(:initDateTime) AS day
-        UNION ALL
-        SELECT day + INTERVAL 1 DAY
-        FROM days
-        WHERE day < DATE(:endDateTime)
-    )
-
-    SELECT
-        d.day AS day,
-
-        COUNT(
-            CASE
-                WHEN a.attendance_id IS NOT NULL
-                 AND (a.user_type <> 'Estudiante' OR s.student_record_id IS NOT NULL)
-                THEN 1
-            END
-        ) AS totalRegisters,
-
-        COUNT(CASE WHEN a.user_type = 'Estudiante' AND s.student_record_id IS NOT NULL THEN 1 END)         AS studentRegisters,
-        COUNT(CASE WHEN a.user_type = 'Empleado' THEN 1 END)           AS employeeRegisters,
-        COUNT(CASE WHEN a.user_type = 'Acudiente' THEN 1 END)          AS parentRegisters,
-        COUNT(CASE WHEN a.user_type = 'Persona Autorizada' THEN 1 END) AS authorizedPersonRegisters
-
-    FROM days d
-        LEFT JOIN attendance a
-            ON DATE(a.attendance_time) = d.day
-           AND a.school_id = :schoolId
-           AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
-        LEFT JOIN students s
-            ON a.user_type = 'Estudiante'
-           AND s.student_record_id = a.student_record_id
-           AND s.school_id = :schoolId
-           AND s.novedad = b'0'
-           AND s.active = 1
-        LEFT JOIN attendance_type at
-            ON at.attendance_type_id = a.attendance_type_id
-           AND at.description IN (:enterFilter, :outFilter)
-
-    GROUP BY d.day
-    ORDER BY d.day ASC
-    """,
+            WITH RECURSIVE days AS (
+                SELECT DATE(:initDateTime) AS day
+                UNION ALL
+                SELECT day + INTERVAL 1 DAY
+                FROM days
+                WHERE day < DATE(:endDateTime)
+            )
+            
+            SELECT
+                d.day AS day,
+            
+            COUNT(
+                    CASE
+                        WHEN a.attendance_id IS NOT NULL
+                            AND (a.user_type <> 'Estudiante' OR s.student_record_id IS NOT NULL)
+                            AND at.attendance_type_id IS NOT NULL
+                            THEN 1
+                        END
+            ) AS totalRegisters,
+            
+            COUNT(CASE WHEN a.user_type = 'Estudiante'
+                AND s.student_record_id IS NOT NULL
+                AND at.attendance_type_id IS NOT NULL
+                           THEN 1 END) AS studentRegisters,
+            
+            COUNT(CASE WHEN a.user_type = 'Empleado'
+                AND at.attendance_type_id IS NOT NULL
+                           THEN 1 END) AS employeeRegisters,
+            
+            COUNT(CASE WHEN a.user_type = 'Acudiente'
+                AND at.attendance_type_id IS NOT NULL
+                           THEN 1 END) AS parentRegisters,
+            
+            COUNT(CASE WHEN a.user_type = 'Persona Autorizada'
+                AND at.attendance_type_id IS NOT NULL
+                           THEN 1 END) AS authorizedPersonRegisters
+            
+            FROM days d
+                LEFT JOIN attendance a
+                    ON DATE(a.attendance_time) = d.day
+                   AND a.school_id = :schoolId
+                   AND a.attendance_time BETWEEN :initDateTime AND :endDateTime
+                LEFT JOIN students s
+                    ON a.user_type = 'Estudiante'
+                   AND s.student_record_id = a.student_record_id
+                   AND s.school_id = :schoolId
+                   AND s.novedad = b'0'
+                   AND s.active = 1
+                LEFT JOIN attendance_type at
+                    ON at.attendance_type_id = a.attendance_type_id
+                   AND at.description IN (:enterFilter, :outFilter)
+            
+            GROUP BY d.day
+            ORDER BY d.day ASC
+            """,
             nativeQuery = true)
     List<DailyAttendanceStatistics> findAttendanceByDay(
             @Param("schoolId") Long schoolId,
