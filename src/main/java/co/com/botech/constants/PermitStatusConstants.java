@@ -4,7 +4,8 @@ public enum PermitStatusConstants {
 
     AUTHORIZED("Autorizado"),
     REFUSED("Rechazado"),
-    PENDING("Pendiente");
+    PENDING("Pendiente"),
+    CANCELLED("Cancelado");
     private final String description;
 
     PermitStatusConstants(String description) {
