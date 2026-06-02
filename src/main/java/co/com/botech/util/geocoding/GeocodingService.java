@@ -30,4 +30,22 @@ public class GeocodingService {
             return "Error al obtener la dirección en coordenadas: " + lat + ", " + lon;
         }
     }
+
+    public LatLng getCoordinatesByAddress(String address) {
+        try {
+            GeocodingResult[] results = GeocodingApi.geocode(geocodingContext, address)
+                    .region("co")
+                    .await();
+            if (results != null && results.length > 0) {
+                return results[0].geometry.location;
+            } else {
+                log.warn("No se encontraron coordenadas para la dirección: {}", address);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Error al obtener coordenadas para la dirección: {}. Error: {}", address, e.getMessage());
+            return null;
+        }
+    }
+
 }
