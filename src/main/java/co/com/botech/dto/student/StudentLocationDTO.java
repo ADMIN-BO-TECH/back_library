@@ -13,6 +13,7 @@ public class StudentLocationDTO {
     private Long studentRecordId;
     private Long studentId;
     private String firstName;
+    private String lastName;
     private String gradeLevel;
     private String homeAddress;
     private Double homeLatitude;
