@@ -2,7 +2,7 @@ package co.com.botech.constants;
 
 public enum PermitTypeConstants {
 
-    EARLY_EXIT("Salida temprana"),
+    EARLY_EXIT("Salida durante horario escolar"),
     ABSENCE("Inasistencia"),
     INFORMATIVE("Informativa"),
     ROUTE_CHANGE("Cambio de Recorrido");
