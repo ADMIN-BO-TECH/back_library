@@ -15,14 +15,20 @@ public interface WorkBlockRepository extends JpaRepository<WorkBlock, Long> {
     List<WorkBlock> findByEmployeeIdAndWorkDateBetweenAndStatusOrderByWorkDateAscStartTimeAsc(
             Long employeeId, LocalDate start, LocalDate end, WorkBlockStatus status);
 
+    List<WorkBlock> findByEmployeeIdAndWorkDateAndStatusOrderByStartTimeAsc(
+            Long employeeId, LocalDate workDate, WorkBlockStatus status);
+
     List<WorkBlock> findByEmployeeIdAndWorkDateAndSourceAndStatusAndIsCompleteOrderByStartTimeAsc(
-            Long employeeId, LocalDate workDate, WorkBlockSource source, WorkBlockStatus status, Boolean isComplete);
+            Long employeeId, LocalDate workDate, WorkBlockSource source,
+            WorkBlockStatus status, Boolean isComplete);
 
     @Query("SELECT MAX(wb.sourceStartAttendanceId) FROM WorkBlock wb " +
             "WHERE wb.employee.id = :empId AND wb.source = :source AND wb.sourceStartAttendanceId IS NOT NULL")
-    Long findMaxConsumedStartAttendanceId(@Param("empId") Long employeeId, @Param("source") WorkBlockSource source);
+    Long findMaxConsumedStartAttendanceId(@Param("empId") Long employeeId,
+                                          @Param("source") WorkBlockSource source);
 
     @Query("SELECT MAX(wb.sourceEndAttendanceId) FROM WorkBlock wb " +
             "WHERE wb.employee.id = :empId AND wb.source = :source AND wb.sourceEndAttendanceId IS NOT NULL")
-    Long findMaxConsumedEndAttendanceId(@Param("empId") Long employeeId, @Param("source") WorkBlockSource source);
+    Long findMaxConsumedEndAttendanceId(@Param("empId") Long employeeId,
+                                        @Param("source") WorkBlockSource source);
 }

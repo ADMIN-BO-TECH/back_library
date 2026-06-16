@@ -74,4 +74,16 @@ public class WorkBlock {
 
     @Column(name = "modified_by")
     private Long modifiedBy;
+
+    @Column(name = "extra_hour", nullable = false)
+    private Boolean extraHour;
+
+    @Column(name = "minutes_extra")
+    private Integer minutesExtra;
+
+    @Column(name = "nigth_hours", nullable = false)
+    private Boolean nigthHours;
+
+    @Column(name = "minutes_nigth_hours")
+    private Integer minutesNigthHours;
 }
