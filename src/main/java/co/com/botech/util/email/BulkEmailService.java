@@ -10,7 +10,6 @@ import co.com.botech.dto.email.bulk.PersonalizedBulkEmailRequest;
 import co.com.botech.dto.email.bulk.PersonalizedRecipient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @Slf4j
-@Service
 public class BulkEmailService {
 
     private final EmailDispatcher dispatcher;

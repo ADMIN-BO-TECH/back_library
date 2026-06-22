@@ -1,21 +1,23 @@
 package co.com.botech.config;
 
+import co.com.botech.util.email.BulkEmailService;
+import co.com.botech.util.email.EmailDispatcher;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.TemplateEngine;
 
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 @AutoConfiguration
 @ConditionalOnClass({JavaMailSender.class, TemplateEngine.class})
 @ConditionalOnProperty(prefix = "app.email", name = "username")
 @EnableConfigurationProperties(EmailProperties.class)
-@ComponentScan(basePackages = "co.com.botech.util.email")
 public class BotechEmailAutoConfiguration {
 
     @Bean
@@ -33,5 +35,22 @@ public class BotechEmailAutoConfiguration {
         mailProps.put("mail.smtp.ssl.trust", props.getTrust());
         mailProps.put("mail.transport.protocol", "smtp");
         return sender;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EmailDispatcher emailDispatcher(JavaMailSender mailSender,
+                                           TemplateEngine templateEngine,
+                                           EmailProperties props) {
+        return new EmailDispatcher(mailSender, templateEngine, props);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(name = "notificationExecutor")
+    public BulkEmailService bulkEmailService(EmailDispatcher dispatcher,
+                                             EmailProperties props,
+                                             @Qualifier("notificationExecutor") Executor executor) {
+        return new BulkEmailService(dispatcher, props, executor);
     }
 }
