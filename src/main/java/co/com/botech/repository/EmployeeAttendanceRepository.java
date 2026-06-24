@@ -26,4 +26,7 @@ public interface EmployeeAttendanceRepository extends JpaRepository<EmployeeAtte
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
+
+    List<EmployeeAttendance> findByEmployeeIdAndIdGreaterThanOrderByAttendanceTimeAsc(
+            Long employeeId, Long minId);
 }

@@ -4,3 +4,4 @@ co.com.botech.config.BotechFirebaseAutoConfiguration
 co.com.botech.config.BotechGeocodingAutoConfiguration
 co.com.botech.config.BotechJpaAutoConfiguration
 co.com.botech.security.SpringSecurityConfig
+co.com.botech.config.BotechEmailAutoConfiguration

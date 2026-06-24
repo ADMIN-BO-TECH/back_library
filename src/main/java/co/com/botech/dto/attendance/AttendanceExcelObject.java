@@ -28,8 +28,6 @@ public class AttendanceExcelObject implements AttendanceResponseProjection {
     private String systemName;
     @JsonProperty("Tipo de Registro")
     private String registerType;
-    @JsonProperty("Tag de Lector")
-    private String rfidTag;
-    @JsonProperty("Descripción de Lector")
+    @JsonProperty("Lector")
     private String rfidDescription;
 }
