@@ -482,6 +482,33 @@ public class FirebaseService {
         }
     }
 
+    public List<Map<String, Object>> getHistoryByDateRange(
+            String rootCollection,
+            String docId,
+            String subCollection,
+            String dateTimeField,
+            Timestamp start,
+            Timestamp end
+    ) {
+        try {
+            ApiFuture<QuerySnapshot> future = firestore
+                    .collection(rootCollection)
+                    .document(docId)
+                    .collection(subCollection)
+                    .whereGreaterThanOrEqualTo(dateTimeField, start)
+                    .whereLessThanOrEqualTo(dateTimeField, end)
+                    .orderBy(dateTimeField)
+                    .get();
+
+            return future.get().getDocuments().stream()
+                    .map(QueryDocumentSnapshot::getData)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("[Firebase] Error obteniendo historial de {}/{} entre {} y {}", rootCollection, docId, start, end, e);
+            return Collections.emptyList();
+        }
+    }
+
     public boolean determineBooleanStatus(String collection, String docRef, String booleanVar) {
         try {
             Map<String, Object> doc = findDocRef(collection, docRef);
