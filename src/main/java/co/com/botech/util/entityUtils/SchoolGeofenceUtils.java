@@ -29,10 +29,12 @@ public class SchoolGeofenceUtils {
         if (schoolId == null) {
             return false;
         }
+        boolean cacheHit = geofenceCache.containsKey(schoolId);
         Polygon polygon = geofenceCache.computeIfAbsent(schoolId, id -> loadPolygon(schoolName, id));
+        log.info("[Geocerca] schoolId={} | {} | cacheSize={}", schoolId,
+                cacheHit ? "CACHE HIT" : "CACHE MISS → cargando de BD", geofenceCache.size());
         Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lat, lon));
-        return polygon.contains(
-                point) || polygon.distance(point) <= ERROR_EPSILON;
+        return polygon.contains(point) || polygon.distance(point) <= ERROR_EPSILON;
     }
 
     public void evictGeofence(Long schoolId) {
