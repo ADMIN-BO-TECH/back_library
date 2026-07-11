@@ -184,6 +184,13 @@
             <version>3.2.5</version>
         </dependency>
 
+        <!-- JTS: point-in-polygon con soporte OGC y N vértices -->
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>1.19.0</version>
+        </dependency>
+
     </dependencies>
 
     <!-- Repos para resolver dependencias de ESTA build -->
