@@ -15,6 +15,7 @@ public interface UserGeofenceRepository extends JpaRepository<UserGeofence, Long
 
     @Query("""
         SELECT DISTINCT ug.id AS geofenceId,
+               ug.name AS name,
                ug.user.id AS userId,
                ug.user.fcmToken AS fcmToken,
                ug.latitude AS latitude,
