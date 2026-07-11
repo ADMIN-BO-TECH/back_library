@@ -28,6 +28,7 @@ public class SpringSecurityConfig {
                         .requestMatchers("/schedule/**","/family/**").permitAll()
                         .requestMatchers("/api/passes/**").permitAll()
                         .requestMatchers("/api/otp/**").permitAll()
+                        .requestMatchers("/user-geofence/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}))

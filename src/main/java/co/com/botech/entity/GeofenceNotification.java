@@ -6,15 +6,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * Registro auditable de notificaciones de entrada/salida de geocerca enviadas
- * (o intentadas) a un usuario. No usa NotificationHistory porque esa entidad
- * es genérica (email/title/body) y no tiene campos para bus, geocerca ni tipo
- * de evento — mezclar esos campos ahí afectaría a otras features que la usan.
- */
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity @Table(name = "geofence_notification_log")
-public class GeofenceNotificationLog {
+public class GeofenceNotification {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_id")
