@@ -7,11 +7,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
-@Entity @Table(name = "geofence_notification_log")
+@Entity @Table(name = "geofence_notification")
 public class GeofenceNotification {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "log_id")
+    @Column(name = "notification_id")
     private Long id;
 
     @Column(name = "user_id", nullable = false)
