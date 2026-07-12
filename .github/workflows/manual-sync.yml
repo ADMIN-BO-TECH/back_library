@@ -31,7 +31,7 @@ on:
         description: 8078-SocketAsistencia
         type: boolean
 
-      cardinal-api :
+      cardinal-api:
         description: cardinal-api
         type: boolean
 
@@ -41,6 +41,10 @@ on:
 
       boss-api:
         description: boss-api
+        type: boolean
+
+      user-geofence:
+        description: user-geofence
         type: boolean
 
 
@@ -81,6 +85,9 @@ jobs:
           fi
           if [ "${{ inputs.boss-api }}" = "true" ]; then
           repos+=("boss-api")
+          fi
+          if [ "${{ inputs.user-geofence }}" = "true" ]; then
+          repos+=("user-geofence")
           fi
           
           matrix_json=$(printf '%s\n' "${repos[@]}" | jq -R . | jq -s -c .)
