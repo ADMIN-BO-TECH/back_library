@@ -1,6 +1,9 @@
 package co.com.botech.constants;
 
 public enum FirebaseCollectionsConstants {
+    ROOT_COLLECTION("Clients"),
+    ROOT_SUBCOLLECTION("tenants"),
+    GLOBAL_TENANT("Global"),
     LISTA_EN_VIVO("ListaEnVivo"),
     LISTA_RECOGIDA("ListaRecogida"),
     REGISTRO_SALIDAS_MANUALES_PASS("RegistroSalidasManualesPass"),
