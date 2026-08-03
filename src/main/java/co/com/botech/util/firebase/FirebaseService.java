@@ -107,6 +107,49 @@ public class FirebaseService {
         }
     }
 
+    public boolean existsInBusCollection(String clientName, String tenantName, String collectionName, String rfidId, String busCollection, String userId) {
+        try {
+            ApiFuture<DocumentSnapshot> future = firestore
+                    .collection(FirebaseCollectionsConstants.ROOT_COLLECTION.getName())
+                    .document(clientName)
+                    .collection(FirebaseCollectionsConstants.ROOT_SUBCOLLECTION.getName())
+                    .document(tenantName)
+                    .collection(collectionName)
+                    .document(rfidId)
+                    .collection(busCollection)
+                    .document(userId)
+                    .get();
+
+            ApiFutures.addCallback(
+                    future,
+                    new ApiFutureCallback<>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            log.error("[Firebase] Error leyendo {} para {}/{}: {}",
+                                    collectionName, clientName, tenantName, t.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()) {
+                                log.info("[Firebase] Documento {} existe en {} para {}/{}",
+                                        id, collectionName, clientName, tenantName);
+                            } else {
+                                log.info("[Firebase] Documento {} NO existe en {} para {}/{}",
+                                        id, collectionName, clientName, tenantName);
+                            }
+                        }
+                    },
+                    MoreExecutors.directExecutor()
+            );
+
+            return future.get().exists();
+        } catch (Exception e) {
+            log.error("[Firebase] Error al validar existencia en Firebase", e);
+            throw new FirebaseException("Error al validar existencia en Firebase");
+        }
+    }
+
     public void createRegister(Map<String, Object> registerMap, String clientName, String tenantName, String collectionName, String id) {
         try {
             CollectionReference collectionRef = firestore
