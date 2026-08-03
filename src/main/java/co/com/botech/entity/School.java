@@ -10,4 +10,6 @@ public class School {
     private Long id;
     @Column(name = "name")
     private String name;
+    @Column(nullable=false,length=60)
+    private String code;
 }

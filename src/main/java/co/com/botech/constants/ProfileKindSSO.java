@@ -1,0 +1,24 @@
+package co.com.botech.constants;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum ProfileKindSSO {
+    ADMIN_PASS("ADMIN-PASS"),
+    GUARDA_PASS("GUARDA-PASS"),
+    ADMIN_SEGUIMIENTO("ADMIN-SEGUIMIENTO"),
+    PADRE_TRACKING("PADRE-TRACKING"),
+    EMPLEADO_TRACKING("EMPLEADO-TRACKING"),
+    ESTUDIANTE_TRACKING("ESTUDIANTE-TRACKING"),
+    LINKS("LINKS"),
+    AUXILIAR_CARDINAL("AUXILIAR-CARDINAL"),
+    OPERARIO_CARDINAL("OPERARIO-CARDINAL"),
+    RRHH_PASS("RRHH-PASS"),
+    PADRE_N8N("PADRE-N8N"),
+    ADMIN_BOSS("ADMIN-BOSS"),
+    ASISESCUELA_PASS("ASISESCUELA-PASS");
+
+    private final String slug;
+}

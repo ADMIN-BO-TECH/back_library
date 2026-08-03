@@ -25,5 +25,18 @@ public interface StartedRouteRegisterRepository extends JpaRepository<StartedRou
             @Param("status") Boolean status
     );
 
+    @Query("""
+               SELECT s
+               FROM StartedRouteRegister s
+               JOIN FETCH s.vehicle v
+               JOIN FETCH v.rfidRegister
+               JOIN FETCH s.route
+               WHERE s.status = true
+                 AND s.registerDate BETWEEN :start AND :end
+            """)
+    List<StartedRouteRegister> findByRegisterDateBetweenAndStatusTrue(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 
 }
