@@ -37,6 +37,26 @@ public class QRManagementUtils {
                 category, clientName, tenantName, collectionName, schoolIdentificator);
     }
 
+    public void insertUserInBusLiveList(String clientName, String tenantName, String collectionName, String rfidId, String busCollection,
+                                        String schoolIdentificator, String name, String category,
+                                        LocalDateTime now) {
+        Map<String, Object> mapRegister = new HashMap<>();
+        mapRegister.put("id_persona", schoolIdentificator);
+        mapRegister.put("nombre", name);
+        mapRegister.put("categoria", category);
+        mapRegister.put("fecha_registro", Timestamp.valueOf(now));
+        firebaseService.createBusRegister(mapRegister, clientName, tenantName, collectionName, rfidId, busCollection, schoolIdentificator);
+        log.info("Registro agregado a Firebase ({}): {}/{}/{}/{}/{}/{}",
+                category, clientName, tenantName, collectionName, rfidId, busCollection, schoolIdentificator);
+    }
+
+    public void deleteUserInBusLiveList(String clientName, String tenantName, String collectionName,
+                                        String rfidId, String busCollection, String schoolIdentificator, String userType) {
+        firebaseService.deleteRegisterByIdOnBus(clientName, tenantName, collectionName, rfidId, busCollection, schoolIdentificator);
+        log.info("Registro eliminado de Firebase ({}): {}/{}/{}/{}/{}/{}",
+                userType, clientName, tenantName, collectionName, rfidId, busCollection, schoolIdentificator);
+    }
+
     public void deleteUserInLiveList(String clientName, String tenantName, String collectionName,
                                      String schoolIdentificator, String userType) {
         firebaseService.deleteRegisterById(clientName, tenantName, collectionName, schoolIdentificator);

@@ -190,6 +190,50 @@ public class FirebaseService {
         }
     }
 
+    public void createBusRegister(Map<String, Object> registerMap, String clientName, String tenantName, String collectionName, String rfidId, String busCollection, String id) {
+        try {
+            CollectionReference collectionRef = firestore
+                    .collection(FirebaseCollectionsConstants.ROOT_COLLECTION.getName())
+                    .document(clientName)
+                    .collection(FirebaseCollectionsConstants.ROOT_SUBCOLLECTION.getName())
+                    .document(tenantName)
+                    .collection(collectionName)
+                    .document(rfidId)
+                    .collection(busCollection);
+
+
+
+            DocumentReference docRef = (id == null || id.isBlank() || AUTO_GENERATED_ID.equals(id))
+                    ? collectionRef.document()
+                    : collectionRef.document(id);
+
+            ApiFuture<WriteResult> future = docRef.set(registerMap);
+
+            ApiFutures.addCallback(
+                    future,
+                    new ApiFutureCallback<>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            log.error("[Firebase] Error guardando en {} de {}/{} - Subcolección: {}/{}: {}",
+                                    collectionName, clientName, tenantName, rfidId, busCollection, t.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(WriteResult result) {
+                            log.info("[Firebase] Registro guardado o actualizado en {}/{}/{}/{}/{} correctamente: {}",
+                                    clientName, tenantName, collectionName,rfidId,busCollection, registerMap);
+                        }
+                    },
+                    MoreExecutors.directExecutor()
+            );
+
+            future.get();
+        } catch (Exception e) {
+            log.error("Error al registrar en Firebase", e);
+            throw new FirebaseException("Error al registrar en Firebase");
+        }
+    }
+
     public void deleteRegisterById(String clientName, String tenantName, String collectionName, String id) {
         try {
             ApiFuture<WriteResult> future = firestore
@@ -214,6 +258,42 @@ public class FirebaseService {
                         public void onSuccess(WriteResult result) {
                             log.info("[Firebase] Registro {} eliminado correctamente en {}/{}/{}",
                                     id, clientName, tenantName, collectionName);
+                        }
+                    },
+                    MoreExecutors.directExecutor()
+            );
+        } catch (Exception e) {
+            log.error("Error al eliminar en Firebase", e);
+            throw new FirebaseException("Error al eliminar en Firebase");
+        }
+    }
+
+    public void deleteRegisterByIdOnBus(String clientName, String tenantName, String collectionName, String rfidId, String busCollection, String id) {
+        try {
+            ApiFuture<WriteResult> future = firestore
+                    .collection(FirebaseCollectionsConstants.ROOT_COLLECTION.getName())
+                    .document(clientName)
+                    .collection(FirebaseCollectionsConstants.ROOT_SUBCOLLECTION.getName())
+                    .document(tenantName)
+                    .collection(collectionName)
+                    .document(rfidId)
+                    .collection(busCollection)
+                    .document(id)
+                    .delete();
+
+            ApiFutures.addCallback(
+                    future,
+                    new ApiFutureCallback<>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            log.error("[Firebase] Error eliminando registro {} en {}/{}/{}/{}/{}: {}",
+                                    id, clientName, tenantName, collectionName, rfidId, busCollection, t.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(WriteResult result) {
+                            log.info("[Firebase] Registro {} eliminado correctamente en {}/{}/{}/{}/{}",
+                                    id, clientName, tenantName, collectionName,  rfidId, busCollection);
                         }
                     },
                     MoreExecutors.directExecutor()
