@@ -33,9 +33,9 @@ import static co.com.botech.util.generalUtils.FirebaseObjectUtils.toDouble;
 @Service
 public class FirebaseService {
 
+    private static final String AUTO_GENERATED_ID = "Autogenerado";
     private final Firestore firestore;
     private final Storage storage;
-    private static final String AUTO_GENERATED_ID = "Autogenerado";
 
     public boolean existsInCollectionBasic(String id, String collection) {
         try {
@@ -132,11 +132,11 @@ public class FirebaseService {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (documentSnapshot.exists()) {
-                                log.info("[Firebase] Documento {} existe en {} para {}/{}",
-                                        id, collectionName, clientName, tenantName);
+                                log.info("[Firebase] Documento {} existe en {} para {}/{} - Subcolección: {}/{}",
+                                        rfidId, collectionName, clientName, tenantName, busCollection, userId);
                             } else {
-                                log.info("[Firebase] Documento {} NO existe en {} para {}/{}",
-                                        id, collectionName, clientName, tenantName);
+                                log.info("[Firebase] Documento {} NO existe en {} para {}/{} - Subcolección: {}/{}",
+                                        rfidId, collectionName, clientName, tenantName, busCollection, userId);
                             }
                         }
                     },
