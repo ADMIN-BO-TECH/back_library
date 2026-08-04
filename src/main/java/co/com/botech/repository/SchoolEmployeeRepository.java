@@ -31,4 +31,13 @@ public interface SchoolEmployeeRepository extends JpaRepository<SchoolEmployee, 
             Long schoolId,
             List<String> familyCodes
     );
+
+    @Query("""
+    SELECT e FROM SchoolEmployee e
+    WHERE e.family.id IN :familyIds
+      AND e.active = true
+    ORDER BY e.id ASC
+""")
+    List<SchoolEmployee> findByFamilyIdIn(@Param("familyIds") List<Long> familyIds);
+
 }
