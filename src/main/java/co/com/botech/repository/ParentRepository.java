@@ -26,4 +26,21 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
           AND p.active = true
     """)
     List<Parent> findByFamilyCode_Code(@Param("familyCode") String familyCode);
+
+    @Query("""
+    SELECT p FROM Parent p
+    WHERE p.family.id IN :familyIds
+      AND p.active = true
+    ORDER BY p.id ASC
+""")
+    List<Parent> findByFamilyIdIn(@Param("familyIds") List<Long> familyIds);
+
+    @Query("""
+    SELECT p FROM Parent p
+    WHERE p.family.id = :familyId
+      AND p.active = true
+    ORDER BY p.id ASC
+""")
+    List<Parent> findByFamily_Id(@Param("familyId") Long familyId);
+
 }

@@ -73,4 +73,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("SELECT s FROM Student s WHERE s.school.id = :schoolId AND s.family.familyCode IN :familyCodes AND s.active = true")
     List<Student> findBySchool_IdAndFamily_FamilyCodeIn(@Param("schoolId") Long schoolId, @Param("familyCodes") List<String> familyCodes);
+
+    @Query("""
+    SELECT s FROM Student s
+    WHERE s.family.id IN :familyIds
+      AND s.active = true
+    ORDER BY s.id ASC
+""")
+    List<Student> findByFamilyIdIn(@Param("familyIds") List<Long> familyIds);
+
 }
