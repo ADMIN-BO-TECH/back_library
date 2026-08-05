@@ -1,6 +1,5 @@
 package co.com.botech.util.serviceUtils;
 
-
 import co.com.botech.constants.FirebaseCollectionsConstants;
 import co.com.botech.constants.RegisterTypeNameConstants;
 import co.com.botech.entity.Authorization;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +21,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AllArgsConstructor
 @Slf4j
 public class QRManagementUtils {
+    private static final String EVENT_ENTRADA = "ENTRADA";
+    private static final String EVENT_SALIDA  = "SALIDA";
+    private static final String HISTORY_COLLECTION = FirebaseCollectionsConstants.HISTORIAL_LISTA_EN_VIVO.getName();
+    private static final ZoneId BOGOTA_ZONE = ZoneId.of("America/Bogota");
 
     private final FirebaseService firebaseService;
+
+    private static LocalDateTime toBogota(LocalDateTime dateTime) {
+        return dateTime.atZone(ZoneId.systemDefault())
+                .withZoneSameInstant(BOGOTA_ZONE)
+                .toLocalDateTime();
+    }
 
     public void insertUserInLiveList(String clientName, String tenantName, String collectionName,
                                      String schoolIdentificator, String name, String category,
@@ -31,7 +41,7 @@ public class QRManagementUtils {
         mapRegister.put("id_persona", schoolIdentificator);
         mapRegister.put("nombre", name);
         mapRegister.put("categoria", category);
-        mapRegister.put("fecha_registro", Timestamp.valueOf(now));
+        mapRegister.put("fecha_registro", Timestamp.valueOf(toBogota(now)));
         firebaseService.createRegister(mapRegister, clientName, tenantName, collectionName, schoolIdentificator);
         log.info("Registro agregado a Firebase ({}): {}/{}/{}/{}",
                 category, clientName, tenantName, collectionName, schoolIdentificator);
@@ -44,7 +54,7 @@ public class QRManagementUtils {
         mapRegister.put("id_persona", schoolIdentificator);
         mapRegister.put("nombre", name);
         mapRegister.put("categoria", category);
-        mapRegister.put("fecha_registro", Timestamp.valueOf(now));
+        mapRegister.put("fecha_registro", Timestamp.valueOf(toBogota(now)));
         firebaseService.createBusRegister(mapRegister, clientName, tenantName, collectionName, rfidId, busCollection, schoolIdentificator);
         log.info("Registro agregado a Firebase ({}): {}/{}/{}/{}/{}/{}",
                 category, clientName, tenantName, collectionName, rfidId, busCollection, schoolIdentificator);
@@ -78,7 +88,7 @@ public class QRManagementUtils {
                 String pickUpMode = RegisterTypeNameConstants.QR_REGISTER.getName() + " - " + rfidRegister.getDescription();
                 pickupRegister.put("id_estudiante", studentId);
                 pickupRegister.put("nombre_estudiante", studentName);
-                pickupRegister.put("fecha_hora_recogida", Timestamp.valueOf(now));
+                pickupRegister.put("fecha_hora_recogida", Timestamp.valueOf(toBogota(now)));
                 pickupRegister.put("documento_persona_autorizada", authorization.getAuthorizedPerson().getDocumentNumber());
                 pickupRegister.put("nombre_completo_persona_autorizada", authorizedPersonName);
                 pickupRegister.put("modo_recogida", pickUpMode);
@@ -93,5 +103,33 @@ public class QRManagementUtils {
             }
         });
         return pickupValidRegistersCounter;
+    }
+
+    public void insertUserInLiveListWithHistory(String clientName, String schoolName, String collection,
+                                                String documentNumber, String name, String category,
+                                                LocalDateTime now) {
+        insertUserInLiveList(clientName, schoolName, collection, documentNumber, name, category, now);
+        saveLiveListHistory(clientName, schoolName, documentNumber, name, category, EVENT_ENTRADA, now);
+    }
+
+    public void deleteUserInLiveListWithHistory(String clientName, String schoolName, String collection,
+                                                String documentNumber, String name, String category,
+                                                LocalDateTime now) {
+        deleteUserInLiveList(clientName, schoolName, collection, documentNumber, category);
+        saveLiveListHistory(clientName, schoolName, documentNumber, name, category, EVENT_SALIDA, now);
+    }
+
+    private void saveLiveListHistory(String clientName, String schoolName, String documentNumber,
+                                     String name, String category, String event, LocalDateTime now) {
+        Map<String, Object> history = new HashMap<>();
+        history.put("id_persona", documentNumber);
+        history.put("idOriginal", documentNumber);
+        history.put("nombre", name);
+        history.put("categoria", category);
+        history.put("evento", event);
+        history.put("fecha_registro", Timestamp.valueOf(toBogota(now)));
+        history.put("timestamp", Timestamp.valueOf(toBogota(LocalDateTime.now())));
+
+        firebaseService.createRegister(history, clientName, schoolName, HISTORY_COLLECTION, null);
     }
 }
