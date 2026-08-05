@@ -23,7 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class QRManagementUtils {
     private static final String EVENT_ENTRADA = "ENTRADA";
     private static final String EVENT_SALIDA  = "SALIDA";
-    private static final String HISTORY_COLLECTION = FirebaseCollectionsConstants.HISTORIAL_LISTA_EN_VIVO.getName();
+    private static final String HISTORIAL_LISTA_EN_VIVO = FirebaseCollectionsConstants.HISTORIAL_LISTA_EN_VIVO.getName();
+    private static final String HISTORIAL_LISTA_RECOGIDA = FirebaseCollectionsConstants.HISTORIAL_LISTA_RECOGIDA.getName();
     private static final ZoneId BOGOTA_ZONE = ZoneId.of("America/Bogota");
 
     private final FirebaseService firebaseService;
@@ -109,18 +110,37 @@ public class QRManagementUtils {
                                                 String documentNumber, String name, String category,
                                                 LocalDateTime now) {
         insertUserInLiveList(clientName, schoolName, collection, documentNumber, name, category, now);
-        saveLiveListHistory(clientName, schoolName, documentNumber, name, category, EVENT_ENTRADA, now);
+        saveLiveListHistory(clientName, schoolName, HISTORIAL_LISTA_EN_VIVO,
+                documentNumber, name, category, EVENT_ENTRADA, now);
     }
 
     public void deleteUserInLiveListWithHistory(String clientName, String schoolName, String collection,
                                                 String documentNumber, String name, String category,
                                                 LocalDateTime now) {
         deleteUserInLiveList(clientName, schoolName, collection, documentNumber, category);
-        saveLiveListHistory(clientName, schoolName, documentNumber, name, category, EVENT_SALIDA, now);
+        saveLiveListHistory(clientName, schoolName, HISTORIAL_LISTA_EN_VIVO,
+                documentNumber, name, category, EVENT_SALIDA, now);
     }
 
-    private void saveLiveListHistory(String clientName, String schoolName, String documentNumber,
-                                     String name, String category, String event, LocalDateTime now) {
+    public void insertUserInPickupListWithHistory(String clientName, String schoolName, String collection,
+                                                  String documentNumber, String name, String category,
+                                                  LocalDateTime now) {
+        insertUserInLiveList(clientName, schoolName, collection, documentNumber, name, category, now);
+        saveLiveListHistory(clientName, schoolName, HISTORIAL_LISTA_RECOGIDA,
+                documentNumber, name, category, EVENT_ENTRADA, now);
+    }
+
+    public void deleteUserInPickupListWithHistory(String clientName, String schoolName, String collection,
+                                                  String documentNumber, String name, String category,
+                                                  LocalDateTime now) {
+        deleteUserInLiveList(clientName, schoolName, collection, documentNumber, category);
+        saveLiveListHistory(clientName, schoolName, HISTORIAL_LISTA_RECOGIDA,
+                documentNumber, name, category, EVENT_SALIDA, now);
+    }
+
+    private void saveLiveListHistory(String clientName, String schoolName, String historyCollection,
+                                     String documentNumber, String name, String category,
+                                     String event, LocalDateTime now) {
         Map<String, Object> history = new HashMap<>();
         history.put("id_persona", documentNumber);
         history.put("idOriginal", documentNumber);
@@ -130,6 +150,6 @@ public class QRManagementUtils {
         history.put("fecha_registro", Timestamp.valueOf(toBogota(now)));
         history.put("timestamp", Timestamp.valueOf(toBogota(LocalDateTime.now())));
 
-        firebaseService.createRegister(history, clientName, schoolName, HISTORY_COLLECTION, null);
+        firebaseService.createRegister(history, clientName, schoolName, historyCollection, null);
     }
 }
