@@ -13,7 +13,10 @@ public enum EmailTemplateAssignation {
     BETA_TESTERS("welcome-beta-testers.html", null),
     WELCOME_EMPLOYEES("welcome-empleados-email.html", null),
     WELCOME_PARENTS("welcome-parents-email.html", SendParentEmailRequest.class),
-    PRODUCT_KEY_DELIVERY("product-key-delivery.html", SendProductKeyEmailRequest.class);
+    PRODUCT_KEY_DELIVERY("product-key-delivery.html", SendProductKeyEmailRequest.class),
+    PRODUCT_KEY_EMPLOYEE("product-key-employee.html", SendProductKeyEmailRequest.class),
+    PRODUCT_KEY_GENERIC("product-key-generic.html", SendProductKeyEmailRequest.class);
+
 
     private final String templateName;
     private final Class<? extends EmailVariables> variablesClass;
