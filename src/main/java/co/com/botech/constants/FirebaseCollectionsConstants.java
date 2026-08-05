@@ -13,6 +13,8 @@ public enum FirebaseCollectionsConstants {
     SCHEDULES("Schedules"),
     KILOMETRAJE("Kilometraje"),
     HISTORIAL("Historial"),
+    HISTORIAL_LISTA_EN_VIVO("HistorialListaEnVivo"),
+    HISTORIAL_LISTA_RECOGIDA("HistorialListaRecogida"),
     HISTORIAL_UBICACION("HistorialUbicacion"),
     ROUTES("routes"),
     MAP_TRACE("TrazadoMapa"),
