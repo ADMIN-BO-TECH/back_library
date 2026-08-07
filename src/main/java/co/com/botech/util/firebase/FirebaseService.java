@@ -442,6 +442,44 @@ public class FirebaseService {
         }
     }
 
+    public void deleteRegistersByBusCollection(String clientName, String tenantName, String collectionName,
+                                            String rfidId, String subCollectionName) {
+        try {
+            CollectionReference firestoreCollection = firestore
+                    .collection(FirebaseCollectionsConstants.ROOT_COLLECTION.getName())
+                    .document(clientName)
+                    .collection(FirebaseCollectionsConstants.ROOT_SUBCOLLECTION.getName())
+                    .document(tenantName)
+                    .collection(collectionName)
+                    .document(rfidId)
+                    .collection(subCollectionName);
+
+            int deletedRegisters = 0;
+
+            while (true) {
+                ApiFuture<QuerySnapshot> future = firestoreCollection.limit(100).get();
+                QuerySnapshot documents = future.get();
+
+                if (documents.isEmpty()) break;
+
+                WriteBatch deleteBatch = firestore.batch();
+                for (DocumentSnapshot snapshot : documents.getDocuments()) {
+                    deleteBatch.delete(snapshot.getReference());
+                    deletedRegisters++;
+                }
+
+                deleteBatch.commit().get();
+            }
+
+            log.info("[Firebase] Se eliminaron {} registros de {}/{}/{}/{}/{}",
+                    deletedRegisters, clientName, tenantName, collectionName, rfidId, subCollectionName);
+
+        } catch (Exception e) {
+            log.error("Error al eliminar registros por colección en Firebase", e);
+            throw new FirebaseException("Error al eliminar registros de Firebase");
+        }
+    }
+
     public Optional<FirebaseObjectUtils.LatLng> getLatLngByDocId(String clientName, String docId) {
         try {
             DocumentSnapshot doc = firestore

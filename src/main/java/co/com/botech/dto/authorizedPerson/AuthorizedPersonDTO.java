@@ -31,8 +31,8 @@ public class AuthorizedPersonDTO {
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "La persona que autoriza contienen caracteres inválidos")
     private String authorizedBy;
-    @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El codigo de familia contiene caracteres inválidos")
+    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]*$",
+            message = "El codigo de familia contiene caracteres inválidos")
     private String familyCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
