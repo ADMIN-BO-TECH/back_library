@@ -472,7 +472,7 @@ public class FirebaseService {
             }
 
             log.info("[Firebase] Se eliminaron {} registros de {}/{}/{}/{}/{}",
-                    deletedRegisters, clientName, tenantName, collectionName, docId, subCollectionName);
+                    deletedRegisters, clientName, tenantName, collectionName, rfidId, subCollectionName);
 
         } catch (Exception e) {
             log.error("Error al eliminar registros por colección en Firebase", e);
