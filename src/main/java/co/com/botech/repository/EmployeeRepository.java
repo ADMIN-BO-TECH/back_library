@@ -12,4 +12,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     boolean existsByDocumentNumberAndId(String documentNumber, Long employeeId);
     Optional<Employee> findByDocumentNumber(String documentNumber);
     Optional<Employee> findByRfidTag(String rfidTag);
+    Optional<Employee> findByRfidTagIgnoreCase(String rfidTag);
 }

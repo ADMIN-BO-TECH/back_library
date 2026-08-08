@@ -28,6 +28,9 @@ public class EmployeeUtils {
     }
 
     public Optional<Employee> getEmployeeOptionalByRfidTagSocket(String rfidTag) {
-        return employeeRepository.findByRfidTag(rfidTag);
+        if (rfidTag == null || rfidTag.isBlank()) {
+            return Optional.empty();
+        }
+        return employeeRepository.findByRfidTagIgnoreCase(rfidTag.trim());
     }
 }
