@@ -26,4 +26,11 @@ public class EmployeeUtils {
     public Optional<Employee> getEmployeeOptionalByDocumentNumberSocket(String documentNumber) {
         return employeeRepository.findByDocumentNumber(documentNumber);
     }
+
+    public Optional<Employee> getEmployeeOptionalByRfidTagSocket(String rfidTag) {
+        if (rfidTag == null || rfidTag.isBlank()) {
+            return Optional.empty();
+        }
+        return employeeRepository.findByRfidTagIgnoreCase(rfidTag.trim());
+    }
 }
