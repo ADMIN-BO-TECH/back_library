@@ -26,4 +26,8 @@ public class EmployeeUtils {
     public Optional<Employee> getEmployeeOptionalByDocumentNumberSocket(String documentNumber) {
         return employeeRepository.findByDocumentNumber(documentNumber);
     }
+
+    public Optional<Employee> getEmployeeOptionalByRfidTagSocket(String rfidTag) {
+        return employeeRepository.findByRfidTag(rfidTag);
+    }
 }
