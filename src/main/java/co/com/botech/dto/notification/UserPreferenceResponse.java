@@ -9,6 +9,6 @@ import lombok.*;
 @Builder
 public class UserPreferenceResponse {
     private String categoryName;
-    private Boolean categoryDescription;
+    private String categoryDescription;
     private Boolean enabled;
 }
