@@ -812,6 +812,40 @@ public class FirebaseService {
             );
         }
     }
+
+    public List<Map<String, Object>> getTenantCollectionByDateRange(
+            String clientName, String schoolName, String collection,
+            String dateField, com.google.cloud.Timestamp start, com.google.cloud.Timestamp end) {
+        try {
+            CollectionReference ref = firestore
+                    .collection(FirebaseCollectionsConstants.ROOT_COLLECTION.getName())
+                    .document(clientName)
+                    .collection(FirebaseCollectionsConstants.ROOT_SUBCOLLECTION.getName())
+                    .document(schoolName)
+                    .collection(collection);
+
+            QuerySnapshot snapshot = ref
+                    .whereGreaterThanOrEqualTo(dateField, start)
+                    .whereLessThanOrEqualTo(dateField, end)
+                    .orderBy(dateField)
+                    .get()
+                    .get();
+
+            return snapshot.getDocuments().stream()
+                    .map(QueryDocumentSnapshot::getData)
+                    .collect(Collectors.toList());
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("[Firebase] Interrumpido obteniendo {}/{}/{} entre {} y {}",
+                    clientName, schoolName, collection, start, end, e);
+            return Collections.emptyList();
+        } catch (Exception e) {
+            log.error("[Firebase] Error obteniendo {}/{}/{} entre {} y {}",
+                    clientName, schoolName, collection, start, end, e);
+            return Collections.emptyList();
+        }
+    }
 }
 
 
