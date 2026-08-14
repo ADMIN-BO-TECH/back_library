@@ -37,4 +37,5 @@ public class SchoolEmployeeDTO {
     private String position;
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El colegio contiene caracteres inválidos")
     private String schoolName;
+    private Boolean sendEmail;
 }

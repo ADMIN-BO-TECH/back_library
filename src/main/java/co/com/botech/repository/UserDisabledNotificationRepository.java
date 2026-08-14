@@ -14,6 +14,7 @@ public interface UserDisabledNotificationRepository extends JpaRepository<UserDi
     @Query(value = """
             SELECT
                 nc.category_name AS categoryName,
+                nc.category_description AS categoryDescription,
                 CASE WHEN EXISTS (
                     SELECT 1 FROM user_disabled_notification udn
                     WHERE udn.notification_category_id = nc.notification_category_id
