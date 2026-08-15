@@ -7,9 +7,21 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface UserDisabledNotificationRepository extends JpaRepository<UserDisabledNotification, Long> {
+
+    @Query("""
+            SELECT udn.user.id FROM UserDisabledNotification udn
+            WHERE udn.notificationCategory.id = :categoryId
+            AND udn.user.id IN :userIds
+            """)
+    Set<Long> findDisabledUserIdsByCategoryAndUserIds(
+            @Param("categoryId") Long categoryId,
+            @Param("userIds") Collection<Long> userIds);
+
 
     @Query(value = """
             SELECT
