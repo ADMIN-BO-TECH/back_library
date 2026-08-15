@@ -2,10 +2,11 @@ package co.com.botech.constants;
 
 public enum NotificationCategoryConstants {
 
-    PASS("PASS TEST"),
-    SEGUIMIENTO("SEGUMIENTO TEST"),
+    PASS("Comunicados"),
+    SEGUIMIENTO("Comunicados"),
     NOTIFICACIONES_PROGRAMADAS_RECORRIDO("RECORRIDO PROGRAMADAS"),
-    ASISTENCIA("ASISTENCIA");
+    ASISTENCIA("Asistencia"),
+    GEOCERCAS("Geocercas");
 
     private final String name;
 
