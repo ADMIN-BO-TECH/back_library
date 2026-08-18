@@ -6,7 +6,7 @@ import java.util.Set;
 public enum GimFemSchoolSection {
 
     PRESCOLAR(
-            Set.of("TRANSICIÓN", "PREMONTESSORI", "MONTESSORI"),
+            Set.of("TRANSICION", "PREMONTESSORI", "MONTESSORI"),
             "Paula Valentina Villacres Fonseca",
             "paula.vf@gimnasiofemenino.edu.co"
     ),
@@ -16,8 +16,8 @@ public enum GimFemSchoolSection {
             "ingrid.po@gimnasiofemenino.edu.co"
     ),
     MEDIA(
-            Set.of("QUINTO", "SEXTO", "SÉPTIMO", "OCTAVO", "NOVENO"),
-            "Indira Elena Diaz Peñaloza",
+            Set.of("QUINTO", "SEXTO", "SEPTIMO", "OCTAVO", "NOVENO"),
+            "Indira Elena Diaz Penaloza",
             "indira.dp@gimnasiofemenino.edu.co"
     ),
     ALTA(
@@ -40,7 +40,7 @@ public enum GimFemSchoolSection {
 
     public static GimFemSchoolSection fromGradeLevel(String gradeLevel) {
         if (gradeLevel == null) return PRESCOLAR;
-        String upper = gradeLevel.toUpperCase();
+        String upper = gradeLevel.toUpperCase().trim();
         for (GimFemSchoolSection section : values()) {
             for (String prefix : section.gradePrefixes) {
                 if (upper.startsWith(prefix)) return section;
