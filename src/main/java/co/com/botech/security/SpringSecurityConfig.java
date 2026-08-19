@@ -25,10 +25,9 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/schedule/**","/family/**").permitAll()
+                        .requestMatchers("/schedule/**","/family/**","/user-geofence**").permitAll()
                         .requestMatchers("/api/passes/**").permitAll()
                         .requestMatchers("/api/otp/**").permitAll()
-                        .requestMatchers("/user-geofence/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}))
