@@ -18,7 +18,8 @@ public class Otp {
     private String name;
     private String email;
     private String phone;
-    private String familyCode;
+    @Column(name = "product_key")
+    private String productKey;
     private String otpCode;
     private String iv;
     private boolean isValid;
