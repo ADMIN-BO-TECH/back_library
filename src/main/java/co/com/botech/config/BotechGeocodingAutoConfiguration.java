@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 @ConditionalOnExpression("#{environment.containsProperty('GEOCODING_API_KEY')}")
 public class BotechGeocodingAutoConfiguration {
 
+    // Beans for GeoApiContext and GeocodingService
     @Bean
     @ConditionalOnMissingBean(GeoApiContext.class)
     public GeoApiContext geoApiContext() {
