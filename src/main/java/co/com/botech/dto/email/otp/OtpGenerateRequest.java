@@ -7,6 +7,6 @@ import lombok.*;
 public class OtpGenerateRequest {
     @NotBlank private String name;
     @NotBlank @Email private String email;
-    @NotBlank private String phone;
-    @NotBlank private String familyCode;
+    private String phone;
+    @NotBlank private String productKey;
 }
