@@ -5,7 +5,10 @@ public enum PermitTypeConstants {
     EARLY_EXIT("Salida durante horario escolar"),
     ABSENCE("Inasistencia"),
     INFORMATIVE("Informativa"),
-    ROUTE_CHANGE("Cambio de Recorrido");
+    ROUTE_CHANGE("Cambio de Recorrido"),
+    PSYCHOLOGY("Psicología"),
+    INFIRMARY("Enfermería");
+
     private final String description;
 
     PermitTypeConstants(String description) {
