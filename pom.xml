@@ -5,7 +5,7 @@
 
     <groupId>co.com.botech</groupId>
     <artifactId>botech-back-library</artifactId>
-    <version>PROD-0.2.1</version>
+    <version>PROD-0.2.2</version>
     <packaging>jar</packaging>
 
     <name>botech-back-library</name>
