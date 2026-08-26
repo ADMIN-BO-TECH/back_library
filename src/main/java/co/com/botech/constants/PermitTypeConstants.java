@@ -1,7 +1,7 @@
 package co.com.botech.constants;
 
 public enum PermitTypeConstants {
-
+    //Tipos de Novedad
     EARLY_EXIT("Salida durante horario escolar"),
     ABSENCE("Inasistencia"),
     INFORMATIVE("Informativa"),
