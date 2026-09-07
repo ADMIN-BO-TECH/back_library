@@ -83,6 +83,15 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Boot Health (Boot 4): HealthIndicator, AbstractHealthIndicator, ConditionalOnEnabledHealthIndicator.
+             optional=true: no se impone a consumidores que no usen el módulo de salud -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-health</artifactId>
+            <version>4.0.1</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Spring Boot core + AutoConfigure: para @AutoConfiguration y EntityScanPackages.
              optional=true: no se arrastra a los consumidores (ellos ya lo tienen vía spring-boot) -->
         <dependency>

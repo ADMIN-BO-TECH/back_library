@@ -6,3 +6,4 @@ co.com.botech.config.BotechJpaAutoConfiguration
 co.com.botech.security.SpringSecurityConfig
 co.com.botech.config.BotechEmailAutoConfiguration
 co.com.botech.config.BotechNotificationAutoConfiguration
+co.com.botech.config.BackLibraryHealthAutoConfiguration
