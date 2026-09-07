@@ -83,12 +83,12 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Spring Boot Actuator: solo para compilar HealthIndicator y ConditionalOnEnabledHealthIndicator.
-             optional=true: no se impone a consumidores que no usen Actuator -->
+        <!-- Spring Boot Health (Boot 4): HealthIndicator, AbstractHealthIndicator, ConditionalOnEnabledHealthIndicator.
+             optional=true: no se impone a consumidores que no usen el módulo de salud -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator-autoconfigure</artifactId>
-            <version>3.2.5</version>
+            <artifactId>spring-boot-health</artifactId>
+            <version>4.0.1</version>
             <optional>true</optional>
         </dependency>
 

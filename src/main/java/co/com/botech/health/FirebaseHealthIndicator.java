@@ -1,8 +1,8 @@
 package co.com.botech.health;
 
 import com.google.firebase.FirebaseApp;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
 
 /**
  * Verifica que {@link FirebaseApp} esté correctamente inicializado sin realizar llamadas de red,
