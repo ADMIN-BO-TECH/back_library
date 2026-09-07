@@ -83,6 +83,15 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Boot Actuator: solo para compilar HealthIndicator y ConditionalOnEnabledHealthIndicator.
+             optional=true: no se impone a consumidores que no usen Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator-autoconfigure</artifactId>
+            <version>3.2.5</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Spring Boot core + AutoConfigure: para @AutoConfiguration y EntityScanPackages.
              optional=true: no se arrastra a los consumidores (ellos ya lo tienen vía spring-boot) -->
         <dependency>
