@@ -82,4 +82,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 """)
     List<Student> findByFamilyIdIn(@Param("familyIds") List<Long> familyIds);
 
+    @Query("""
+        SELECT s FROM Student s
+        WHERE s.school.id = :schoolId
+          AND s.leaveAlone = true
+          AND s.active = true
+        ORDER BY s.gradeLevel ASC, s.lastName ASC
+    """)
+    List<Student> findLeaveAloneBySchoolId(@Param("schoolId") Long schoolId);
+
 }
