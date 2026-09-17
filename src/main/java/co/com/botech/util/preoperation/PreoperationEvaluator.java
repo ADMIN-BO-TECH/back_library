@@ -25,8 +25,7 @@ public final class PreoperationEvaluator {
 
     private PreoperationEvaluator() {}
 
-    public static PreoperationEvaluationResult evaluate(
-            PreoperationSubmitRequest request, Vehicle vehicle, Long schoolId, String schoolName) {
+    public static PreoperationEvaluationResult evaluate(PreoperationSubmitRequest request, Vehicle vehicle) {
 
         List<PreoperationItem> items = new ArrayList<>();
         items.addAll(externalItems(request.getInspeccionExterna()));
@@ -42,8 +41,6 @@ public final class PreoperationEvaluator {
                 .vehicle(vehicle)
                 .plateNumber(request.getPlaca())
                 .fleetNumber(request.getMovil())
-                .schoolId(schoolId)
-                .schoolName(schoolName)
                 .driverId(request.getDriverId())
                 .operatorName(request.getOperador())
                 .operatorDocument(request.getCedula())

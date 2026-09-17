@@ -6,7 +6,6 @@ public interface PreoperationVehicleRankingProjection {
     Long getVehicleId();
     String getPlateNumber();
     String getFleetNumber();
-    String getSchoolName();
     Long getTotalPreops();
     Long getPreopsWithIssues();
     Long getCriticalCount();

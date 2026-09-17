@@ -6,7 +6,6 @@ public interface PreoperationVehicleOverviewProjection {
     Long getVehicleId();
     String getPlateNumber();
     String getFleetNumber();
-    String getSchoolName();
     Integer getLastKilometrage();
     LocalDate getLastPreopDate();
     String getLastOperator();

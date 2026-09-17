@@ -14,7 +14,7 @@ public class PreopHistoryItemDTO {
     private String plateNumber;
     private Long vehicleId;
     private Integer kilometraje;
-    private String colegioName;
+
     private boolean hasIssues;
     private boolean hasCritical;
     private int issueCount;
