@@ -2,7 +2,7 @@ package co.com.botech.dto.preoperation;
 
 import lombok.*;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data @Builder(toBuilder = true) @NoArgsConstructor @AllArgsConstructor
 public class DocumentsInput {
     private String tarjetaDeOperacion;
     private String tarjetaDePropiedad;
