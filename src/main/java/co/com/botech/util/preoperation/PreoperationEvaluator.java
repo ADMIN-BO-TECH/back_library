@@ -2,18 +2,33 @@ package co.com.botech.util.preoperation;
 
 import co.com.botech.constants.*;
 import co.com.botech.dto.preoperation.*;
+import co.com.botech.entity.Employee;
 import co.com.botech.entity.Preoperation;
 import co.com.botech.entity.PreoperationItem;
 import co.com.botech.entity.Vehicle;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Convierte un PreoperationSubmitRequest en la cabecera + items a persistir, y deriva
+ * el estado operativo del vehiculo. Es la unica fuente de verdad sobre que cuenta como
+ * novedad o condicion critica: seguimiento-api (analitica) y el microservicio que
+ * recibe el submit dependen de esta misma logica para no desincronizarse.
+ *
+ * Regla: DANADO (externa) y NO_VIGENTE (documento) son criticos. Critico implica
+ * novedad: nunca hay un item critico que no cuente tambien como novedad.
+ *
+ * estadoDeBaterias invierte la convencion de SI/NO de los demas campos internos: aqui
+ * SI significa baterias en buen estado, no una novedad.
+ */
 public final class PreoperationEvaluator {
 
     private PreoperationEvaluator() {}
 
-    public static PreoperationEvaluationResult evaluate(PreoperationSubmitRequest request, Vehicle vehicle) {
+    public static PreoperationEvaluationResult evaluate(PreoperationSubmitRequest request, Vehicle vehicle,
+                                                          Employee employee, LocalDateTime now) {
 
         List<PreoperationItem> items = new ArrayList<>();
         items.addAll(externalItems(request.getInspeccionExterna()));
@@ -27,14 +42,14 @@ public final class PreoperationEvaluator {
 
         Preoperation preoperation = Preoperation.builder()
                 .vehicle(vehicle)
-                .plateNumber(request.getPlaca())
-                .fleetNumber(request.getMovil())
-                .driverId(request.getDriverId())
-                .operatorName(request.getOperador())
-                .operatorDocument(request.getCedula())
-                .mobileNumber(request.getMovil())
-                .preopDate(request.getFecha())
-                .preopHour(request.getHora())
+                .plateNumber(vehicle.getPlateNumber())
+                .fleetNumber(vehicle.getFleetNumber())
+                .driverId(employee.getId())
+                .operatorName(employee.getFirstName())
+                .operatorDocument(employee.getDocumentNumber())
+                .mobileNumber(vehicle.getFleetNumber())
+                .preopDate(now.toLocalDate())
+                .preopHour(now.toLocalTime())
                 .mileage(request.getKilometraje())
                 .acceptedVeracity(request.getAceptoVeracidad())
                 .gpsLat(request.getGpsLocation() != null ? request.getGpsLocation().getLat() : null)
