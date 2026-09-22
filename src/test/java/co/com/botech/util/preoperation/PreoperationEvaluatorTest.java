@@ -2,7 +2,6 @@ package co.com.botech.util.preoperation;
 
 import co.com.botech.constants.VehicleOperationalStatus;
 import co.com.botech.dto.preoperation.*;
-import co.com.botech.entity.Employee;
 import co.com.botech.entity.Preoperation;
 import co.com.botech.entity.PreoperationItem;
 import co.com.botech.entity.Vehicle;
@@ -10,26 +9,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("PreoperationEvaluator")
 class PreoperationEvaluatorTest {
 
-    private static final LocalDateTime NOW = LocalDateTime.of(2026, 8, 11, 6, 12);
-
     private Vehicle vehicle() {
         return Vehicle.builder().id(5L).plateNumber("MNP-654").fleetNumber("005").build();
     }
 
-    private Employee employee() {
-        return Employee.builder().id(17L).firstName("Carlos Mendoza").documentNumber("1020345678").build();
-    }
-
     private PreoperationSubmitRequest.PreoperationSubmitRequestBuilder cleanRequest() {
         return PreoperationSubmitRequest.builder()
-                .idVehicle(5L).kilometraje(187430).aceptoVeracidad(true)
+                .driverId(17L).idVehicle(5L).fecha(LocalDate.of(2026, 8, 11)).hora(LocalTime.of(6, 12))
+                .operador("Carlos Mendoza").cedula("1020345678").colegio("Colegio El Jardín")
+                .movil("005").placa("MNP-654").kilometraje(187430).aceptoVeracidad(true)
                 .inspeccionInterna(InternalInspectionInput.builder()
                         .fugaDeAceite("NO").nivelDeAceite("NORMAL")
                         .fugaLiquidoFrenos("NO").nivelLiquidoFrenos("NORMAL")
@@ -55,7 +51,7 @@ class PreoperationEvaluatorTest {
 
         @Test
         void Given_a_clean_preop_When_evaluate_Then_status_is_OPERATIVO() {
-            var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle(), employee(), NOW);
+            var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle());
 
             assertThat(result.vehicleStatus()).isEqualTo(VehicleOperationalStatus.OPERATIVO);
             assertThat(result.preoperation().getHasIssues()).isFalse();
@@ -69,7 +65,7 @@ class PreoperationEvaluatorTest {
                             .llantasTraseras("MALO").build())
                     .build();
 
-            var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+            var result = PreoperationEvaluator.evaluate(request, vehicle());
 
             assertThat(result.vehicleStatus()).isEqualTo(VehicleOperationalStatus.REQUIERE_ATENCION);
         }
@@ -81,7 +77,7 @@ class PreoperationEvaluatorTest {
                             .llantasTraseras("DAÑADO").build())
                     .build();
 
-            var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+            var result = PreoperationEvaluator.evaluate(request, vehicle());
 
             assertThat(result.vehicleStatus()).isEqualTo(VehicleOperationalStatus.NO_OPERATIVO);
             assertThat(result.preoperation().getHasCritical()).isTrue();
@@ -95,7 +91,7 @@ class PreoperationEvaluatorTest {
                             .soat("NO VIGENTE").build())
                     .build();
 
-            var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+            var result = PreoperationEvaluator.evaluate(request, vehicle());
 
             assertThat(result.vehicleStatus()).isEqualTo(VehicleOperationalStatus.NO_OPERATIVO);
         }
@@ -107,7 +103,7 @@ class PreoperationEvaluatorTest {
 
         @Test
         void Given_estadoDeBaterias_SI_When_evaluate_Then_it_is_not_an_issue() {
-            var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle(), employee(), NOW);
+            var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle());
 
             PreoperationItem battery = result.items().stream()
                     .filter(i -> i.getItemKey().equals("estado_baterias")).findFirst().orElseThrow();
@@ -121,7 +117,7 @@ class PreoperationEvaluatorTest {
                             .estadoDeBaterias("NO").build())
                     .build();
 
-            var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+            var result = PreoperationEvaluator.evaluate(request, vehicle());
 
             PreoperationItem battery = result.items().stream()
                     .filter(i -> i.getItemKey().equals("estado_baterias")).findFirst().orElseThrow();
@@ -136,7 +132,7 @@ class PreoperationEvaluatorTest {
                         .fugaDeAceite("SI").nivelDeAceite("BAJO").build())
                 .build();
 
-        var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+        var result = PreoperationEvaluator.evaluate(request, vehicle());
 
         PreoperationItem fuga = result.items().stream()
                 .filter(i -> i.getItemKey().equals("fuga_aceite")).findFirst().orElseThrow();
@@ -155,7 +151,7 @@ class PreoperationEvaluatorTest {
                         .fugasDeRadiador("SI").nivelAguaRefrigerante("BAJO").build())
                 .build();
 
-        var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+        var result = PreoperationEvaluator.evaluate(request, vehicle());
 
         PreoperationItem fuga = result.items().stream()
                 .filter(i -> i.getItemKey().equals("fuga_radiador")).findFirst().orElseThrow();
@@ -169,7 +165,7 @@ class PreoperationEvaluatorTest {
                         .conosBanderolas("NOVEDAD").build())
                 .build();
 
-        var result = PreoperationEvaluator.evaluate(request, vehicle(), employee(), NOW);
+        var result = PreoperationEvaluator.evaluate(request, vehicle());
 
         PreoperationItem conos = result.items().stream()
                 .filter(i -> i.getItemKey().equals("conos_banderolas")).findFirst().orElseThrow();
@@ -180,21 +176,21 @@ class PreoperationEvaluatorTest {
     @Test
     void Given_a_valid_request_When_evaluate_Then_it_produces_exactly_34_items() {
         // 14 externos + 7 internos (6 del contrato + estado_baterias) + 7 de kit + 6 documentos = 34
-        var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle(), employee(), NOW);
+        var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle());
 
         assertThat(result.items()).hasSize(34);
     }
 
     @Test
     void Given_a_request_When_evaluate_Then_each_item_is_linked_back_to_the_preoperation() {
-        var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle(), employee(), NOW);
+        var result = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle());
 
         assertThat(result.items()).allMatch(i -> i.getPreoperation() == result.preoperation());
     }
 
     @Test
     void Given_plate_and_fleet_When_evaluate_Then_they_are_frozen_onto_the_header() {
-        Preoperation preop = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle(), employee(), NOW)
+        Preoperation preop = PreoperationEvaluator.evaluate(cleanRequest().build(), vehicle())
                 .preoperation();
 
         assertThat(preop.getPlateNumber()).isEqualTo("MNP-654");

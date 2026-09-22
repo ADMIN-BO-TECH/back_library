@@ -12,7 +12,15 @@ import java.time.OffsetDateTime;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class PreoperationSubmitRequest {
 
+    @NotNull private Long driverId;
     @NotNull private Long idVehicle;
+    @NotNull private LocalDate fecha;
+    @NotNull private LocalTime hora;
+    @NotBlank private String operador;
+    @NotBlank private String cedula;
+    @NotBlank private String colegio;
+    private String movil;
+    @NotBlank private String placa;
     private Integer kilometraje;
 
     @NotNull @Valid private InternalInspectionInput inspeccionInterna;
