@@ -9,18 +9,6 @@ import co.com.botech.entity.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Convierte un PreoperationSubmitRequest en la cabecera + items a persistir, y deriva
- * el estado operativo del vehiculo. Es la unica fuente de verdad sobre que cuenta como
- * novedad o condicion critica: seguimiento-api (analitica) y el microservicio que
- * recibe el submit dependen de esta misma logica para no desincronizarse.
- *
- * Regla: DANADO (externa) y NO_VIGENTE (documento) son criticos. Critico implica
- * novedad: nunca hay un item critico que no cuente tambien como novedad.
- *
- * estadoDeBaterias invierte la convencion de SI/NO de los demas campos internos: aqui
- * SI significa baterias en buen estado, no una novedad.
- */
 public final class PreoperationEvaluator {
 
     private PreoperationEvaluator() {}
