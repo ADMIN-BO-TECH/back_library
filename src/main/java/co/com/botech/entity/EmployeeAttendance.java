@@ -14,8 +14,9 @@ public class EmployeeAttendance {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @Column(name = "rfid_register_id") private String rfidRegisterId;
-    @Column(name = "attendance_time")  private LocalDateTime attendanceTime;
-    @Column(name = "latitude")         private Double latitude;
-    @Column(name = "longitude")        private Double longitude;
+    @Column(name = "rfid_register_id")    private String rfidRegisterId;
+    @Column(name = "attendance_time")     private LocalDateTime attendanceTime;
+    @Column(name = "latitude")            private Double latitude;
+    @Column(name = "longitude")           private Double longitude;
+    @Column(name = "server_received_at")  private LocalDateTime serverReceivedAt;
 }
