@@ -1,6 +1,8 @@
 package co.com.botech.repository;
 
 import co.com.botech.entity.EmployeeAttendance;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,9 @@ public interface EmployeeAttendanceRepository extends JpaRepository<EmployeeAtte
 
     List<EmployeeAttendance> findByEmployeeIdAndIdGreaterThanOrderByAttendanceTimeAsc(
             Long employeeId, Long minId);
+
+    Page<EmployeeAttendance> findByEmployeeIdOrderByAttendanceTimeDesc(Long employeeId, Pageable pageable);
+
+    Page<EmployeeAttendance> findByEmployeeIdAndAttendanceTimeBetweenOrderByAttendanceTimeDesc(
+            Long employeeId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 }
