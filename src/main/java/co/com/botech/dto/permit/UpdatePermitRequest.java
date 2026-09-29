@@ -16,10 +16,22 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UpdatePermitRequest {
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El responsable contiene caracteres inválidos")
+
+    @Pattern(
+            regexp = "^[^\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]+$",
+            message = "El responsable contiene caracteres de control no permitidos"
+    )
     private String repliedBy;
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "La respuesta contiene caracteres inválidos")
+
+    @Pattern(
+            regexp = "^[^\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]+$",
+            message = "La respuesta contiene caracteres de control no permitidos"
+    )
     private String response;
-    @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El estado de permiso contiene caracteres inválidos")
+
+    @Pattern(
+            regexp = "^[^\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]+$",
+            message = "El estado de permiso contiene caracteres de control no permitidos"
+    )
     private String permitStatus;
 }
