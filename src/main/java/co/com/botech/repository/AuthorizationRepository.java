@@ -72,4 +72,9 @@ public interface AuthorizationRepository extends JpaRepository<Authorization, Lo
             @Param("familyCodes") List<String> familyCodes,
             @Param("schoolId") Long schoolId
     );
+
+    List<Authorization> findByAuthorizedPerson_IdAndAuthorizationEndDateGreaterThanEqual(
+            Long authorizedPersonId,
+            LocalDate today
+    );
 }
