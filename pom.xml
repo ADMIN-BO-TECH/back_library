@@ -74,6 +74,15 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Anotaciones OpenAPI (@Schema) para documentar DTOs en la spec de los microservicios hacia Apidog -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>2.2.47</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Spring Data JPA (para compilar repos). Marcado provided+optional para no arrastrarlo a consumidores -->
         <dependency>
             <groupId>org.springframework.data</groupId>
