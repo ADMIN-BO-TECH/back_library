@@ -119,9 +119,10 @@ public final class PreoperationEvaluator {
     }
 
     private static void addLeak(List<PreoperationItem> items, InternalField field, String rawLeak, String rawLevel) {
-        YesNo leak = YesNo.valueOf(normalize(rawLeak, "fuga"));
-        boolean issue = leak == YesNo.SI;
-        FluidLevel level = issue && rawLevel != null ? FluidLevel.valueOf(normalize(rawLevel, "nivel")) : null;
+        YesNo leak = rawLeak != null ? YesNo.valueOf(normalize(rawLeak, "fuga")) : YesNo.NO;
+        boolean issue = (leak == YesNo.SI);
+        FluidLevel level = (issue && rawLevel != null) ? FluidLevel.valueOf(normalize(rawLevel, "nivel")) : null;
+
         items.add(PreoperationItem.builder()
                 .category(PreoperationCategory.INTERNA.name())
                 .itemKey(field.getKey())
