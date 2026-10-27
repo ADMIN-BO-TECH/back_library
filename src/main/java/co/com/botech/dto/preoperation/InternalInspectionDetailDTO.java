@@ -17,5 +17,7 @@ public class InternalInspectionDetailDTO {
     private Boolean fugaRadiador;
     private String fugaRadiadorNivel;
     private Boolean estadoBaterias;
+    // El contrato siempre muestra novedades, aunque sea null: se excluye del NON_NULL.
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String novedades;
 }

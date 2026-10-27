@@ -47,7 +47,8 @@ public final class PreoperationEvaluator {
                 .driverId(employee.getId())
                 .operatorName(employee.getFirstName())
                 .operatorDocument(employee.getDocumentNumber())
-                .mobileNumber(vehicle.getFleetNumber())
+                // mobileNumber queda null: ni Employee ni el submit traen el celular del
+                // operador. Antes se guardaba aqui el fleetNumber por error.
                 .preopDate(now.toLocalDate())
                 .preopHour(now.toLocalTime())
                 .mileage(request.getKilometraje())

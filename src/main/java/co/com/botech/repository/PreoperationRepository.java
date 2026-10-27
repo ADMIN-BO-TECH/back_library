@@ -4,6 +4,7 @@ import co.com.botech.customDto.PreoperationFleetSummaryProjection;
 import co.com.botech.customDto.PreoperationTrendPointProjection;
 import co.com.botech.customDto.PreoperationVehicleOverviewProjection;
 import co.com.botech.customDto.PreoperationVehicleRankingProjection;
+import co.com.botech.customDto.VehicleSchoolNamesProjection;
 import co.com.botech.entity.Preoperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +33,13 @@ public interface PreoperationRepository extends JpaRepository<Preoperation, Long
             COUNT(DISTINCT vehicle_id)                                        AS totalVehicles,
             COUNT(DISTINCT CASE WHEN has_issues THEN vehicle_id END)          AS vehiclesWithIssues,
             COUNT(DISTINCT CASE WHEN has_critical THEN vehicle_id END)        AS vehiclesWithCritical
-        FROM preoperations
-        WHERE preop_date BETWEEN :from AND :to
+        FROM preoperations p
+        WHERE p.preop_date BETWEEN :from AND :to
+          AND (:schoolId IS NULL OR p.vehicle_id IN (
+                SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
         """, nativeQuery = true)
-    PreoperationFleetSummaryProjection fleetSummary(@Param("from") LocalDate from, @Param("to") LocalDate to);
+    PreoperationFleetSummaryProjection fleetSummary(@Param("from") LocalDate from, @Param("to") LocalDate to,
+                                                    @Param("schoolId") Long schoolId);
 
     @Query(value = """
         SELECT vehicleId, plateNumber, fleetNumber, totalPreops, preopsWithIssues, criticalCount, lastPreopDate
@@ -50,12 +55,14 @@ public interface PreoperationRepository extends JpaRepository<Preoperation, Long
                 ROW_NUMBER() OVER (PARTITION BY p.vehicle_id ORDER BY p.preop_date DESC, p.preop_hour DESC) AS rn
             FROM preoperations p
             WHERE p.preop_date BETWEEN :from AND :to
+              AND (:schoolId IS NULL OR p.vehicle_id IN (
+                    SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
         ) t
         WHERE rn = 1
         ORDER BY preopsWithIssues DESC
         """, nativeQuery = true)
     List<PreoperationVehicleRankingProjection> vehiclesRanking(
-            @Param("from") LocalDate from, @Param("to") LocalDate to);
+            @Param("from") LocalDate from, @Param("to") LocalDate to, @Param("schoolId") Long schoolId);
 
     @Query(value = """
         SELECT
@@ -116,20 +123,36 @@ public interface PreoperationRepository extends JpaRepository<Preoperation, Long
             @Param("vehicleId") Long vehicleId, @Param("from") LocalDate from, @Param("to") LocalDate to);
 
     @Query(value = """
-        SELECT COUNT(*) FROM preoperations
-        WHERE preop_date BETWEEN :from AND :to
-          AND (:vehicleId IS NULL OR vehicle_id = :vehicleId)
-          AND internal_notes IS NOT NULL AND TRIM(internal_notes) <> ''
+        SELECT COUNT(*) FROM preoperations p
+        WHERE p.preop_date BETWEEN :from AND :to
+          AND (:vehicleId IS NULL OR p.vehicle_id = :vehicleId)
+          AND (:schoolId IS NULL OR p.vehicle_id IN (
+                SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
+          AND p.internal_notes IS NOT NULL AND TRIM(p.internal_notes) <> ''
         """, nativeQuery = true)
     long countWithInternalNotes(@Param("from") LocalDate from, @Param("to") LocalDate to,
-                                 @Param("vehicleId") Long vehicleId);
+                                 @Param("vehicleId") Long vehicleId, @Param("schoolId") Long schoolId);
 
     @Query(value = """
-        SELECT COUNT(*) FROM preoperations
-        WHERE preop_date BETWEEN :from AND :to
-          AND (:vehicleId IS NULL OR vehicle_id = :vehicleId)
-          AND documents_notes IS NOT NULL AND TRIM(documents_notes) <> ''
+        SELECT COUNT(*) FROM preoperations p
+        WHERE p.preop_date BETWEEN :from AND :to
+          AND (:vehicleId IS NULL OR p.vehicle_id = :vehicleId)
+          AND (:schoolId IS NULL OR p.vehicle_id IN (
+                SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
+          AND p.documents_notes IS NOT NULL AND TRIM(p.documents_notes) <> ''
         """, nativeQuery = true)
     long countWithDocumentsNotes(@Param("from") LocalDate from, @Param("to") LocalDate to,
-                                  @Param("vehicleId") Long vehicleId);
+                                  @Param("vehicleId") Long vehicleId, @Param("schoolId") Long schoolId);
+
+    // La preoperacion no guarda colegio (un bus cubre rutas de varios). El colegio de un
+    // vehiculo se deriva de sus rutas activas HOY; si tiene varias, se unen con ", ".
+    @Query(value = """
+        SELECT r.vehicle_id AS vehicleId,
+               GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS schoolNames
+        FROM route r
+        JOIN school s ON s.id = r.school_id
+        WHERE r.status = true AND r.vehicle_id IN (:vehicleIds)
+        GROUP BY r.vehicle_id
+        """, nativeQuery = true)
+    List<VehicleSchoolNamesProjection> schoolNamesByVehicleIds(@Param("vehicleIds") Collection<Long> vehicleIds);
 }

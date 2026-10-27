@@ -23,11 +23,13 @@ public interface PreoperationItemRepository extends JpaRepository<PreoperationIt
         WHERE i.category = :category
           AND p.preop_date BETWEEN :from AND :to
           AND (:vehicleId IS NULL OR p.vehicle_id = :vehicleId)
+          AND (:schoolId IS NULL OR p.vehicle_id IN (
+                SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
         GROUP BY i.item_key, i.status
         """, nativeQuery = true)
     List<PreoperationItemBreakdownProjection> itemBreakdown(
             @Param("category") String category, @Param("from") LocalDate from,
-            @Param("to") LocalDate to, @Param("vehicleId") Long vehicleId);
+            @Param("to") LocalDate to, @Param("vehicleId") Long vehicleId, @Param("schoolId") Long schoolId);
 
     @Query(value = """
         SELECT i.item_key AS itemKey, i.status AS status, i.fluid_level AS fluidLevel, COUNT(*) AS total
@@ -36,20 +38,25 @@ public interface PreoperationItemRepository extends JpaRepository<PreoperationIt
         WHERE i.category = 'INTERNA'
           AND p.preop_date BETWEEN :from AND :to
           AND (:vehicleId IS NULL OR p.vehicle_id = :vehicleId)
+          AND (:schoolId IS NULL OR p.vehicle_id IN (
+                SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
         GROUP BY i.item_key, i.status, i.fluid_level
         """, nativeQuery = true)
     List<PreoperationInternalBreakdownProjection> internalBreakdown(
-            @Param("from") LocalDate from, @Param("to") LocalDate to, @Param("vehicleId") Long vehicleId);
+            @Param("from") LocalDate from, @Param("to") LocalDate to, @Param("vehicleId") Long vehicleId,
+            @Param("schoolId") Long schoolId);
 
     @Query(value = """
         SELECT p.vehicle_id AS vehicleId, i.category AS category, i.item_key AS itemKey, COUNT(*) AS issueCount
         FROM preoperation_items i
         JOIN preoperations p ON p.id = i.preoperation_id
         WHERE p.preop_date BETWEEN :from AND :to AND i.is_issue = true
+          AND (:schoolId IS NULL OR p.vehicle_id IN (
+                SELECT r.vehicle_id FROM route r WHERE r.school_id = :schoolId AND r.status = true))
         GROUP BY p.vehicle_id, i.category, i.item_key
         """, nativeQuery = true)
     List<PreoperationTopIssueProjection> topIssuesByVehicle(
-            @Param("from") LocalDate from, @Param("to") LocalDate to);
+            @Param("from") LocalDate from, @Param("to") LocalDate to, @Param("schoolId") Long schoolId);
 
     @Query(value = """
         SELECT i.item_key AS itemKey, COUNT(*) AS issueCount
