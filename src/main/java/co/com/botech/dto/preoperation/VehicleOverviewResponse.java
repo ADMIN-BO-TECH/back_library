@@ -10,6 +10,7 @@ public class VehicleOverviewResponse {
     private Long vehicleId;
     private String plateNumber;
     private String fleetNumber;
+    private String colegioName;
 
     private Integer lastKilometrage;
     private LocalDate lastPreopDate;
