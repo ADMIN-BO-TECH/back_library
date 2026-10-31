@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Schema(description = "Solicitud de permiso para uno o varios estudiantes")
+@Schema(description = "Permit request for students")
 public class CreatePermitRequest {
 
     @NotBlank
@@ -26,14 +26,14 @@ public class CreatePermitRequest {
             regexp = "^[^\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]+$",
             message = "La descripción contiene caracteres de control no permitidos"
     )
-    @Schema(description = "Motivo del permiso", example = "Cita médica en la tarde")
+    @Schema(description = "Permit reason", example = "Cita médica en la tarde")
     private String description;
 
-    @Schema(description = "Fecha del permiso", example = "2026-10-20")
+    @Schema(description = "Permit date (yyyy-MM-dd); same-day requests only before 10:00 AM", example = "2026-11-03")
     @NotNull
     private LocalDate permitDate;
 
-    @Schema(description = "IDs de los estudiantes (student_record_id)", example = "[1024, 1025]")
+    @Schema(description = "Student school IDs (student_id), not student_record_id", example = "[20231045, 20231046]")
     @NotNull
     @NotEmpty
     private List<Long> studentIds;
@@ -45,10 +45,10 @@ public class CreatePermitRequest {
             regexp = "^[^\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]+$",
             message = "El campo 'solicitado por' contiene caracteres de control no permitidos"
     )
-    @Schema(description = "Nombre de quien solicita el permiso", example = "María Pérez")
+    @Schema(description = "Requester name", example = "María Pérez")
     private String requestedBy;
 
-    @Schema(description = "Tipo de permiso", example = "SALIDA_ANTICIPADA")
+    @Schema(description = "Allowed: Salida durante horario escolar, Inasistencia, Informativa, Cambio de Recorrido", example = "Salida durante horario escolar")
     @NotBlank
     @NotNull
     private String permitType;
