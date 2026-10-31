@@ -7,22 +7,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Announcement search by status and tag")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class GetFilteredAnnouncementsRequest {
 
+    @Schema(description = "Page number, starts at 1", example = "1")
     @Min(value = 0, message = "La página no puede ser menor a 0")
     private int page;
 
+    @Schema(description = "Records per page", example = "10")
     @Min(value = 1, message = "El límite debe ser mayor a 0")
     private int limit;
 
+    @Schema(description = "Status filter: DRAFT, PUBLISHED or ARCHIVED", example = "PUBLISHED")
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El estado no puede contener caracteres especiales")
     private String status;
 
+    @Schema(description = "Tag filter", example = "eventos")
     @Pattern(regexp = "^[A-Za-z0-9 áéíóúÁÉÍÓÚñÑ_().#,/*\\r\\n-:]+$", message = "El tag no puede contener caracteres especiales")
     private String filteredTag;
 }
