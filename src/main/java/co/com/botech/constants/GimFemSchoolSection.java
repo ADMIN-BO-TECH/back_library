@@ -12,8 +12,8 @@ public enum GimFemSchoolSection {
     ),
     PRIMARIA(
             Set.of("PRIMERO", "SEGUNDO", "TERCERO", "CUARTO"),
-            "Ingrid Pedraza Ortegon",
-            "ingrid.po@gimnasiofemenino.edu.co"
+            "Karen López Ortega",
+            "karenc.lo@gimnasiofemenino.edu.co"
     ),
     MEDIA(
             Set.of("QUINTO", "SEXTO", "SEPTIMO", "OCTAVO", "NOVENO"),

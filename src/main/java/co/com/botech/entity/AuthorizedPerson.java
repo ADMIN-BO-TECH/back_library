@@ -49,6 +49,9 @@ public class AuthorizedPerson {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     private School school;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_school_employee_id")
+    private SchoolEmployee createdBySchoolEmployee;
     @Builder.Default
     @Column(name = "active", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean active = true;
