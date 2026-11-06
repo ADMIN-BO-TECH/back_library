@@ -26,4 +26,19 @@ public interface AuthorizedPersonRepository extends JpaRepository<AuthorizedPers
           AND ap.active = true
     """)
     List<AuthorizedPerson> findByFamilyCode_Id(@Param("familyId") Long familyId);
+
+    List<AuthorizedPerson> findBySchool_IdAndCreatedBySchoolEmployee_IdAndActiveTrue(Long schoolId, Long employeeId);
+
+    List<AuthorizedPerson> findBySchool_IdAndFamily_IdAndActiveTrue(Long schoolId, Long familyId);
+
+    @Query("""
+        SELECT DISTINCT ap FROM AuthorizedPerson ap
+        WHERE ap.school.id = :schoolId
+          AND ap.active = true
+          AND (ap.createdBySchoolEmployee.id = :employeeId
+               OR (:familyId IS NOT NULL AND ap.family.id = :familyId))
+    """)
+    List<AuthorizedPerson> findVisibleForEmployee(@Param("schoolId") Long schoolId,
+                                                  @Param("employeeId") Long employeeId,
+                                                  @Param("familyId") Long familyId);
 }
