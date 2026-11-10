@@ -12,6 +12,7 @@ public class MaintenanceOrderSequence {
     @Column(name = "seq_year")
     private Integer seqYear;
 
-    @Column(name = "last_value", nullable = false)
+    // last_value es palabra reservada en MySQL 8 (función de ventana)
+    @Column(name = "last_number", nullable = false)
     private Integer lastValue;
 }

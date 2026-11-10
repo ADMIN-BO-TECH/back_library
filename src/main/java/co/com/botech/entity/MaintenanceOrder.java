@@ -122,7 +122,7 @@ public class MaintenanceOrder {
     private LocalDateTime closedAt;
 
     @Builder.Default
-    @Column(name = "active", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
+    @Column(name = "active", nullable = false)
     private Boolean active = true;
 
     @Version
